@@ -9,6 +9,10 @@ end
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1.4'
 #https://rubygems.org/gems/pg/versions/0.18.4?locale=es
+
+#https://github.com/plataformatec/devise
+gem 'devise'
+
 gem 'pg', '~> 0.18.4'
 # Use Puma as the app server
 gem 'puma', '~> 3.7'
