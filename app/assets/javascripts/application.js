@@ -15,5 +15,11 @@
 //= require twitter/bootstrap
 //= require popper
 //= require bootstrap
+//= require jquery.slimscroll
+//= require waves
+//= require sidebarmenu
+//= require sticky-kit.min.js
+//= require jquery.sparkline.min.js
+//= require custom.min.js
 //= require turbolinks
 //= require_tree .
