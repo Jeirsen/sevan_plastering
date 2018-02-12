@@ -5,62 +5,96 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= content_for?(:title) ? yield(:title) : "Sevan Plastering" %></title>
+    <%= stylesheet_link_tag 'application'%>
+    <%= stylesheet_link_tag 'style' %>
+    <%= stylesheet_link_tag 'blue' %>
+    <%= javascript_include_tag 'application'%>
     <%= csrf_meta_tags %>
-
-    <%= stylesheet_link_tag "application", :media => "all" %>
-
-    <%= javascript_include_tag "application" %>
-
-    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
-    <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js" type="text/javascript"></script>
-    <![endif]-->
   </head>
-  <body>
+  <body class="fix-header fix-sidebar card-no-border">
 
-    <div class="navbar navbar-default navbar-static-top">
-      <div class="container">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="#">Sevan Plastering</a>
-        <div class="navbar-collapse collapse navbar-responsive-collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="<%=list_vendors_path%>" data-method="get">Vendors</a></li>
-            <li><%= link_to "Link2", "/path2"  %></li>
-            <li><%= link_to "Link3", "/path3"  %></li>
-            <% if user_signed_in? %>
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user">
-                  </i> New User <b class="caret"></b>
+    <div id="main-wrapper">
+      <header class="topbar">
+        <nav class="navbar top-navbar navbar-expand-md navbar-light">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="<%= root_path %>">
+              <b>
+                <img src="/assets/logo-icon.png" alt="homepage" class="dark-logo" />
+                <img src="/assets/logo-light-icon.png" alt="homepage" class="light-logo" />
+              </b>
+              <span>
+                <img src="/assets/logo-text.png" alt="homepage" class="dark-logo" />
+                <img src="/assets/logo-light-text.png" class="light-logo" alt="homepage" />
+              </span>
+            </a>
+          </div>
+
+          <div class="navbar-collapse">
+            <ul class="navbar-nav mr-auto mt-md-0">
+              <li class="nav-item"> <a class="nav-link nav-toggler hidden-md-up text-muted waves-effect waves-dark" href="javascript:void(0)"><i class="mdi mdi-menu"></i></a> </li>
+              <li class="nav-item"> <a class="nav-link sidebartoggler hidden-sm-down text-muted waves-effect waves-dark" href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
+            </ul>
+
+            <ul class="navbar-nav my-lg-0">
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <img src="/assets/1.jpg" alt="user" class="profile-pic" />
                 </a>
-                <ul class="dropdown-menu">
-                  <li>
-                    <a href="<%= destroy_user_session_path %>" data-method="delete"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
-                  </li>
-                </ul>
+                <div class="dropdown-menu dropdown-menu-right scale-up">
+                  <ul class="dropdown-user">
+                    <li>
+                      <div class="dw-user-box">
+                        <div class="u-img">
+                          <img src="/assets/1.jpg" alt="user">
+                        </div>
+                        <div class="u-text">
+                          <h4>Steave Jobs</h4>
+                          <p class="text-muted">varun@gmail.com</p>
+                          <a href="profile.html" class="btn btn-rounded btn-danger btn-sm">View Profile</a>
+                        </div>
+                      </div>
+                    </li>
+                    <li><a href="#"><i class="fa fa-power-off"></i> Logout</a></li>
+                  </ul>
+                </div>
               </li>
-            <% end %>
-          </ul>
-        </div>
-      </div>
-    </div>
+            </ul>
+          </div>
+        </nav>
+      </header>
 
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-9">
-          <%= bootstrap_flash %>
+      <aside class="left-sidebar">
+         <div class="scroll-sidebar">
+            <nav class="sidebar-nav">
+              <ul id="sidebarnav">
+                <li>
+                  <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="true"><i class="mdi mdi-gauge"></i><span class="hide-menu">Dashboard </span></a>
+                    <ul aria-expanded="false" class="collapse">
+                      <% if user_signed_in? %>
+                        <li><a href="<%= destroy_user_session_path %>" data-method="delete">Log Out</a></li>
+                      <% end %>
+                      <li><a href="">Option 2</a></li>
+                      <li><a href="">Option 3</a></li>
+                      <li><a href="">Option 4</a></li>
+                      <li><a href="">Option 5</a></li>
+                      <li><a href="">Option 6</a></li>
+                    </ul>
+                </li>
+              </ul>
+            </nav>
+         </div>
+      </aside>
+
+      <div class="page-wrapper">
+        <div class="container-fluid">
           <%= yield %>
         </div>
-      </div><!--/row-->
+        <footer class="footer">
+          © 2018 Sevan Plastering
+        </footer>
+      </div>
 
-      <footer>
-        <p>&copy; Company 2018</p>
-      </footer>
-
-    </div> <!-- /container -->
+    </div>
 
   </body>
 </html>
