@@ -3,8 +3,8 @@
   <div class="login-box card">
     <div class="card-body">
       <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: 'form-horizontal form-material',role: 'form' }) do |f| %>
-        <h3 class="box-title m-b-20">Log In</h3>
-        
+        <h2 class="box-title m-b-20">Log In</h2>
+        <p>Welcome back, enter your email and password to continue.</p>
         <div class="form-group">
           <div class="col-xs-12">
             <%= f.email_field :email, autofocus: true, class: 'form-control', placeholder:"Username" %>
