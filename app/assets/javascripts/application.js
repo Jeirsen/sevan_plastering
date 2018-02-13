@@ -12,9 +12,8 @@
 //
 //= require jquery3
 //= require rails-ujs
-//= require twitter/bootstrap
 //= require popper
-//= require bootstrap
+//= require bootstrap.min
 //= require jquery.slimscroll
 //= require waves
 //= require sidebarmenu
