@@ -1,5 +1,43 @@
-<div class="container">
-    <h1>Vendors</h1>
+<div class="row page-titles">
+	<div class="col-md-5 col-8 align-self-center">
+		<h3 class="text-themecolor">Sevan</h3>
+		<ol class="breadcrumb">
+	  	<li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+	    <li class="breadcrumb-item active">Vendors</li>
+	  </ol>
+	</div>
 </div>
-  
+
+<div class="row">
+	<% if !@vendors.blank? %>
+		<% @vendors.each do |vendor| %>
+			<div class="col-lg-6 col-md-6">
+				<div class="card">
+	     		<div class="card-body">
+	          <div class="d-flex flex-row">
+	            <div class="round round-lg align-self-center round-info">
+	              <i class="fa fa-address-card"></i>
+	            </div>
+	            <div class="m-l-10 align-self-center">
+	              <h3 class="m-b-0 font-light"><%= vendor.name %></h3>
+	              <h5 class="text-muted m-b-0"><%= vendor.phone %></h5>
+	              <h5 class="text-muted m-b-0"><%= vendor.address1 %></h5>
+	            </div>
+	          </div>
+	        </div>
+     		</div>
+			</div>
+		<% end %>
+	<% else %>
+		<div class="alert alert-info" style="width: 100%">
+    	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    			<span aria-hidden="true">×</span>
+    	</button>
+      <h3 class="text-info">
+      	<i class="fa fa-exclamation-circle"></i> Information
+     	</h3> 
+     	There are no vendors created yet on this app, please go and create some.
+    </div>
+	<% end %>
+</div>
 

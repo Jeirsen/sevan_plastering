@@ -12,8 +12,6 @@ gem 'rails', '~> 5.1.4'
 
 #https://github.com/plataformatec/devise
 gem 'devise'
-gem 'twitter-bootstrap-rails'
-gem 'devise-bootstrap-views'
 gem 'pg', '~> 0.18.4'
 # Use Puma as the app server
 gem 'puma', '~> 3.7'
@@ -37,11 +35,8 @@ gem 'jbuilder', '~> 2.5'
 # gem 'capistrano-rails', group: :development
 
 #https://github.com/twbs/bootstrap-rubygem#a-ruby-on-rails
-#https://getbootstrap.com/docs/4.0/getting-started/download/
-gem 'bootstrap', '~> 4.0.0'
 gem 'jquery-rails'
 gem 'popper_js', '~> 1.12.9'
-
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
