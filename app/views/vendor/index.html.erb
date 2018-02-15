@@ -2,30 +2,40 @@
 	<div class="col-md-5 col-8 align-self-center">
 		<h3 class="text-themecolor">Sevan</h3>
 		<ol class="breadcrumb">
-	  	<li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+	  	<li class="breadcrumb-item"><a href="<%= root_path %>">Home</a></li>
 	    <li class="breadcrumb-item active">Vendors</li>
 	  </ol>
 	</div>
 </div>
 
 <div class="row">
+	<div class="col-lg-12 col-xlg-6 m-b-30">
+		<button onclick="addNewVendor()" class="btn btn-outline-info waves-effect waves-light" type="submit">
+			<span class="btn-label"><i class="fa fa-plus"></i></span>Add new
+		</button>
+	</div>	
+</div>
+
+<div class="row">
 	<% if !@vendors.blank? %>
 		<% @vendors.each do |vendor| %>
 			<div class="col-lg-6 col-md-6">
-				<div class="card">
-	     		<div class="card-body">
-	          <div class="d-flex flex-row">
-	            <div class="round round-lg align-self-center round-info">
-	              <i class="fa fa-address-card"></i>
-	            </div>
-	            <div class="m-l-10 align-self-center">
-	              <h3 class="m-b-0 font-light"><%= vendor.name %></h3>
-	              <h5 class="text-muted m-b-0"><%= vendor.phone %></h5>
-	              <h5 class="text-muted m-b-0"><%= vendor.address1 %></h5>
-	            </div>
-	          </div>
-	        </div>
-     		</div>
+				<a href="<%= vendor_detail_path(vendor.id) %>">
+					<div class="card">
+		     		<div class="card-body">
+		          <div class="d-flex flex-row">
+		            <div class="round round-lg align-self-center round-info">
+		              <i class="fa fa-address-card"></i>
+		            </div>
+		            <div class="m-l-10 align-self-center">
+		              <h3 class="m-b-0 font-light"><%= vendor.name %></h3>
+		              <h5 class="text-muted m-b-0"><%= vendor.phone %></h5>
+		              <h5 class="text-muted m-b-0"><%= vendor.address1 %></h5>
+		            </div>
+		          </div>
+		        </div>
+	     		</div>
+     		</a>
 			</div>
 		<% end %>
 	<% else %>
@@ -40,4 +50,13 @@
     </div>
 	<% end %>
 </div>
+
+<script type="text/javascript">
+	
+	function addNewVendor(){
+		window.location.href = "<%= new_vendor_path %>"
+	}
+
+</script>
+
 
