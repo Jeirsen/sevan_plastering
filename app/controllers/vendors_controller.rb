@@ -1,5 +1,5 @@
-class VendorController < ApplicationController
-    
+class VendorsController < ApplicationController
+
     def index
     	@vendors = Vendor.all
     end
@@ -9,27 +9,26 @@ class VendorController < ApplicationController
     end
 
     def edit
-        
+        @vendor = Vendor.find(params[:id])
     end
 
     def create
       #render plain: params[:article].inspect
       @vendor = Vendor.new(vendor_params)
       if @vendor.save
-        flash[:success] = "Vendor was successfully created!!"
-        redirect_to list_vendors_path
+        redirect_to vendors_path
       else
-        render 'new'
+        render 'vendors/new'
       end
     end
 
     def update
-        #if @article.update(article_params)
-            #flash[:success] = "Article was successfully updated!!"
-            #redirect_to article_path(@article)
-        #else
-            #render 'edit'
-        #end
+        @vendor = Vendor.find(params[:id])
+        if @vendor.update(vendor_params)
+            redirect_to vendor_path(@vendor)
+        else
+            render 'vendors/edit'
+        end
     end
 
     def show

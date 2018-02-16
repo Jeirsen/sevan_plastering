@@ -10,9 +10,7 @@
 
 <div class="row">
 	<div class="col-lg-12 col-xlg-6 m-b-30">
-		<button onclick="addNewVendor()" class="btn btn-outline-info waves-effect waves-light" type="submit">
-			<span class="btn-label"><i class="fa fa-plus"></i></span>Add new
-		</button>
+		<button onclick="addNewVendor()" type="button" class="btn btn-outline-info"><i class="fa fa-plus"></i> Add new</button>
 	</div>	
 </div>
 
@@ -20,7 +18,7 @@
 	<% if !@vendors.blank? %>
 		<% @vendors.each do |vendor| %>
 			<div class="col-lg-6 col-md-6">
-				<a href="<%= vendor_detail_path(vendor.id) %>">
+				<a href="<%= vendor_path(vendor.id) %>">
 					<div class="card">
 		     		<div class="card-body">
 		          <div class="d-flex flex-row">
