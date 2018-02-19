@@ -5,4 +5,9 @@ class Vendor < ApplicationRecord
     validates :address1, presence: true
     validates :phone, presence: true
     validates :city, presence: true
+
+    has_many :vendor_emails
+
+    Status = {:active => 1, :inactive => 0}
+
 end

@@ -5,5 +5,6 @@ Rails.application.routes.draw do
 
   #vendors
   resources :vendors
+  post 'new-vendor-email' => 'vendors#new_email', :as => 'new_email'
 
 end
