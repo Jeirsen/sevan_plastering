@@ -42,28 +42,24 @@ class VendorsController < ApplicationController
     end
 
     def new_email
-        if (params[:vendor_email][:name].blank? or params[:vendor_email][:description].blank? or params[:vendor_email][:email].blank? or params[:vendor_email][:vendor_id].blank?)
-            response = {success: false, data: "Missing parameters"}
-        else
-          vendor_email_name = params[:vendor_email][:name] 
-          vendor_email_desc = params[:vendor_email][:description]
-          vendor_email = params[:vendor_email][:email]
-          vendor_email = VendorEmail.where(email: vendor_email).first
-
-          if (vendor_email.blank?)
-            email = VendorEmail.new(vendor_email_params)
-            if !email.save
-              response = {success: false, data: "Server exception adding the new vendor email"}
-            else
-              response = {success: true, data: "Vendor email added successfully!"}
-            end
-            
+      if (params[:vendor_email][:name].blank? or params[:vendor_email][:description].blank? or params[:vendor_email][:email].blank? or params[:vendor_email][:vendor_id].blank?)
+          response = {success: false, data: "Missing parameters"}
+      else
+        vendor_email = VendorEmail.where(email: params[:vendor_email][:email]).first
+        if (vendor_email.blank?)
+          email = VendorEmail.new(vendor_email_params)
+          if !email.save
+            response = {success: false, data: "Server exception adding the new vendor email"}
           else
-            response = {success: false, data: "The email #{vendor_email} is already registered!"}
+            response = {success: true, data: "Vendor email added successfully!"}
           end
-
+          
+        else
+          response = {success: false, data: "The email #{vendor_email.email} is already registered!"}
         end
-        render json: response, status: 200
+
+      end
+      render json: response, status: 200
     end
 
     private

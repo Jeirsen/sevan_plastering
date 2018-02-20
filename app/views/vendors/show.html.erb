@@ -38,7 +38,7 @@
 	</div>
 </div>
 <br>
-<div class="row">
+<div class="row" id="vendor_emails">
 	<div class="col-md-12 col-sm-12">
 		<h2 class="text-info">Vendor Emails</h2>
 	</div>
@@ -72,12 +72,14 @@
      	There are no emails related to this vendor, please go and create some.
     </div>
 	<% end %>
+</div>
+
+<div class="row">
 	<div class="col-md-12 col-sm-12">
 		<button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#newVendorEmail">
 			<i class="fa fa-plus"></i> Add New Email
 		</button>
 	</div>
-
 </div>
 
 <div class="modal fade" id="newVendorEmail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1">
@@ -104,12 +106,14 @@
                   <input type="text" class="form-control" id="vendor_email">
                   <span class="label label-danger" style="display: none" id="danger_email"></span>
               </div>
+              <div class="alert" id="vendor_email_alert" style="display: none">
+              </div>
           	</form>
             
           </div>
           <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button onclick="addNewvendorEmail()" ontype="button" class="btn btn-danger waves-effect waves-light">Create</button>
+              <button onclick="addNewvendorEmail(<%= @vendor.id %>)" ontype="button" class="btn btn-danger waves-effect waves-light">Create</button>
           </div>
       </div>
   </div>
@@ -122,12 +126,97 @@ function editVendor() {
   window.location.href = "<%= edit_vendor_path(@vendor.id) %>"
 }
 
-function addNewvendorEmail(){
-	if (validateEmailData()){
-		
-	}else{
+function addNewvendorEmail(vendor_id){
+	if (!validateEmailData()){
+		name = $.trim($("#vendor_email_name").val());
+  	description = $.trim($("#vendor_email_desc").val());
+  	email = $.trim($("#vendor_email").val());
 
+  	vendor_email_object = {
+			vendor_email : {
+				name: name,
+				description: description,
+				email: email,
+				vendor_id: vendor_id
+			}
+		}
+
+		$.ajax({
+      url: "<%= new_email_path %>",
+      method: "POST",
+      data: vendor_email_object,
+      success: function (data) {
+        if(data.success){
+        	appendVendorEmail();
+        	$("#vendor_email_alert").empty();
+        	$("#vendor_email_alert").removeClass("alert-danger");
+        	$("#vendor_email_alert").addClass("alert-success");
+        	message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+										<span aria-hidden="true">×</span>\
+										</button>';
+					$("#vendor_email_alert").append(message);
+					$("#vendor_email_alert").show();
+					setTimeout(function(){
+						$("#vendor_email_alert").hide();
+            $("#newVendorEmail").modal('hide');
+          },5000);
+        }else{
+        	$("#vendor_email_alert").empty();
+        	$("#vendor_email_alert").removeClass("alert-success");
+        	$("#vendor_email_alert").addClass("alert-danger");
+        	message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+										<span aria-hidden="true">×</span>\
+										</button>';
+					$("#vendor_email_alert").append(message);
+					$("#vendor_email_alert").show();
+					setTimeout(function(){
+            $("#vendor_email_alert").hide();
+          },5000);
+        }
+      },
+      error: function (data) {
+      	$("#vendor_email_alert").empty();
+      	$("#vendor_email_alert").removeClass("alert-success");
+      	$("#vendor_email_alert").addClass("alert-danger");
+      	message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+									<span aria-hidden="true">×</span>\
+									</button>';
+				$("#vendor_email_alert").append(message);
+				$("#vendor_email_alert").show();
+				setTimeout(function(){
+        	$("#vendor_email_alert").hide();
+        },5000);
+      }
+	  })
 	}
+}
+
+function appendVendorEmail(){
+	name = $.trim($("#vendor_email_name").val());
+  description = $.trim($("#vendor_email_desc").val());
+  email = $.trim($("#vendor_email").val());
+
+  var element = '<div class="col-lg-4 col-md-6">\
+	    						<div class="card">\
+	        					<div class="d-flex flex-row">\
+	          					<div class="p-10 bg-info">\
+	             					<h3 class="text-white box m-b-0">\
+	             						<i class="ti-email"></i>\
+	            					</h3>\
+	          					</div>\
+	          					<div class="align-self-center m-l-20">\
+	            					<h6 class="text-muted m-b-0">' + description + '</h6>\
+	            					<small class="m-b-0 text-info">' + email + '</small>\
+	            					<h6 class="text-muted m-b-0">' + name + '</h6>\
+	          					</div>\
+	        					</div>\
+	      					</div>\
+	    					</div>';
+
+	$("#vendor_emails").append(element);
+	$("#vendor_email_name").val("");
+  $("#vendor_email_desc").val("");
+  $("#vendor_email").val("");
 }
 
 function validateEmailData(){

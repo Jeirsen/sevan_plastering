@@ -20,5 +20,4 @@
 //= require sticky-kit.min.js
 //= require jquery.sparkline.min.js
 //= require custom.min.js
-//= require turbolinks
 //= require_tree .
