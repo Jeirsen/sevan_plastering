@@ -67,22 +67,34 @@
         <div class="scroll-sidebar">
           <nav class="sidebar-nav">
             <ul id="sidebarnav">
-              <li>
-                <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="true">
-                  <i class="mdi mdi-gauge"></i>
-                  <span class="hide-menu">Menu</span>
-                </a>
-                <ul aria-expanded="false" class="collapse">
-                  <li><a href="<%= vendors_path %>">Browse Vendors</a></li>
-                  <li><a href="">Option 3</a></li>
-                  <li><a href="">Option 4</a></li>
-                  <li><a href="">Option 5</a></li>
-                  <li><a href="">Option 6</a></li>
-                  <% if user_signed_in? %>
-                    <li><a href="<%= destroy_user_session_path %>" data-method="delete">Log Out</a></li>
-                  <% end %>
-                </ul>
-              </li>
+              <li class="nav-small-cap">MENU</li>
+                <li>
+                  <a href="<%= vendors_path %>" >
+                    <i class="mdi mdi-cash"></i>
+                    <span class="hide-menu">Vendors</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="<%= builders_path %>" >
+                    <i class="mdi mdi-home-modern"></i>
+                    <span class="hide-menu">Builders</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" >
+                    <i class="mdi mdi-home-variant"></i>
+                    <span class="hide-menu">Projects</span>
+                  </a>
+                </li>
+
+                <% if user_signed_in? %>
+                <li>
+                  <a href="<%= destroy_user_session_path %>" data-method="delete">
+                    <i class="mdi mdi-gauge"></i>
+                    <span class="hide-menu">Log Out</span>
+                  </a>
+                </li>
+              <% end %>
             </ul>
           </nav>
         </div>

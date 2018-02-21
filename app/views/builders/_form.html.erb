@@ -1,0 +1,27 @@
+<%= form_with(model: builder, local: true) do |form| %>
+  <% if builder.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(builder.errors.count, "error") %> prohibited this builder from being saved:</h2>
+
+      <ul>
+      <% builder.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name, id: :builder_name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :status %>
+    <%= form.number_field :status, id: :builder_status %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

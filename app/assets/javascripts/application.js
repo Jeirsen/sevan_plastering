@@ -20,4 +20,5 @@
 //= require sticky-kit.min.js
 //= require jquery.sparkline.min.js
 //= require custom.min.js
+//= require sweetAlert
 //= require_tree .

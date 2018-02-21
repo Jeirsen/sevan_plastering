@@ -1,0 +1,94 @@
+<div class="row page-titles">
+  <div class="col-md-5 col-8 align-self-center">
+    <h3 class="text-themecolor">Sevan</h3>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="<%= root_path %>">Home</a></li>
+      <li class="breadcrumb-item active">Builders</li>
+    </ol>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12 col-xlg-6 m-b-30">
+    <button onclick="newBuilder()" type="button" class="btn btn-outline-info"><i class="fa fa-plus"></i> Add New </button>
+  </div>
+</div>
+
+<%= notice %>
+
+<div class="row">
+  <% @builders.each do |builder| %>
+    <div class="col-lg-4 col-md-4">
+      <a href="#">
+        <div class="card">
+          <div class="card-body card-padding-small">
+            <div class="d-flex flex-row">
+              <div class="round round-sm align-self-center round-info">
+                <i class="mdi mdi-home-modern"></i>
+              </div>
+              <div class="col-md-7 align-self-center">
+                <h3 class="m-b-0 font-light"><%= builder.name %></h3>
+              </div>
+              <div class="col-md-3 align-self-center" aling="right">
+                <span onclick="editBuilder(<%= builder.id%>)"class="icon-list-actions green-color" data-toggle="tooltip" title="" data-original-title="Update"><i class="mdi mdi-pencil"></i></span>
+                <span onclick="disableBuilder(<%= builder.id%>)" class="icon-list-actions red-color" data-toggle="tooltip" title="" data-original-title="Delete"><i class="mdi mdi-delete"></i></span>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+  <% end %>
+</div>
+
+<div class="modal fade" id="content_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content modal-inject">
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+
+    function newBuilder(){
+        $.get("<%= new_builder_path %>",function(data){
+            $(".modal-inject").html(data);
+            $("#content_modal").modal('show');
+        })
+    }
+
+    function editBuilder(id){
+        $.get("/builders/"+id+"/edit",function(data){
+            $(".modal-inject").html(data);
+            $("#content_modal").modal('show');
+        })
+    }
+
+    function disableBuilder(id){
+        url= "/builders/"+id+"/";
+        console.log(url);
+        swal({
+            title: "Are you sure?",
+            text: "You are going to disable this builder!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Yes, disable it!",
+            closeOnConfirm: false
+        }, function(){
+
+
+            $.ajax({
+                url: url,
+                type: 'DELETE',
+                success: function(response) {
+                    swal("Deleted!", "Your builder has been disable.", "success");
+                    location.reload();
+                }
+            });
+        });
+
+    }
+</script>

@@ -13,6 +13,7 @@ gem 'rails', '~> 5.1.4'
 #https://github.com/plataformatec/devise
 gem 'devise'
 gem 'pg', '~> 0.18.4'
+gem 'sweetAlert'
 # Use Puma as the app server
 gem 'puma', '~> 3.7'
 # Use SCSS for stylesheets

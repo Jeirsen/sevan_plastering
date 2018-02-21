@@ -6,6 +6,7 @@
  *= require style
  *= require blue
  *= require font-awesome.css
+ *= require sweetAlert
  *= require_self
  *= require_tree .
 */
