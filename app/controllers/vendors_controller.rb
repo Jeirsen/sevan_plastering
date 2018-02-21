@@ -41,23 +41,45 @@ class VendorsController < ApplicationController
         #redirect_to articles_path
     end
 
-    def new_email
+    def vendor_email
       if (params[:vendor_email][:name].blank? or params[:vendor_email][:description].blank? or params[:vendor_email][:email].blank? or params[:vendor_email][:vendor_id].blank?)
           response = {success: false, data: "Missing parameters"}
       else
-        vendor_email = VendorEmail.where(email: params[:vendor_email][:email]).first
-        if (vendor_email.blank?)
-          email = VendorEmail.new(vendor_email_params)
-          if !email.save
-            response = {success: false, data: "Server exception adding the new vendor email"}
+        if (params[:vendor_email][:id].to_i == 0 )
+          #Create a new vendor email
+          vendor_email = VendorEmail.where(email: params[:vendor_email][:email]).first
+          if (vendor_email.blank?)
+            email = VendorEmail.new(vendor_email_params)
+            if !email.save
+              response = {success: false, data: "Server exception adding the new vendor email"}
+            else
+              response = {success: true, data: "Vendor email added successfully!"}
+            end
+            
           else
-            response = {success: true, data: "Vendor email added successfully!"}
+            response = {success: false, data: "The email #{vendor_email.email} is already registered!"}
           end
-          
         else
-          response = {success: false, data: "The email #{vendor_email.email} is already registered!"}
-        end
+          #Edit existing vendor email
+          vendor_email = VendorEmail.where(id: params[:vendor_email][:id]).first
+          if (vendor_email.blank?)
+            response = {success: false, data: "Vendor email not found!"}
+          else
+            email = VendorEmail.where(email: params[:vendor_email][:email]).first
+            if (email.blank?)
+              vendor_email.update(vendor_email_params)
+              response = {success: true, data: "Vendor email updated successfully!"}
+            else
+              if (vendor_email.id != email.id)
+                response = {success: false, data: "The email #{vendor_email.email} is already registered!"}
+              else
+                vendor_email.update(vendor_email_params)
+                response = {success: true, data: "Vendor email updated successfully!"}
+              end
+            end
+          end
 
+        end
       end
       render json: response, status: 200
     end
@@ -69,7 +91,7 @@ class VendorsController < ApplicationController
     end
 
     def vendor_email_params
-        params.require(:vendor_email).permit(:name, :description, :email, :vendor_id)
+        params.require(:vendor_email).permit(:name, :description, :email, :vendor_id, :status)
     end
 
 end

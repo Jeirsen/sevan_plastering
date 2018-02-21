@@ -45,20 +45,22 @@
 	<% if !@vendor.vendor_emails.blank? %>
 		<% @vendor.vendor_emails.each do |email| %>
 			<div class="col-lg-4 col-md-6">
-	    	<div class="card">
-	        <div class="d-flex flex-row">
-	          <div class="p-10 bg-info">
-	             <h3 class="text-white box m-b-0">
-	             <i class="ti-email"></i>
-	            </h3>
-	          </div>
-	          <div class="align-self-center m-l-20">
-	            <h6 class="text-muted m-b-0"><%= email.description %></h6>
-	            <small class="m-b-0 text-info"><%= email.email %></small>
-	            <h6 class="text-muted m-b-0"><%= email.name %></h6>
-	          </div>
-	        </div>
-	      </div>
+				<a onclick="openModalVendorEmail(this)" class="edit-vendor-email" style="cursor: pointer;">
+		    	<div class="card" data-email-id="<%= email.id %>" data-email-status="<%= email.status %>">
+		        <div class="d-flex flex-row">
+		          <div class="p-10 bg-info">
+		             <h3 class="text-white box m-b-0">
+		             <i class="ti-email"></i>
+		            </h3>
+		          </div>
+		          <div class="align-self-center m-l-20">
+		            <h5 class="text-muted m-b-0"><%= email.description %></h5>
+		            <small class="m-b-0 text-info"><%= email.email %></small>
+		            <h6 class="text-muted m-b-0"><%= email.name %></h6>
+		          </div>
+		        </div>
+		      </div>
+	    	</a>
 	    </div>
 	  <% end %>
 	<% else %>
@@ -113,7 +115,48 @@
           </div>
           <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button onclick="addNewvendorEmail(<%= @vendor.id %>)" ontype="button" class="btn btn-danger waves-effect waves-light">Create</button>
+              <button onclick="addNewVendorEmail(<%= @vendor.id %>)" ontype="button" class="btn btn-danger waves-effect waves-light">Create</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editVendorEmail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h4 class="modal-title" id="exampleModalLabel1">Edit Vendor Email</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+          	<form>
+              <div class="form-group">
+                  <label for="recipient-name" class="control-label">Name:</label>
+                  <input type="text" class="form-control" id="edit_vendor_email_name" required>
+                  <span class="label label-danger" style="display: none" id="danger_edit_name">Vendor email name is required!</span>
+              </div>
+              <div class="form-group">
+                  <label for="recipient-name" class="control-label">Description:</label>
+                  <input type="text" class="form-control" id="edit_vendor_email_desc" required>
+                  <span class="label label-danger" style="display: none" id="danger_edit_desc">Vendor description is required!</span>
+              </div>
+              <div class="form-group">
+                  <label for="recipient-name" class="control-label">Email:</label>
+                  <input type="text" class="form-control" id="edit_vendor_email" required>
+                  <span class="label label-danger" style="display: none" id="danger_edit_email"></span>
+              </div>
+              <div class="form-group">
+               	<input type="checkbox" id="edit_vendor_email_status" class="filled-in">
+						    <label for="edit_vendor_email_status">Active</label>
+						  </div>
+              <div class="alert" id="vendor_edit_email_alert" style="display: none">
+              </div>
+          	</form>
+            
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button onclick="editVendorEmail(<%= @vendor.id %>)" ontype="button" class="btn btn-primary waves-effect waves-light">Edit</button>
           </div>
       </div>
   </div>
@@ -121,19 +164,35 @@
 
 
 <script type="text/javascript">
-    
-function editVendor() {
-  window.location.href = "<%= edit_vendor_path(@vendor.id) %>"
+
+var idEmailForEditing = 0;
+var statusEmail = false;
+var emailElement = "";
+
+function openModalVendorEmail(element){
+	idEmailForEditing = $(element).find(".card").attr("data-email-id");
+	statusEmail = $(element).find(".card").attr("data-email-status");
+	emailElement = element;
+	description = $(element).find("h5").text();
+	name = $(element).find("h6").text();
+	email = $(element).find("small").text();
+  $('#edit_vendor_email_name').val(name);
+  $('#edit_vendor_email_desc').val(description);
+  $('#edit_vendor_email').val(email);
+  $('#edit_vendor_email_status').prop('checked', statusEmail);
+  $('#editVendorEmail').modal('show');
 }
 
-function addNewvendorEmail(vendor_id){
-	if (!validateEmailData()){
-		name = $.trim($("#vendor_email_name").val());
-  	description = $.trim($("#vendor_email_desc").val());
-  	email = $.trim($("#vendor_email").val());
+function editVendorEmail(vendor_id){
+	debugger
+	if (!validateEditEmailData()){
+		name = $.trim($("#edit_vendor_email_name").val());
+  	description = $.trim($("#edit_vendor_email_desc").val());
+  	email = $.trim($("#edit_vendor_email").val());
 
   	vendor_email_object = {
 			vendor_email : {
+				id: idEmailForEditing,
 				name: name,
 				description: description,
 				email: email,
@@ -142,7 +201,77 @@ function addNewvendorEmail(vendor_id){
 		}
 
 		$.ajax({
-      url: "<%= new_email_path %>",
+      url: "<%= vendor_email_path %>",
+      method: "POST",
+      data: vendor_email_object,
+      success: function (data) {
+        if(data.success){
+        	updateEmailElement();
+        	$("#vendor_edit_email_alert").empty();
+        	$("#vendor_edit_email_alert").removeClass("alert-danger");
+        	$("#vendor_edit_email_alert").addClass("alert-success");
+        	message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+										<span aria-hidden="true">×</span>\
+										</button>';
+					$("#vendor_edit_email_alert").append(message);
+					$("#vendor_edit_email_alert").show();
+					setTimeout(function(){
+						$("#vendor_edit_email_alert").hide();
+            $("#editVendorEmail").modal('hide');
+          },5000);
+        }else{
+        	$("#vendor_edit_email_alert").empty();
+        	$("#vendor_edit_email_alert").removeClass("alert-success");
+        	$("#vendor_edit_email_alert").addClass("alert-danger");
+        	message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+										<span aria-hidden="true">×</span>\
+										</button>';
+					$("#vendor_edit_email_alert").append(message);
+					$("#vendor_edit_email_alert").show();
+					setTimeout(function(){
+            $("#vendor_edit_email_alert").hide();
+          },5000);
+        }
+      },
+      error: function (data) {
+      	$("#vendor_edit_email_alert").empty();
+      	$("#vendor_edit_email_alert").removeClass("alert-success");
+      	$("#vendor_edit_email_alert").addClass("alert-danger");
+      	message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+									<span aria-hidden="true">×</span>\
+									</button>';
+				$("#vendor_edit_email_alert").append(message);
+				$("#vendor_edit_email_alert").show();
+				setTimeout(function(){
+        	$("#vendor_edit_email_alert").hide();
+        },5000);
+      }
+	  })
+	}
+}
+    
+function editVendor() {
+  window.location.href = "<%= edit_vendor_path(@vendor.id) %>"
+}
+
+function addNewVendorEmail(vendor_id){
+	if (!validateEmailData()){
+		name = $.trim($("#vendor_email_name").val());
+  	description = $.trim($("#vendor_email_desc").val());
+  	email = $.trim($("#vendor_email").val());
+
+  	vendor_email_object = {
+			vendor_email : {
+				id: 0,
+				name: name,
+				description: description,
+				email: email,
+				vendor_id: vendor_id
+			}
+		}
+
+		$.ajax({
+      url: "<%= vendor_email_path %>",
       method: "POST",
       data: vendor_email_object,
       success: function (data) {
@@ -219,6 +348,17 @@ function appendVendorEmail(){
   $("#vendor_email").val("");
 }
 
+function updateEmailElement(){
+	name = $.trim($("#edit_vendor_email_name").val());
+  description = $.trim($("#edit_vendor_email_desc").val());
+  email = $.trim($("#edit_vendor_email").val());
+	$(emailElement).find("h5").text(description);
+	$(emailElement).find("h6").text(name);
+	$(emailElement).find("small").text(email);
+  emailElement = "";
+  idEmailForEditing = 0;
+}
+
 function validateEmailData(){
 	vendor_email_name = $.trim($("#vendor_email_name").val());
   vendor_email_desc = $.trim($("#vendor_email_desc").val());
@@ -260,6 +400,55 @@ function validateEmailData(){
 			$("#danger_email").show();
 			setTimeout(function(){
 				("#danger_email").hide();
+			},5000);
+			error = true; 
+    }
+	}
+
+	return error;
+}
+
+function validateEditEmailData(){
+	vendor_email_name = $.trim($("#edit_vendor_email_name").val());
+  vendor_email_desc = $.trim($("#edit_vendor_email_desc").val());
+  vendor_email = $.trim($("#edit_vendor_email").val());
+  error = false;
+
+	if(vendor_email_name.length === 0)
+	{ 
+    $("#danger_edit_name").show();
+    setTimeout(function(){
+        $('#danger_edit_name').hide();
+    },5000);
+    error = true;
+	}
+
+	if(vendor_email_desc.length === 0)
+	{ 
+    $("#danger_edit_desc").show();
+    setTimeout(function(){
+        $('#danger_edit_desc').hide();
+    },5000);
+    error = true;
+	}
+
+	if(vendor_email.length === 0)
+	{	
+		$("#danger_edit_email").text("Vendor Email is required!!");
+	  $("#danger_edit_email").show();
+    setTimeout(function(){
+      $("#danger_edit_email").hide();
+    },5000);
+    error = true;
+	}
+	else
+	{
+    email_regex = new RegExp(/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/)
+    if (!email_regex.test(vendor_email)) {
+    	$("#danger_edit_email").text("Enter a valid email");
+			$("#danger_edit_email").show();
+			setTimeout(function(){
+				("#danger_edit_email").hide();
 			},5000);
 			error = true; 
     }
