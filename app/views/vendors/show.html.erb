@@ -166,12 +166,12 @@
 <script type="text/javascript">
 
 var idEmailForEditing = 0;
-var statusEmail = false;
+var statusEmail = 0;
 var emailElement = "";
 
 function openModalVendorEmail(element){
 	idEmailForEditing = $(element).find(".card").attr("data-email-id");
-	statusEmail = $(element).find(".card").attr("data-email-status");
+	statusEmail = parseInt($(element).find(".card").attr("data-email-status"));
 	emailElement = element;
 	description = $(element).find("h5").text();
 	name = $(element).find("h6").text();
@@ -184,11 +184,12 @@ function openModalVendorEmail(element){
 }
 
 function editVendorEmail(vendor_id){
-	debugger
 	if (!validateEditEmailData()){
 		name = $.trim($("#edit_vendor_email_name").val());
   	description = $.trim($("#edit_vendor_email_desc").val());
   	email = $.trim($("#edit_vendor_email").val());
+  	email_status = $("#edit_vendor_email_status").is(":checked");
+  	email_status = email_status == true ? 1 : 0;
 
   	vendor_email_object = {
 			vendor_email : {
@@ -196,7 +197,8 @@ function editVendorEmail(vendor_id){
 				name: name,
 				description: description,
 				email: email,
-				vendor_id: vendor_id
+				vendor_id: vendor_id,
+				status: email_status
 			}
 		}
 
