@@ -64,14 +64,16 @@
 	    </div>
 	  <% end %>
 	<% else %>
-		<div class="alert alert-info" style="width: 100%">
-    	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    			<span aria-hidden="true">×</span>
-    	</button>
-      <h3 class="text-info">
-      	<i class="fa fa-exclamation-circle"></i> Information
-     	</h3> 
-     	There are no emails related to this vendor, please go and create some.
+    <div class="col-md-12 col-sm-12">
+      <div class="alert alert-info" style="width: 100%">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+        <h3 class="text-info">
+          <i class="fa fa-exclamation-circle"></i> Information
+        </h3> 
+        There are no emails related to this vendor, please go and create some.
+      </div>
     </div>
 	<% end %>
 </div>
@@ -84,7 +86,7 @@
 	</div>
 </div>
 
-<div class="modal fade" id="newVendorEmail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1">
+<div class="modal fade" id="newVendorEmail" tabindex="-1" role="dialog" aria-labelledby="newVendorEmail">
   <div class="modal-dialog" role="document">
       <div class="modal-content">
           <div class="modal-header">
