@@ -91,7 +91,7 @@ class VendorsController < ApplicationController
     end
 
     def vendor_email_params
-        params.require(:vendor_email).permit(:name, :description, :email, :vendor_id, :status)
+        params.require(:vendor_email).permit(:name, :description, :email, :status, :vendor_id)
     end
 
 end
