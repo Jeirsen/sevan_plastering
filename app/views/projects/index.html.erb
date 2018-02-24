@@ -3,7 +3,7 @@
     <h3 class="text-themecolor">Sevan</h3>
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="<%= root_path %>">Home</a></li>
-      <li class="breadcrumb-item active">Builders</li>
+      <li class="breadcrumb-item active">Projects</li>
     </ol>
   </div>
 </div>
@@ -17,7 +17,7 @@
 <%= notice %>
 
 <div class="row">
-  <% @builders.each do |builder| %>
+  <% @projects.each do |project| %>
     <div class="col-lg-6 col-md-6">
       <a href="#">
         <div class="card">
@@ -27,11 +27,11 @@
                 <i class="mdi mdi-home-modern"></i>
               </div>
               <div class="col-md-7 align-self-center">
-                <h3 class="m-b-0 font-light"><%= builder.name %></h3>
+                <h3 class="m-b-0 font-light"><%= project.name %> (<%= project.builder.name %>)</h3>
               </div>
               <div class="col-md-3 align-self-center" aling="right">
-                <span onclick="editBuilder(<%= builder.id%>)"class="icon-list-actions green-color" data-toggle="tooltip" title="" data-original-title="Update"><i class="mdi mdi-pencil"></i></span>
-                <span onclick="disableBuilder(<%= builder.id%>)" class="icon-list-actions red-color" data-toggle="tooltip" title="" data-original-title="Delete"><i class="mdi mdi-delete"></i></span>
+                <span onclick="editBuilder(<%= project.id%>)"class="icon-list-actions green-color" data-toggle="tooltip" title="" data-original-title="Update"><i class="mdi mdi-pencil"></i></span>
+                <span onclick="disableBuilder(<%= project.id%>)" class="icon-list-actions red-color" data-toggle="tooltip" title="" data-original-title="Delete"><i class="mdi mdi-delete"></i></span>
               </div>
 
             </div>
@@ -53,21 +53,21 @@
 <script type="text/javascript">
 
     function newBuilder(){
-        $.get("<%= new_builder_path %>",function(data){
+        $.get("<%= new_project_path %>",function(data){
             $(".modal-inject").html(data);
             $("#content_modal").modal('show');
         })
     }
 
     function editBuilder(id){
-        $.get("/builders/"+id+"/edit",function(data){
+        $.get("/projects/"+id+"/edit",function(data){
             $(".modal-inject").html(data);
             $("#content_modal").modal('show');
         })
     }
 
     function disableBuilder(id){
-        url= "/builders/"+id+"/";
+        url= "/projects/"+id+"/";
         console.log(url);
         swal({
             title: "Are you sure?",
@@ -92,3 +92,5 @@
 
     }
 </script>
+
+
