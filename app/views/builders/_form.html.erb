@@ -11,17 +11,10 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= form.label :name %>
-    <%= form.text_field :name, id: :builder_name %>
+  <div class="form-group">
+    <label for="recipient-name" class="control-label">Name:</label>
+    <%= form.text_field :name, id: :project_name, class: "form-control" %>
   </div>
-
-  <div class="field">
-    <%= form.label :status %>
-    <%= form.number_field :status, id: :builder_status %>
-  </div>
-
-  <div class="actions">
-    <%= form.submit %>
-  </div>
+  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+  <%= form.submit 'Create', class: "btn btn-danger waves-effect waves-light" %>
 <% end %>
