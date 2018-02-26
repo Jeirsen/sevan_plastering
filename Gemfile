@@ -13,7 +13,6 @@ gem 'rails', '~> 5.1.4'
 #https://github.com/plataformatec/devise
 gem 'devise'
 gem 'pg', '~> 0.18.4'
-gem 'sweetAlert'
 # Use Puma as the app server
 gem 'puma', '~> 3.7'
 # Use SCSS for stylesheets
@@ -33,6 +32,8 @@ gem 'select2-rails'
 # gem 'bcrypt', '~> 3.1.7'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
+#https://github.com/mislav/will_paginate
+gem 'will_paginate', '~> 3.1.0'
 
 #https://github.com/twbs/bootstrap-rubygem#a-ruby-on-rails
 gem 'jquery-rails'

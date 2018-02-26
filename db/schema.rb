@@ -10,15 +10,38 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180222022126) do
+ActiveRecord::Schema.define(version: 20180224050502) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "builders", force: :cascade do |t|
+    t.string "name"
+    t.integer "status", default: 1
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "products", force: :cascade do |t|
     t.string "name"
-    t.integer "unit"
+    t.bigint "unit_id"
     t.integer "status", default: 1
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["unit_id"], name: "index_products_on_unit_id"
+  end
+
+  create_table "projects", force: :cascade do |t|
+    t.string "name"
+    t.integer "status"
+    t.bigint "builder_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["builder_id"], name: "index_projects_on_builder_id"
+  end
+
+  create_table "units", force: :cascade do |t|
+    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -65,5 +88,7 @@ ActiveRecord::Schema.define(version: 20180222022126) do
     t.integer "status", default: 1
   end
 
+  add_foreign_key "products", "units"
+  add_foreign_key "projects", "builders"
   add_foreign_key "vendor_emails", "vendors"
 end
