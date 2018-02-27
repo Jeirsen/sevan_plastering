@@ -19,18 +19,20 @@
 <div class="row">
 	<% if !@products.blank? %>
 		<% @products.each do |product| %>
-			<div class="col-lg-3 col-md-6 col-sm-12">
-        <div class="card">
-          <div class="card-body" style="padding: 5px 10px 5px 10px;">
-            <div class="d-flex flex-row">
-              <div class="align-self-center">
-                <small class="m-b-0"><%= product.name %></small>
-                <h4 class="text-muted m-b-0 text-info"><%= product.unit.name %></h4>
+  		<div class="col-lg-3 col-md-6 col-sm-12">
+        <a onclick="openModalEditProduct(this)" style="cursor: pointer;">
+          <div class="card" data-product-id="<%= product.id %>" data-product-status="<%= product.status %>">
+            <div class="card-body" style="padding: 5px 10px 5px 10px;">
+              <div class="d-flex flex-row">
+                <div class="align-self-center">
+                  <small class="m-b-0"><%= product.name %></small>
+                  <h4 class="text-muted m-b-0 text-info" data-unit-id="<%= product.unit_id %>"><%= product.unit.name %></h4>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-    	</div>
+        </a>
+      </div>
 		<% end %>
     <div class="col-lg-12 col-md-12 text-center">
       <%= will_paginate @products %>
@@ -66,8 +68,7 @@
               </div>
               <div class="form-group">
                   <label for="recipient-name" class="control-label">Unit:</label>
-                  <input type="text" class="form-control" id="product_unit">
-                  <%= j(select_tag "unit_type", options_for_select(Unit.get_all.map { |e| [e.name, e.id] }.sort), { :class => "form-control", :include_blank => "-None-"}) %>
+                  <%= select_tag "unit_type", options_for_select(Unit.get_all.map { |e| [e.name, e.id] }.sort), { :class => "form-control", :include_blank => "-None-"} %>
                   <span class="label label-danger" style="display: none" id="danger_unit">Product unit is required!</span>
               </div>
               <div class="alert" id="product_alert" style="display: none">
@@ -76,8 +77,168 @@
           </div>
           <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button onclick="addNewProduct()" ontype="button" class="btn btn-danger waves-effect waves-light">Create</button>
+              <button onclick="addProduct()" ontype="button" class="btn btn-danger waves-effect waves-light">Create</button>
           </div>
       </div>
   </div>
 </div>
+
+<div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-labelledby="editProduct">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+          <h4 class="modal-title">Edit Product</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+              <label for="recipient-name" class="control-label">Name:</label>
+              <input type="text" class="form-control" id="edit_product_name" required>
+              <span class="label label-danger" style="display: none" id="danger_edit_name">Product name is required!</span>
+          </div>
+          <div class="form-group">
+              <label for="recipient-name" class="control-label">Unit:</label>
+              <%= select_tag "unit_type", options_for_select(Unit.get_all.map { |e| [e.name, e.id] }.sort), { :id => "select_edit_unit", :class => "form-control", :include_blank => "- None -"} %>
+              <span class="label label-danger" style="display: none" id="danger_edit_unit">Product unit is required!</span>
+          </div>
+          <div class="form-group">
+            <input type="checkbox" id="edit_product_status" class="filled-in">
+            <label for="edit_product_status">Active</label>
+          </div>
+          <div class="alert" id="product_edit_alert" style="display: none">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button onclick="editProduct()" ontype="button" class="btn btn-primary waves-effect waves-light">Edit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+var idProductForEditing = 0;
+var statusProduct = 0;
+var unitId = 0;
+var productElement = "";
+
+function openModalEditProduct(element){  
+  idProductForEditing = $(element).find(".card").attr("data-product-id");
+  statusEmail = parseInt($(element).find(".card").attr("data-product-status"));
+  unitId = parseInt($(element).find("h4").attr("data-unit-id"));
+  productElement = element;
+  name = $(element).find("small").text();
+  $('#edit_product_name').val(name);
+  $('#edit_product_status').prop('checked', statusEmail);
+  $("#select_edit_unit").val(unitId);
+  $('#editProductModal').modal('show');
+}
+
+function editProduct(){
+  if (!validateEditProductData()){
+    name = $.trim($("#edit_product_name").val());
+    product_status = $("#edit_product_status").is(":checked");
+    product_status = product_status == true ? 1 : 0;
+    unit_id = $("#select_edit_unit").val();
+
+    product_object = {
+      product : {
+        id: idProductForEditing,
+        name: name,
+        unit_id: unit_id,
+        status: product_status
+      }
+    }
+
+    $.ajax({
+      url: "<%= admin_product_path %>",
+      method: "POST",
+      data: product_object,
+      success: function (data) {
+        if(data.success){
+          updateProductElement();
+          $("#product_edit_alert").empty();
+          $("#product_edit_alert").removeClass("alert-danger");
+          $("#product_edit_alert").addClass("alert-success");
+          message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                    <span aria-hidden="true">×</span>\
+                    </button>';
+          $("#product_edit_alert").append(message);
+          $("#product_edit_alert").show();
+          setTimeout(function(){
+            $("#product_edit_alert").hide();
+            $("#editProductModal").modal('hide');
+          },5000);
+        }else{
+          $("#product_edit_alert").empty();
+          $("#product_edit_alert").removeClass("alert-success");
+          $("#product_edit_alert").addClass("alert-danger");
+          message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                    <span aria-hidden="true">×</span>\
+                    </button>';
+          $("#product_edit_alert").append(message);
+          $("#product_edit_alert").show();
+          setTimeout(function(){
+            $("#product_edit_alert").hide();
+          },5000);
+        }
+      },
+      error: function (data) {
+        $("#product_edit_alert").empty();
+        $("#product_edit_alert").removeClass("alert-success");
+        $("#product_edit_alert").addClass("alert-danger");
+        message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                  <span aria-hidden="true">×</span>\
+                  </button>';
+        $("#product_edit_alert").append(message);
+        $("#product_edit_alert").show();
+        setTimeout(function(){
+          $("#product_edit_alert").hide();
+        },5000);
+      }
+    })
+
+  }
+}
+
+function validateEditProductData(){
+  product_name = $.trim($("#edit_product_name").val());
+  unit_id = $("#select_edit_unit").val()
+  error = false;
+
+  if(product_name.length === 0)
+  { 
+    $("#danger_edit_name").show();
+    setTimeout(function(){
+        $('#danger_edit_name').hide();
+    },5000);
+    error = true;
+  }
+
+  if(unit_id === "")
+  { 
+    $("#danger_edit_unit").show();
+    setTimeout(function(){
+        $('#danger_edit_unit').hide();
+    },5000);
+    error = true;
+  }
+
+  return error;
+}
+
+function updateProductElement(){
+  name = $.trim($("#edit_product_name").val());
+  unit_name = $("#select_edit_unit option:selected").text();
+  unit_id = $("#select_edit_unit").val();
+  $(productElement).find("small").text(name);
+  $(productElement).find("h4").text(unit_name);
+  $(productElement).find("h4").attr('data-unit-id', unit_id); 
+  productElement = "";
+  idProductForEditing = 0;
+}
+
+</script>
