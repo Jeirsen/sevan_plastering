@@ -14,7 +14,7 @@ class ProductsController < ApplicationController
           if !product.save
             response = {success: false, data: "Server exception adding the new product"}
           else
-           	response = {success: true, data: "Product added successfully!"}
+           	response = {success: true, data: "Product added successfully!", product_id: product.id}
           end
         else
           #Edit existing product

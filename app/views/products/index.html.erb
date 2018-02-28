@@ -10,13 +10,13 @@
 
 <div class="row">
 	<div class="col-lg-12 col-xlg-6 m-b-30">
-		<button onclick="addNewProduct()" type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#newProduct">
+		<button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#newProduct">
 			<i class="fa fa-plus"></i> Add new
 		</button>
 	</div>	
 </div>
 
-<div class="row">
+<div class="row" id="products">
 	<% if !@products.blank? %>
 		<% @products.each do |product| %>
   		<div class="col-lg-3 col-md-6 col-sm-12">
@@ -68,7 +68,7 @@
               </div>
               <div class="form-group">
                   <label for="recipient-name" class="control-label">Unit:</label>
-                  <%= select_tag "unit_type", options_for_select(Unit.get_all.map { |e| [e.name, e.id] }.sort), { :class => "form-control", :include_blank => "-None-"} %>
+                  <%= select_tag "unit_type", options_for_select(Unit.get_all.map { |e| [e.name, e.id] }.sort), { :id => "select_unit", :class => "form-control", :include_blank => "-None-"} %>
                   <span class="label label-danger" style="display: none" id="danger_unit">Product unit is required!</span>
               </div>
               <div class="alert" id="product_alert" style="display: none">
@@ -124,6 +124,119 @@ var idProductForEditing = 0;
 var statusProduct = 0;
 var unitId = 0;
 var productElement = "";
+
+function addProduct(){
+  if (!validateProductData()){
+    name = $.trim($("#product_name").val());
+    unit_id = parseInt($("#select_unit").val());
+
+    product_object = {
+      product : {
+        name: name,
+        unit_id: unit_id
+      }
+    }
+
+    $.ajax({
+      url: "<%= admin_product_path %>",
+      method: "POST",
+      data: product_object,
+      success: function (data) {
+        if(data.success){
+          appendProduct(data.product_id);
+          $("#product_alert").empty();
+          $("#product_alert").removeClass("alert-danger");
+          $("#product_alert").addClass("alert-success");
+          message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                    <span aria-hidden="true">×</span>\
+                    </button>';
+          $("#product_alert").append(message);
+          $("#product_alert").show();
+          setTimeout(function(){
+            $("#product_alert").hide();
+            $("#newProduct").modal('hide');
+          },5000);
+        }else{
+          $("#product_alert").empty();
+          $("#product_alert").removeClass("alert-success");
+          $("#product_alert").addClass("alert-danger");
+          message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                    <span aria-hidden="true">×</span>\
+                    </button>';
+          $("#product_alert").append(message);
+          $("#product_alert").show();
+          setTimeout(function(){
+            $("#product_alert").hide();
+          },5000);
+        }
+      },
+      error: function (data) {
+        $("#product_alert").empty();
+        $("#product_alert").removeClass("alert-success");
+        $("#product_alert").addClass("alert-danger");
+        message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                  <span aria-hidden="true">×</span>\
+                  </button>';
+        $("#product_alert").append(message);
+        $("#product_alert").show();
+        setTimeout(function(){
+          $("#product_alert").hide();
+        },5000);
+      }
+    })
+  }
+}
+
+function validateProductData(){
+  product_name = $.trim($("#product_name").val());
+  unit_id = $("#select_unit").val();
+  error = false;
+
+  if(product_name.length === 0)
+  { 
+    $("#danger_name").show();
+    setTimeout(function(){
+        $('#danger_name').hide();
+    },5000);
+    error = true;
+  }
+
+  if(unit_id === "")
+  { 
+    $("#danger_unit").show();
+    setTimeout(function(){
+        $('#danger_unit').hide();
+    },5000);
+    error = true;
+  }
+
+  return error;
+}
+
+function appendProduct(product_id){
+  name = $.trim($("#product_name").val());
+  unit_id = parseInt($("#select_unit").val());
+  unit_name = $("#select_unit option:selected").text();
+
+  var element = '<div class="col-lg-3 col-md-6 col-sm-12">\
+                  <a onclick="openModalEditProduct(this)" style="cursor: pointer;">\
+                    <div class="card" data-product-id="' + product_id + '" data-product-status="1">\
+                      <div class="card-body" style="padding: 5px 10px 5px 10px;">\
+                        <div class="d-flex flex-row">\
+                          <div class="align-self-center">\
+                            <small class="m-b-0">' + name + '</small>\
+                            <h4 class="text-muted m-b-0 text-info" data-unit-id="' + unit_id +'">' + unit_name +'</h4>\
+                          </div>\
+                        </div>\
+                      </div>\
+                    </div>\
+                  </a>\
+                </div>';
+
+  $("#products").prepend(element);
+  $("#product_name").val("");
+  $("#select_unit").val("");
+}
 
 function openModalEditProduct(element){  
   idProductForEditing = $(element).find(".card").attr("data-product-id");
