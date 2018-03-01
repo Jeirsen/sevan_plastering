@@ -7,6 +7,7 @@ class Vendor < ApplicationRecord
     validates :city, presence: true
 
     has_many :vendor_emails
+    has_many :product_vendors
 
     Status = {:active => 1, :inactive => 0}
 
