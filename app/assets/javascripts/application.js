@@ -14,6 +14,7 @@
 //= require rails-ujs
 //= require popper
 //= require bootstrap.min
+//= require select2-full
 //= require jquery.slimscroll
 //= require waves
 //= require sidebarmenu

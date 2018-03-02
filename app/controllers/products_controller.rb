@@ -5,35 +5,41 @@ class ProductsController < ApplicationController
   end
 
 	def admin_product
-      if (params[:product][:name].blank? or params[:product][:unit_id].blank?)
-          response = {success: false, data: "Missing parameters"}
-      else
-        if (params[:product][:id].to_i == 0 )
-          #Create a new product
-          product = Product.new(product_params)
-          if !product.save
-            response = {success: false, data: "Server exception adding the new product"}
-          else
-           	response = {success: true, data: "Product added successfully!", product_id: product.id}
-          end
+    if (params[:product][:name].blank? or params[:product][:unit_id].blank?)
+        response = {success: false, data: "Missing parameters"}
+    else
+      if (params[:product][:id].to_i == 0 )
+        #Create a new product
+        product = Product.new(product_params)
+        if !product.save
+          response = {success: false, data: "Server exception adding the new product"}
         else
-          #Edit existing product
-          product = Product.where(id: params[:product][:id]).first
-          if (product.blank?)
-            response = {success: false, data: "Product not found!"}
-          else
-            product.update(product_params)
-            response = {success: true, data: "Product updated successfully!"}
-          end
+         	response = {success: true, data: "Product added successfully!", product_id: product.id}
+        end
+      else
+        #Edit existing product
+        product = Product.where(id: params[:product][:id]).first
+        if (product.blank?)
+          response = {success: false, data: "Product not found!"}
+        else
+          product.update(product_params)
+          response = {success: true, data: "Product updated successfully!"}
         end
       end
-      render json: response, status: 200
     end
+    render json: response, status: 200
+  end
 
-    private
+  def search_products
+    q = params[:q].to_s
+    results = Product.select('product.id, product.name').where("product.name ILIKE ? AND product.status = #{Product::Status[:active]}", "%#{q}%").limit(5).map { |product| {id: product.id, name: product.name} }
+    render json: {success: true, data: results}, status: :ok
+  end
 
-    def product_params
-        params.require(:product).permit(:name, :unit_id, :status)
-    end
+  private
+
+  def product_params
+      params.require(:product).permit(:name, :unit_id, :status)
+  end
 
 end

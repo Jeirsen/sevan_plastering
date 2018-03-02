@@ -5,6 +5,8 @@
  *= require bootstrap.min
  *= require style
  *= require blue
+ *= require select2
+ *= require select2-bootstrap
  *= require font-awesome.css
  *= require sweetalert
  *= require_self

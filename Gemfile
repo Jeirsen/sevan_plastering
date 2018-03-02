@@ -35,6 +35,9 @@ gem 'select2-rails'
 #https://github.com/mislav/will_paginate
 gem 'will_paginate', '~> 3.1.0'
 
+#https://github.com/argerim/select2-rails
+gem "select2-rails"
+
 #https://github.com/twbs/bootstrap-rubygem#a-ruby-on-rails
 gem 'jquery-rails'
 gem 'popper_js', '~> 1.12.9'

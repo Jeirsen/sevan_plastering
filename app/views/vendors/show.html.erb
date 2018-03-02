@@ -94,18 +94,20 @@
   <% if !@vendor.product_vendors.blank? %>
     <% @vendor.product_vendors.each do |product| %>
       <div class="col-lg-3 col-md-6">
-        <div class="card">
-          <div class="d-flex flex-row">
-            <div class="p-20">
-              <h5 class="m-b-0 text-info">
-                $<%= product.price %>
-              </h5>
-            </div>
-            <div class="align-self-center m-l-20">
-              <small class="text-muted m-b-0"><%= product.product.name %></small>
+        <a onclick="openModalVendorProduct(this)" class="edit-vendor-product" style="cursor: pointer;">
+          <div class="card">
+            <div class="d-flex flex-row">
+              <div class="p-20">
+                <h5 class="m-b-0 text-info">
+                  $<%= product.price %>
+                </h5>
+              </div>
+              <div class="align-self-center m-l-20">
+                <small class="text-muted m-b-0"><%= product.product.name %></small>
+              </div>
             </div>
           </div>
-        </div>
+        </a>
       </div>
     <% end %>
   <% else %>
@@ -209,12 +211,78 @@
   </div>
 </div>
 
+<div class="modal fade" id="editVendorProduct" role="dialog" aria-labelledby="editVendorProduct">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h4 class="modal-title">Edit Vendor Product</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                  <label for="recipient-name" class="control-label">Product:</label>
+                  <select id="edit-products"></select>
+                  <span class="label label-danger" style="display: none" id="danger_edit_product">Product is required!</span>
+              </div>
+              <div class="form-group">
+                  <label for="recipient-name" class="control-label">Price:</label>
+                  <input type="text" class="form-control" id="edit_vendor_product_price" required>
+                  <span class="label label-danger" style="display: none" id="danger_edit_price">Price is required!</span>
+              </div>
+              <div class="form-group">
+                <input type="checkbox" id="edit_vendor_product_status" class="filled-in">
+                <label for="edit_vendor_product_status">Active</label>
+              </div>
+              <div class="alert" id="vendor_edit_product_alert" style="display: none">
+              </div>
+            </form>
+            
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button onclick="editVendorProduct()" ontype="button" class="btn btn-primary waves-effect waves-light">Edit</button>
+          </div>
+      </div>
+  </div>
+</div>
+
 
 <script type="text/javascript">
 
 var idEmailForEditing = 0;
 var statusEmail = 0;
 var emailElement = "";
+
+$(document).ready(function(){
+  $("#edit-products").select2({
+    theme: "bootstrap",
+    ajax:{
+      url: "<%= search_products_path %>",
+      dataType: 'json',
+      data: function(params){
+        return{
+          q: params.term
+        };
+      },
+      processResults: function (data) {
+        return {
+            results: data.data
+        };
+      },
+    },
+    minimumInputLength: 3,
+    placeholder: {
+      id: '-1',
+      text: 'Enter product name ...'
+    }
+  });
+
+});
+
+function openModalVendorProduct(element){
+  $('#editVendorProduct').modal('show');
+}
 
 function openModalVendorEmail(element){
 	idEmailForEditing = $(element).find(".card").attr("data-email-id");
