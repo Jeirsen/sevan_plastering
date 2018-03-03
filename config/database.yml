@@ -3,8 +3,19 @@ development:
   encoding: unicode
   pool: 5
   timeout: 5000
-  database: sevan_orders
-  username: pguser
-  password: sevanporders123
+  database: <%= ENV['DB_NAME'] %>
+  username: <%= ENV['DB_USER'] %>
+  password: <%= ENV['DB_PASS'] %>
+  host: localhost
+  port: 5432
+
+production:
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+  timeout: 5000
+  database: <%= ENV['DB_NAME'] %>
+  username: <%= ENV['DB_USER'] %>
+  password: <%= ENV['DB_PASS'] %>
   host: localhost
   port: 5432
