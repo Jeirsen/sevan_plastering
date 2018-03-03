@@ -13,8 +13,22 @@
 
   <div class="form-group">
     <label for="recipient-name" class="control-label">Name:</label>
-    <%= form.text_field :name, id: :project_name, class: "form-control" %>
+    <%= form.text_field :name, id: :project_name, class: "form-control", id: "name_builder" %>
+    <span class="label label-danger" style="display: none" id="danger_name">Name is required!</span>
   </div>
   <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
   <%= form.submit 'Create', class: "btn btn-danger waves-effect waves-light" %>
 <% end %>
+
+<script>
+
+    $('form').submit(function() {
+
+        var name_builder = $("#name_builder").val();
+        if (name_builder == null || name_builder == "" ) {
+            $("#danger_name").show();
+            return false;
+        }
+        return true;
+    });
+</script>

@@ -1,14 +1,93 @@
-<p id="notice"><%= notice %></p>
+<div class="row page-titles">
+  <div class="col-md-5 col-8 align-self-center">
+    <h3 class="text-themecolor">Sevan</h3>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="<%= root_path %>">Home</a></li>
+      <li class="breadcrumb-item">Builder</li>
+      <li class="breadcrumb-item active"><%= @builder.name %></li>
+    </ol>
+  </div>
+</div>
 
-<p>
-  <strong>Name:</strong>
-  <%= @builder.name %>
-</p>
+<div class="row">
+  <div class="col-lg-12 col-xlg-6 m-b-30">
+    <button onclick="newProject()" type="button" class="btn btn-outline-info"><i class="fa fa-plus"></i> Add New Project </button>
+  </div>
+</div>
 
-<p>
-  <strong>Status:</strong>
-  <%= @builder.status %>
-</p>
+<div class="row">
+  <% @builder.projects.each do |project| %>
+    <div class="col-lg-4 col-md-4">
+      <a href="<%= project_path(project)%>">
+        <div class="card">
+          <div class="card-body card-padding-small">
+            <div class="d-flex flex-row">
+              <div class="round round-sm align-self-center round-info">
+                <i class="mdi mdi-home-modern"></i>
+              </div>
+              <div class="col-md-7 align-self-center">
+                <h3 class="m-b-0 font-light"><%= project.name %></h3>
+              </div>
+              <div class="col-md-3 align-self-center text-right">
+                <span onclick="editProject(<%= project.id%>)"class="icon-list-actions green-color" data-toggle="tooltip" title="" data-original-title="Update"><i class="mdi mdi-pencil"></i></span>
+                <span onclick="disableProject(<%= project.id%>)" class="icon-list-actions red-color" data-toggle="tooltip" title="" data-original-title="Delete"><i class="mdi mdi-delete"></i></span>
+              </div>
 
-<%= link_to 'Edit', edit_builder_path(@builder) %> |
-<%= link_to 'Back', builders_path %>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+  <% end %>
+</div>
+
+<div class="modal fade" id="content_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content modal-inject">
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+
+    function newProject(){
+        $.get("<%= new_project_path %>",function(data){
+            $(".modal-inject").html(data);
+            $("#content_modal").modal('show');
+        })
+    }
+
+    function editBuilder(id){
+        $.get("/projects/"+id+"/edit",function(data){
+            $(".modal-inject").html(data);
+            $("#content_modal").modal('show');
+        })
+    }
+
+    function disableBuilder(id){
+        url= "/projects/"+id+"/";
+        console.log(url);
+        swal({
+            title: "Are you sure?",
+            text: "You are going to disable this builder!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Yes, disable it!",
+            closeOnConfirm: false
+        }, function(){
+
+
+            $.ajax({
+                url: url,
+                type: 'DELETE',
+                success: function(response) {
+                    swal("Deleted!", "Your builder has been disable.", "success");
+                    location.reload();
+                }
+            });
+        });
+
+    }
+</script>

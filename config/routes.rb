@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :lots
   resources :projects
   resources :builders
   devise_for :users

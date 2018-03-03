@@ -1,19 +1,50 @@
-<p id="notice"><%= notice %></p>
+<div class="row page-titles">
+  <div class="col-md-5 col-8 align-self-center">
+    <h3 class="text-themecolor">Sevan</h3>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="<%= root_path %>">Home</a></li>
+      <li class="breadcrumb-item">Builder</li>
+      <li class="breadcrumb-item">Project</li>
+      <li class="breadcrumb-item active"><%= @project.name %></li>
+    </ol>
+  </div>
+</div>
 
-<p>
-  <strong>Name:</strong>
-  <%= @project.name %>
-</p>
+<div class="row">
+  <div class="col-lg-12 col-xlg-6 m-b-30">
+    <button onclick="newLot()" type="button" class="btn btn-outline-info"><i class="fa fa-plus"></i> Add New Lot </button>
+  </div>
+</div>
 
-<p>
-  <strong>Status:</strong>
-  <%= @project.status %>
-</p>
+<div class="row">
+  <% @project.lots.each do |lot| %>
+    <div class="col-lg-4 col-md-4">
+      <a href="<%= lot_path(lot)%>">
+        <div class="card">
+          <div class="card-body card-padding-small">
+            <div class="d-flex flex-row">
+              <div class="round round-sm align-self-center round-info">
+                <i class="mdi mdi-home-modern"></i>
+              </div>
+              <div class="col-md-7 align-self-center">
+                <h3 class="m-b-0 font-light"><%= lot.name %></h3>
+              </div>
+              <div class="col-md-3 align-self-center text-right">
+                <span onclick="editProject(<%= project.id%>)"class="icon-list-actions green-color" data-toggle="tooltip" title="" data-original-title="Update"><i class="mdi mdi-pencil"></i></span>
+                <span onclick="disableProject(<%= project.id%>)" class="icon-list-actions red-color" data-toggle="tooltip" title="" data-original-title="Delete"><i class="mdi mdi-delete"></i></span>
+              </div>
 
-<p>
-  <strong>Builder:</strong>
-  <%= @project.builder %>
-</p>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+  <% end %>
+</div>
 
-<%= link_to 'Edit', edit_project_path(@project) %> |
-<%= link_to 'Back', projects_path %>
+<div class="modal fade" id="content_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content modal-inject">
+    </div>
+  </div>
+</div>

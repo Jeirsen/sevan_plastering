@@ -19,7 +19,7 @@
 <div class="row">
   <% @builders.each do |builder| %>
     <div class="col-lg-4 col-md-4">
-      <a href="#">
+      <a href="<%= builder_path(builder)%>">
         <div class="card">
           <div class="card-body card-padding-small">
             <div class="d-flex flex-row">
