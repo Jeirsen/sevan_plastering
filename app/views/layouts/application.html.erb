@@ -40,7 +40,7 @@
                 <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><%= current_user.email %></a>
                 <div class="dropdown-menu dropdown-menu-right scale-up">
                   <ul class="dropdown-user">
-                    <li><a href="<%= destroy_user_session_path %>"><i class="fa fa-power-off"></i> Logout</a></li>
+                    <li><a data-method="delete" href="<%= destroy_user_session_path %>"><i class="fa fa-power-off"></i> Logout</a></li>
                   </ul>
                 </div>
               </li>
