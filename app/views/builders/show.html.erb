@@ -18,7 +18,7 @@
 <div class="row">
   <% @builder.projects.each do |project| %>
     <div class="col-lg-4 col-md-4">
-      <a href="<%= project_path(project)%>">
+      
         <div class="card">
           <div class="card-body card-padding-small">
             <div class="d-flex flex-row">
@@ -26,7 +26,9 @@
                 <i class="mdi mdi-home-modern"></i>
               </div>
               <div class="col-md-7 align-self-center">
-                <h3 class="m-b-0 font-light"><%= project.name %></h3>
+                <h3 class="m-b-0 font-light">
+                  <a href="<%= project_path(project) %>"><%= project.name %></a>
+                </h3>
               </div>
               <div class="col-md-3 align-self-center text-right">
                 <span onclick="editProject(<%= project.id%>)"class="icon-list-actions green-color" data-toggle="tooltip" title="" data-original-title="Update"><i class="mdi mdi-pencil"></i></span>
@@ -36,7 +38,7 @@
             </div>
           </div>
         </div>
-      </a>
+      
     </div>
   <% end %>
 </div>

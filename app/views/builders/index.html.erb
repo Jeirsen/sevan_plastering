@@ -19,7 +19,6 @@
 <div class="row">
   <% @builders.each do |builder| %>
     <div class="col-lg-4 col-md-4">
-      <a href="<%= builder_path(builder)%>">
         <div class="card">
           <div class="card-body card-padding-small">
             <div class="d-flex flex-row">
@@ -27,17 +26,18 @@
                 <i class="mdi mdi-home-modern"></i>
               </div>
               <div class="col-md-7 align-self-center">
-                <h3 class="m-b-0 font-light"><%= builder.name %></h3>
+                <h3 class="m-b-0 font-light">
+                  <a href="<%= builder_path(builder) %>"><%= builder.name %></a>
+                </h3>
               </div>
               <div class="col-md-3 align-self-center text-right">
-                <span onclick="editBuilder(<%= builder.id%>)"class="icon-list-actions green-color" data-toggle="tooltip" title="" data-original-title="Update"><i class="mdi mdi-pencil"></i></span>
+                <span onclick="editBuilder(<%= builder.id%>)" class="icon-list-actions green-color" data-toggle="tooltip" title="" data-original-title="Update"><i class="mdi mdi-pencil"></i></span>
                 <span onclick="disableBuilder(<%= builder.id%>)" class="icon-list-actions red-color" data-toggle="tooltip" title="" data-original-title="Delete"><i class="mdi mdi-delete"></i></span>
               </div>
 
             </div>
           </div>
         </div>
-      </a>
     </div>
   <% end %>
 </div>
