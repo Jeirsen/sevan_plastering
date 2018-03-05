@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   #vendors
   resources :vendors
   post 'vendor-email' => 'vendors#vendor_email', :as => 'vendor_email'
+  post 'vendor-product' => 'vendors#vendor_product', :as => 'vendor_product'
 
   #products
   resources :products

@@ -84,6 +84,38 @@ class VendorsController < ApplicationController
       render json: response, status: 200
     end
 
+    def vendor_product
+      if (params[:vendor_product][:vendor_id].blank? or params[:vendor_product][:product_id].blank? or params[:vendor_product][:price].blank?)
+          response = {success: false, data: "Missing parameters"}
+      else
+        if (params[:vendor_product][:id].to_i == 0 )
+          #Add new product to vendor
+          product_vendor = ProductVendor.where(vendor_id: params[:vendor_product][:vendor_id], product_id: params[:vendor_product][:product_id],).first
+          if (product_vendor.blank?)
+            product_vendor = ProductVendor.new(vendor_product_params)
+            if !product_vendor.save
+              response = {success: false, data: "Server exception adding the new product vendor"}
+            else
+              response = {success: true, data: "Product added successfully!", id: product_vendor.id}
+            end
+            
+          else
+            response = {success: false, data: "This product is already registered to this vendor!"}
+          end
+        else
+          #Edit existing vendor product
+          product_vendor = ProductVendor.where(id: params[:vendor_product][:id]).first
+          if (product_vendor.blank?)
+            response = {success: false, data: "Vendor product not found!"}
+          else
+            product_vendor.update(vendor_product_params)
+            response = {success: true, data: "Vendor product updated successfully!"}
+          end
+        end
+      end
+      render json: response, status: 200
+    end
+
     private
 
     def vendor_params
@@ -92,6 +124,10 @@ class VendorsController < ApplicationController
 
     def vendor_email_params
         params.require(:vendor_email).permit(:name, :description, :email, :status, :vendor_id)
+    end
+
+    def vendor_product_params
+        params.require(:vendor_product).permit(:product_id, :vendor_id, :status, :price)
     end
 
 end

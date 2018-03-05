@@ -37,10 +37,13 @@
 		<button onclick="editVendor()" type="button" class="btn btn-outline-info"><i class="fa fa-pencil"></i> Edit Vendor</button>
 	</div>
 </div>
-<br>
+<br><br>
 <div class="row" id="vendor_emails">
-	<div class="col-md-12 col-sm-12">
-		<h2 class="text-info">Vendor Emails</h2>
+	<div class="col-md-12 col-sm-12" style="display: -webkit-inline-box;">
+		<h2 class="text-info">Vendor Emails</h2>&nbsp;&nbsp;&nbsp;
+    <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#newVendorEmail">
+      <i class="fa fa-plus"></i> Add New
+    </button>
 	</div>
 	<% if !@vendor.vendor_emails.blank? %>
 		<% @vendor.vendor_emails.each do |email| %>
@@ -78,24 +81,19 @@
 	<% end %>
 </div>
 
-<div class="row">
-	<div class="col-md-12 col-sm-12">
-		<button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#newVendorEmail">
-			<i class="fa fa-plus"></i> Add New Email
-		</button>
-	</div>
-</div>
-
 <br>
 <div class="row" id="vendor_products">
-  <div class="col-md-12 col-sm-12">
-    <h2 class="text-info">Vendor Products</h2>
+  <div class="col-md-12 col-sm-12" style="display: -webkit-inline-box;">
+    <h2 class="text-info">Vendor Products</h2>&nbsp;&nbsp;&nbsp;
+    <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#newVendorProduct">
+      <i class="fa fa-plus"></i> Add New
+    </button>
   </div>
   <% if !@vendor.product_vendors.blank? %>
     <% @vendor.product_vendors.each do |product| %>
       <div class="col-lg-3 col-md-6">
         <a onclick="openModalVendorProduct(this)" class="edit-vendor-product" style="cursor: pointer;">
-          <div class="card">
+          <div class="card" data-id="<%= product.id %>" data-product-id="<%= product.product_id %>" data-product-status="<%= product.status %>">
             <div class="d-flex flex-row">
               <div class="p-20">
                 <h5 class="m-b-0 text-info">
@@ -123,14 +121,6 @@
       </div>
     </div>
   <% end %>
-</div>
-
-<div class="row">
-  <div class="col-md-12 col-sm-12">
-    <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#newVendorProduct">
-      <i class="fa fa-plus"></i> Add Product
-    </button>
-  </div>
 </div>
 
 <div class="modal fade" id="newVendorEmail" tabindex="-1" role="dialog" aria-labelledby="newVendorEmail">
@@ -211,6 +201,37 @@
   </div>
 </div>
 
+<div class="modal fade" id="newVendorProduct" role="dialog" aria-labelledby="newVendorProduct">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h4 class="modal-title">Add Vendor Product</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                  <label for="recipient-name" class="control-label">Product:</label>
+                  <select id="add-products"></select>
+                  <span class="label label-danger" style="display: none" id="danger_product">Product is required!</span>
+              </div>
+              <div class="form-group">
+                  <label for="recipient-name" class="control-label">Price:</label>
+                  <input type="number" class="form-control" id="vendor_product_price" required>
+                  <span class="label label-danger" style="display: none" id="danger_price">Price is required!</span>
+              </div>
+              <div class="alert" id="vendor_product_alert" style="display: none">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button onclick="addVendorProduct()" ontype="button" class="btn btn-primary waves-effect waves-light">Add</button>
+          </div>
+      </div>
+  </div>
+</div>
+
 <div class="modal fade" id="editVendorProduct" role="dialog" aria-labelledby="editVendorProduct">
   <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -222,7 +243,7 @@
             <form>
               <div class="form-group">
                   <label for="recipient-name" class="control-label">Product:</label>
-                  <select id="edit-products"></select>
+                  <input type="text" class="form-control" id="edit_vendor_product_name" readonly="true">
                   <span class="label label-danger" style="display: none" id="danger_edit_product">Product is required!</span>
               </div>
               <div class="form-group">
@@ -250,12 +271,20 @@
 
 <script type="text/javascript">
 
+//For Vendor Emails
 var idEmailForEditing = 0;
 var statusEmail = 0;
 var emailElement = "";
 
+//For Vendor Products
+var idProductForEditing = 0;
+var idProduct = 0;
+var statusProduct = 0;
+var productElement = "";
+
 $(document).ready(function(){
-  $("#edit-products").select2({
+
+  $("#add-products").select2({
     theme: "bootstrap",
     ajax:{
       url: "<%= search_products_path %>",
@@ -275,13 +304,231 @@ $(document).ready(function(){
     placeholder: {
       id: '-1',
       text: 'Enter product name ...'
+    },
+    escapeMarkup: function (markup) {
+      return markup;
+    },
+    templateResult: function (product) {
+      if (product.loading) return 'product.name';
+      return $("<div>"+ product.name +"</div>")
+    }, 
+    templateSelection: function (product) {
+      if (product === '' || product === null){
+          return '<span>Enter product name ...</span>';
+      }
+      return $("<span>"+ product.name +"</span>")
     }
   });
 
 });
 
 function openModalVendorProduct(element){
+  idProductForEditing = $(element).find(".card").attr("data-id");
+  idProduct = $(element).find(".card").attr("data-product-id");
+  statusProduct = parseInt($(element).find(".card").attr("data-product-status"));
+  productElement = element;
+  product_name = $(element).find("small").text();
+  price = $.trim($(element).find("h5").text());
+  $('#edit_vendor_product_name').val(product_name);
+  $('#edit_vendor_product_price').val(price.replace('$',''));
+  $('#edit_vendor_product_status').prop('checked', statusProduct);
   $('#editVendorProduct').modal('show');
+}
+
+function addVendorProduct(){
+  if (!validateProductData()){
+    product_id = $('#add-products :selected').val();
+    price = parseFloat($("#vendor_product_price").val());
+    vendor_id = <%= @vendor.id %>
+
+    vendor_product_object = {
+      vendor_product : {
+        id: 0,
+        vendor_id: vendor_id,
+        product_id: product_id,
+        price: price
+      }
+    }
+
+    $.ajax({
+      url: "<%= vendor_product_path %>",
+      method: "POST",
+      data: vendor_product_object,
+      success: function (data) {
+        if(data.success){
+          debugger
+          appendVendorProduct(data.id, product_id);
+          $("#vendor_product_alert").empty();
+          $("#vendor_product_alert").removeClass("alert-danger");
+          $("#vendor_product_alert").addClass("alert-success");
+          message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                    <span aria-hidden="true">×</span>\
+                    </button>';
+          $("#vendor_product_alert").append(message);
+          $("#vendor_product_alert").show();
+          setTimeout(function(){
+            $("#vendor_product_alert").hide();
+            $("#newVendorProduct").modal('hide');
+          },5000);
+        }else{
+          $("#vendor_product_alert").empty();
+          $("#vendor_product_alert").removeClass("alert-success");
+          $("#vendor_product_alert").addClass("alert-danger");
+          message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                    <span aria-hidden="true">×</span>\
+                    </button>';
+          $("#vendor_product_alert").append(message);
+          $("#vendor_product_alert").show();
+          setTimeout(function(){
+            $("#vendor_product_alert").hide();
+          },5000);
+        }
+      },
+      error: function (data) {
+        $("#vendor_product_alert").empty();
+        $("#vendor_product_alert").removeClass("alert-success");
+        $("#vendor_product_alert").addClass("alert-danger");
+        message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                  <span aria-hidden="true">×</span>\
+                  </button>';
+        $("#vendor_product_alert").append(message);
+        $("#vendor_product_alert").show();
+        setTimeout(function(){
+          $("#vendor_product_alert").hide();
+        },5000);
+      }
+    })
+  }
+}
+
+function validateProductData(){
+  product_id = $('#add-products :selected').val();
+  price = parseFloat($("#vendor_product_price").val());
+  error = false;
+
+  if(product_id === "" || product_id === undefined || product_id === null)
+  { 
+    $("#danger_product").show();
+    setTimeout(function(){
+        $('#danger_product').hide();
+    },5000);
+    error = true;
+  }
+
+  if(isNaN(price) || price === null)
+  { 
+    $("#danger_price").show();
+    setTimeout(function(){
+        $('#danger_price').hide();
+    },5000);
+    error = true;
+  }
+
+  return error;
+}
+
+function editVendorProduct(){
+  debugger
+  price = parseFloat($("#edit_vendor_product_price").val());
+  product_status = $("#edit_vendor_product_status").is(":checked");
+  product_status = product_status == true ? 1 : 0;
+  vendor_id = <%= @vendor.id %>
+
+  if (!isNaN(price) || price !== null){
+    vendor_product_object = {
+      vendor_product : {
+        id: idProductForEditing,
+        vendor_id: vendor_id,
+        product_id: idProduct,
+        price: price,
+        status: product_status
+      }
+    }
+
+    $.ajax({
+      url: "<%= vendor_product_path %>",
+      method: "POST",
+      data: vendor_product_object,
+      success: function (data) {
+        if(data.success){
+          updateProductElement();
+          $("#vendor_edit_product_alert").empty();
+          $("#vendor_edit_product_alert").removeClass("alert-danger");
+          $("#vendor_edit_product_alert").addClass("alert-success");
+          message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                    <span aria-hidden="true">×</span>\
+                    </button>';
+          $("#vendor_edit_product_alert").append(message);
+          $("#vendor_edit_product_alert").show();
+          setTimeout(function(){
+            $("#vendor_edit_product_alert").hide();
+            $("#editVendorProduct").modal('hide');
+          },5000);
+        }else{
+          $("#vendor_edit_product_alert").empty();
+          $("#vendor_edit_product_alert").removeClass("alert-success");
+          $("#vendor_edit_product_alert").addClass("alert-danger");
+          message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                    <span aria-hidden="true">×</span>\
+                    </button>';
+          $("#vendor_edit_product_alert").append(message);
+          $("#vendor_edit_product_alert").show();
+          setTimeout(function(){
+            $("#vendor_edit_product_alert").hide();
+          },5000);
+        }
+      },
+      error: function (data) {
+        $("#vendor_edit_product_alert").empty();
+        $("#vendor_edit_product_alert").removeClass("alert-success");
+        $("#vendor_edit_product_alert").addClass("alert-danger");
+        message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                  <span aria-hidden="true">×</span>\
+                  </button>';
+        $("#vendor_edit_product_alert").append(message);
+        $("#vendor_edit_product_alert").show();
+        setTimeout(function(){
+          $("#vendor_edit_product_alert").hide();
+        },5000);
+      }
+    })
+  }else{
+    $("#danger_edit_price").show();
+    setTimeout(function(){
+        $('#danger_edit_price').hide();
+    },5000);
+  }
+}
+
+function updateProductElement(){
+  price = "$" + $.trim($("#edit_vendor_product_price").val());
+  $(productElement).find("h5").text(price);
+  productElement = "";
+  idProduct = 0;
+  idProductForEditing = 0;
+}
+
+function appendVendorProduct(record_id, product_id){
+  price = $("#vendor_product_price").val();
+  product_name = $('#add-products').select2('data')[0].name;
+
+  var element = '<div class="col-lg-3 col-md-6">\
+                  <a onclick="openModalVendorProduct(this)" class="edit-vendor-product" style="cursor: pointer;">\
+                    <div class="card" data-id="'+ record_id +'" data-product-id="' + product_id +'" data-product-status="1">\
+                      <div class="d-flex flex-row">\
+                        <div class="p-20">\
+                          <h5 class="m-b-0 text-info">$' + price + '</h5>\
+                        </div>\
+                        <div class="align-self-center m-l-20">\
+                          <small class="text-muted m-b-0">' + product_name +'</small>\
+                        </div>\
+                      </div>\
+                    </div>\
+                  </a>\
+                </div>';
+
+  $("#vendor_products").append(element);
+  $("#vendor_product_price").val("");
 }
 
 function openModalVendorEmail(element){

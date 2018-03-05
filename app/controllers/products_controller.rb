@@ -32,7 +32,7 @@ class ProductsController < ApplicationController
 
   def search_products
     q = params[:q].to_s
-    results = Product.select('product.id, product.name').where("product.name ILIKE ? AND product.status = #{Product::Status[:active]}", "%#{q}%").limit(5).map { |product| {id: product.id, name: product.name} }
+    results = Product.select('products.id, products.name').where("products.name ILIKE ? AND products.status = #{Product::Status[:active]}", "%#{q}%").limit(5).map { |product| {id: product.id, name: product.name} }
     render json: {success: true, data: results}, status: :ok
   end
 
