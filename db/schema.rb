@@ -22,6 +22,14 @@ ActiveRecord::Schema.define(version: 20180301021141) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "lots", force: :cascade do |t|
+    t.string "name"
+    t.bigint "project_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_lots_on_project_id"
+  end
+
   create_table "product_vendors", force: :cascade do |t|
     t.bigint "product_id"
     t.bigint "vendor_id"
@@ -99,6 +107,7 @@ ActiveRecord::Schema.define(version: 20180301021141) do
     t.integer "status", default: 1
   end
 
+  add_foreign_key "lots", "projects"
   add_foreign_key "product_vendors", "products"
   add_foreign_key "product_vendors", "vendors"
   add_foreign_key "products", "units"
