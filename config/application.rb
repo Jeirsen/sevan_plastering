@@ -16,6 +16,6 @@ module SevanplasteringPorders
     # -- all .rb files in that directory are automatically loaded.
 
     # config/application.rb
-	config.assets.initialize_on_precompile = false
+	config.assets.initialize_on_precompile = true
   end
 end
