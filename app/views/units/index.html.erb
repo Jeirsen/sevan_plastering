@@ -58,7 +58,7 @@
                   <input type="text" class="form-control" id="unit_name">
                   <span class="label label-danger" style="display: none" id="danger_name">Unit name is required!</span>
               </div>
-              <div class="alert" id="vendor_email_alert" style="display: none">
+              <div class="alert" id="unit_alert" style="display: none">
               </div>
           	</form>
             
@@ -70,3 +70,202 @@
       </div>
   </div>
 </div>
+
+<div class="modal fade" id="editUnit" role="dialog" aria-labelledby="editUnit">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h4 class="modal-title">Edit Unit</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                  <label for="recipient-name" class="control-label">Product:</label>
+                  <input type="text" class="form-control" id="edit_unit_name">
+                  <span class="label label-danger" style="display: none" id="danger_unit_name">Unit name is required!</span>
+              </div>
+              <div class="alert" id="unit_edit_alert" style="display: none">
+              </div>
+            </form>
+            
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button onclick="editUnit()" ontype="button" class="btn btn-primary waves-effect waves-light">Edit</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+var idUnitForEditing = 0;
+var unitElement = "";
+	
+function addNewUnit() {
+	name = $.trim($("#unit_name").val());
+	if (name != "" && name != undefined && name != null){
+  	unit_object = {
+			unit : {
+				unit_id: 0,
+				name: name,
+			}
+		}
+
+		$.ajax({
+      url: "<%= admin_unit_path %>",
+      method: "POST",
+      data: unit_object,
+      success: function (data) {
+        if(data.success){
+        	appendUnit(data.unit_id);
+        	$("#unit_alert").empty();
+        	$("#unit_alert").removeClass("alert-danger");
+        	$("#unit_alert").addClass("alert-success");
+        	message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+										<span aria-hidden="true">×</span>\
+										</button>';
+					$("#unit_alert").append(message);
+					$("#unit_alert").show();
+					setTimeout(function(){
+						$("#unit_alert").hide();
+            $("#modalNewUnit").modal('hide');
+          },5000);
+        }else{
+        	$("#unit_alert").empty();
+        	$("#unit_alert").removeClass("alert-success");
+        	$("#unit_alert").addClass("alert-danger");
+        	message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+										<span aria-hidden="true">×</span>\
+										</button>';
+					$("#unit_alert").append(message);
+					$("#unit_alert").show();
+					setTimeout(function(){
+            $("#unit_alert").hide();
+          },5000);
+        }
+      },
+      error: function (data) {
+      	$("#unit_alert").empty();
+      	$("#unit_alert").removeClass("alert-success");
+      	$("#unit_alert").addClass("alert-danger");
+      	message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+									<span aria-hidden="true">×</span>\
+									</button>';
+				$("#unit_alert").append(message);
+				$("#unit_alert").show();
+				setTimeout(function(){
+        	$("#unit_alert").hide();
+        },5000);
+      }
+	  })
+	}else
+	{
+		$("#danger_name").show();
+    setTimeout(function(){
+        $('#danger_name').hide();
+    },5000);
+	}
+}
+
+function appendUnit(unit_id){
+  name = $.trim($("#unit_name").val());
+  var element = '<div class="col-lg-2 col-md-4">\
+        					<a onclick="openModalUnit(this)" class="edit-unit" style="cursor: pointer;">\
+          					<div class="card" data-id="'+unit_id+'">\
+            					<div class="d-flex flex-row">\
+              					<div class="align-self-center m-l-20">\
+                					<small class="text-muted m-b-0">'+name+'</small>\
+              					</div>\
+            					</div>\
+          					</div>\
+        					</a>\
+      					</div>';
+
+  $("#units").append(element);
+  $("#unit_name").val("");
+}
+
+function openModalUnit(element){
+  idUnitForEditing = $(element).find(".card").attr("data-id");
+  unitElement = element;
+  unit_name = $(element).find("small").text();
+  $('#edit_unit_name').val(unit_name);
+  $('#editUnit').modal('show');
+}
+
+function editUnit(){
+	name = $.trim($("#edit_unit_name").val());
+	if (name != "" && name != undefined && name != null){
+  	unit_object = {
+			unit : {
+				unit_id: idUnitForEditing,
+				name: name,
+			}
+		}
+
+		$.ajax({
+      url: "<%= admin_unit_path %>",
+      method: "POST",
+      data: unit_object,
+      success: function (data) {
+        if(data.success){
+        	updateUnit();
+        	$("#unit_edit_alert").empty();
+        	$("#unit_edit_alert").removeClass("alert-danger");
+        	$("#unit_edit_alert").addClass("alert-success");
+        	message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+										<span aria-hidden="true">×</span>\
+										</button>';
+					$("#unit_edit_alert").append(message);
+					$("#unit_edit_alert").show();
+					setTimeout(function(){
+						$("#unit_edit_alert").hide();
+            $("#editUnit").modal('hide');
+          },5000);
+        }else{
+        	$("#unit_edit_alert").empty();
+        	$("#unit_edit_alert").removeClass("alert-success");
+        	$("#unit_edit_alert").addClass("alert-danger");
+        	message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+										<span aria-hidden="true">×</span>\
+										</button>';
+					$("#unit_edit_alert").append(message);
+					$("#unit_edit_alert").show();
+					setTimeout(function(){
+            $("#unit_edit_alert").hide();
+          },5000);
+        }
+      },
+      error: function (data) {
+      	$("#unit_edit_alert").empty();
+      	$("#unit_edit_alert").removeClass("alert-success");
+      	$("#unit_edit_alert").addClass("alert-danger");
+      	message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+									<span aria-hidden="true">×</span>\
+									</button>';
+				$("#unit_edit_alert").append(message);
+				$("#unit_edit_alert").show();
+				setTimeout(function(){
+        	$("#unit_edit_alert").hide();
+        },5000);
+      }
+	  })
+	}else
+	{
+		$("#danger_unit_name").show();
+    setTimeout(function(){
+        $('#danger_unit_name').hide();
+    },5000);
+	}
+}
+
+function updateUnit(){
+	name = $.trim($("#edit_unit_name").val());
+	$(unitElement).find("small").text(name);
+  unitElement = "";
+  idUnitForEditing = 0;
+}
+
+</script>

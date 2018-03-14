@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   get 'search-products' => 'products#search_products', :as => 'search_products'
 
   #units
-  resources :units
+  get 'units' => 'units#index', :as => 'units'
+  post 'admin-unit' => 'units#admin_unit', :as => 'admin_unit'
 
 end

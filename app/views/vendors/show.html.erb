@@ -356,7 +356,6 @@ function addVendorProduct(){
       data: vendor_product_object,
       success: function (data) {
         if(data.success){
-          debugger
           appendVendorProduct(data.id, product_id);
           $("#vendor_product_alert").empty();
           $("#vendor_product_alert").removeClass("alert-danger");
@@ -428,7 +427,6 @@ function validateProductData(){
 }
 
 function editVendorProduct(){
-  debugger
   price = parseFloat($("#edit_vendor_product_price").val());
   product_status = $("#edit_vendor_product_status").is(":checked");
   product_status = product_status == true ? 1 : 0;
