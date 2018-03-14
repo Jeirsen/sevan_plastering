@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180301021141) do
+ActiveRecord::Schema.define(version: 20180314035419) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,6 +28,16 @@ ActiveRecord::Schema.define(version: 20180301021141) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["project_id"], name: "index_lots_on_project_id"
+  end
+
+  create_table "models", force: :cascade do |t|
+    t.bigint "builder_id"
+    t.string "name"
+    t.string "url_model_image"
+    t.integer "status", default: 1
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["builder_id"], name: "index_models_on_builder_id"
   end
 
   create_table "product_vendors", force: :cascade do |t|
@@ -108,6 +118,7 @@ ActiveRecord::Schema.define(version: 20180301021141) do
   end
 
   add_foreign_key "lots", "projects"
+  add_foreign_key "models", "builders"
   add_foreign_key "product_vendors", "products"
   add_foreign_key "product_vendors", "vendors"
   add_foreign_key "products", "units"

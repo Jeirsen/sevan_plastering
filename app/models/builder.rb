@@ -4,6 +4,7 @@ class Builder < ApplicationRecord
   Status = {:active => 1, :inactive => 0}
 
   has_many :projects
+  has_many :models
 
   def disable
     self.status = Status[:inactive]
