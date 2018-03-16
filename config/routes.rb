@@ -20,4 +20,8 @@ Rails.application.routes.draw do
   get 'units' => 'units#index', :as => 'units'
   post 'admin-unit' => 'units#admin_unit', :as => 'admin_unit'
 
+  #models
+  post 'create-model' => 'models#create', :as => 'create_model'
+  get 'model/:id/show' => 'models#show', :as => 'model_detail'
+
 end

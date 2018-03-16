@@ -10,37 +10,90 @@
 </div>
 
 <div class="row">
-  <div class="col-lg-12 col-xlg-6 m-b-30">
-    <button onclick="newProject()" type="button" class="btn btn-outline-info"><i class="fa fa-plus"></i> Add New Project </button>
+  <div class="col-lg-12 col-xlg-6 m-b-30" style="display: -webkit-inline-box;">
+    <h2 class="text-info">Projects</h2>&nbsp;&nbsp;&nbsp;
+    <button onclick="newProject()" type="button" class="btn btn-outline-info"><i class="fa fa-plus"></i> Add New</button>
   </div>
 </div>
 
-<div class="row">
-  <% @builder.projects.each do |project| %>
-    <div class="col-lg-4 col-md-4">
-      
-        <div class="card">
-          <div class="card-body card-padding-small">
-            <div class="d-flex flex-row">
-              <div class="round round-sm align-self-center round-info">
-                <i class="mdi mdi-home-modern"></i>
-              </div>
-              <div class="col-md-7 align-self-center">
-                <h3 class="m-b-0 font-light">
-                  <a href="<%= project_path(project) %>"><%= project.name %></a>
-                </h3>
-              </div>
-              <div class="col-md-3 align-self-center text-right">
-                <span onclick="editProject(<%= project.id%>)"class="icon-list-actions green-color" data-toggle="tooltip" title="" data-original-title="Update"><i class="mdi mdi-pencil"></i></span>
-                <span onclick="disableProject(<%= project.id%>)" class="icon-list-actions red-color" data-toggle="tooltip" title="" data-original-title="Delete"><i class="mdi mdi-delete"></i></span>
-              </div>
-
+<div class="row" id="projects">
+  <% @builder.projects.each do |project| %>  
+    <div class="col-lg-4 col-md-4">      
+      <div class="card">
+        <div class="card-body card-padding-small">
+          <div class="d-flex flex-row">
+            <div class="round round-sm align-self-center round-info">
+              <i class="mdi mdi-home-modern"></i>
             </div>
+            <div class="col-md-7 align-self-center">
+              <h5 class="m-b-0 font-light">
+                <a href="<%= project_path(project) %>"><%= project.name %></a>
+              </h5>
+            </div>
+            <div class="col-md-3 align-self-center text-right">
+              <span onclick="editProject(<%= project.id%>)"class="icon-list-actions green-color" data-toggle="tooltip" title="" data-original-title="Update"><i class="mdi mdi-pencil"></i></span>
+              <span onclick="disableProject(<%= project.id%>)" class="icon-list-actions red-color" data-toggle="tooltip" title="" data-original-title="Delete"><i class="mdi mdi-delete"></i></span>
+            </div>
+
           </div>
         </div>
+      </div>
       
     </div>
   <% end %>
+</div>
+
+<div class="row">
+  <div class="col-lg-12 col-xlg-6 m-b-30" style="display: -webkit-inline-box;">
+    <h2 class="text-info">Models</h2>&nbsp;&nbsp;&nbsp;
+    <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#newModel">
+      <i class="fa fa-plus"></i> Add New
+    </button>
+  </div>
+</div>
+
+<div class="row" id="projects">
+  <% @builder.models.where(:status => Model::Status[:active]).each do |model| %>  
+    <div class="col-lg-3 col-md-3">
+      <a href="<%= model_detail_path(model.id) %>" style="cursor: pointer;">
+        <div class="card" data-model-id="<%= model.id %>"> 
+          <div class="card-body card-padding-small">
+            <div class="d-flex flex-row">
+              <div class="col-md-12 align-self-center text-info">
+                <small class="m-b-0 font-light"><%= model.name %></small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+  <% end %>
+</div>
+
+<div class="modal fade" id="newModel" tabindex="-1" role="dialog" aria-labelledby="newModel">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h4 class="modal-title" id="exampleModalLabel1">New Model</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                  <label for="recipient-name" class="control-label">Name:</label>
+                  <input type="text" class="form-control" id="model_name">
+                  <span class="label label-danger" style="display: none" id="danger_model_name">Model name is required!</span>
+              </div>
+              <div class="alert" id="model_alert" style="display: none">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button onclick="addNewModel()" ontype="button" class="btn btn-danger waves-effect waves-light">Create</button>
+          </div>
+      </div>
+  </div>
 </div>
 
 <div class="modal fade" id="content_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -68,28 +121,83 @@
     }
 
     function disableBuilder(id){
-        url= "/projects/"+id+"/";
-        console.log(url);
-        swal({
-            title: "Are you sure?",
-            text: "You are going to disable this builder!",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: "Yes, disable it!",
-            closeOnConfirm: false
-        }, function(){
+      url= "/projects/"+id+"/";
+      console.log(url);
+      swal({
+          title: "Are you sure?",
+          text: "You are going to disable this builder!",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#DD6B55",
+          confirmButtonText: "Yes, disable it!",
+          closeOnConfirm: false
+      }, function(){
 
 
-            $.ajax({
-                url: url,
-                type: 'DELETE',
-                success: function(response) {
-                    swal("Deleted!", "Your builder has been disable.", "success");
-                    location.reload();
-                }
-            });
-        });
-
+          $.ajax({
+              url: url,
+              type: 'DELETE',
+              success: function(response) {
+                  swal("Deleted!", "Your builder has been disable.", "success");
+                  location.reload();
+              }
+          });
+      });
     }
+
+    function addNewModel(){
+      model_name = $('#model_name').val();
+      builder_id = <%= @builder.id %>;
+      if(model_name != "" && model_name != null){
+        model_object = {
+          model : {
+            builder_id: builder_id,
+            name: model_name
+          }
+        }
+
+        $.ajax({
+          url: "<%= create_model_path %>",
+          method: "POST",
+          data: model_object,
+          success: function (data) {
+            if(data.success){
+              window.location.replace('/model/'+data.model_id+'/show');
+            }else{
+              $("#model_alert").empty();
+              $("#model_alert").removeClass("alert-success");
+              $("#model_alert").addClass("alert-danger");
+              message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                        <span aria-hidden="true">×</span>\
+                        </button>';
+              $("#model_alert").append(message);
+              $("#model_alert").show();
+              setTimeout(function(){
+                $("#model_alert").hide();
+              },5000);
+            }
+          },
+          error: function (data) {
+            $("#model_alert").empty();
+            $("#model_alert").removeClass("alert-success");
+            $("#model_alert").addClass("alert-danger");
+            message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                      <span aria-hidden="true">×</span>\
+                      </button>';
+            $("#model_alert").append(message);
+            $("#model_alert").show();
+            setTimeout(function(){
+              $("#model_alert").hide();
+            },5000);
+          }
+        })
+      }else{
+        $("#danger_model_name").show();
+          setTimeout(function(){
+            $('#danger_model_name').hide();
+        },5000);
+      }
+    }
+
+
 </script>
