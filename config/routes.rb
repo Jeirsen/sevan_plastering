@@ -24,4 +24,7 @@ Rails.application.routes.draw do
   post 'create-model' => 'models#create', :as => 'create_model'
   get 'model/:id/show' => 'models#show', :as => 'model_detail'
 
+  #templates
+  post 'template-product' => 'templates#template_product', :as => 'template_product'
+
 end
