@@ -1,6 +1,8 @@
-<h1>Editing Lot</h1>
+<div class="modal-header">
+  <h4 class="modal-title" id="exampleModalLabel1">Edit Lot</h4>
+  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+</div>
+<div class="modal-body">
+  <%= render 'form', lot: @lot %>
+</div>
 
-<%= render 'form', lot: @lot %>
-
-<%= link_to 'Show', @lot %> |
-<%= link_to 'Back', lots_path %>

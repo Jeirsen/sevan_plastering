@@ -15,10 +15,17 @@ class LotsController < ApplicationController
   # GET /lots/new
   def new
     @lot = Lot.new
+    @lot.project_id = params['projectId']
+    project = Project.find params['projectId']
+    @models = Model.where(builder_id: project.builder_id)
+    render :layout => false
   end
 
   # GET /lots/1/edit
   def edit
+    project = Project.find params['projectId']
+    @models = Model.where(builder_id: project.builder_id)
+    render :layout => false
   end
 
   # POST /lots
@@ -69,6 +76,6 @@ class LotsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def lot_params
-      params.require(:lot).permit(:name, :project_id)
+      params.require(:lot).permit(:name, :project_id, :model_id, :address1, :address2, :number, :zip, :city, :state)
     end
 end

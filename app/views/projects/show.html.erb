@@ -3,10 +3,19 @@
     <h3 class="text-themecolor">Sevan</h3>
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="<%= root_path %>">Home</a></li>
-      <li class="breadcrumb-item">Builder</li>
+      <li class="breadcrumb-item"><%= @project.builder.name %></li>
       <li class="breadcrumb-item">Project</li>
       <li class="breadcrumb-item active"><%= @project.name %></li>
     </ol>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-4 col-xlg-6 m-b-10">
+    <h3 >Name: <a href="<%= project_path(@project) %>"><%= @project.name %></a></h3>
+  </div>
+  <div class="col-lg-4 col-xlg-6 m-b-1x0">
+    <h3>Builder: <a href="<%= builder_path(@project.builder) %>"><%= @project.builder.name %></a></h3>
   </div>
 </div>
 
@@ -18,8 +27,8 @@
 
 <div class="row">
   <% @project.lots.each do |lot| %>
-    <div class="col-lg-4 col-md-4">
-      <a href="<%= lot_path(lot)%>">
+    <div class="col-lg-5 col-md-5">
+      <a href="#" onclick="editLot(<%= lot.id%>)">
         <div class="card">
           <div class="card-body card-padding-small">
             <div class="d-flex flex-row">
@@ -27,11 +36,15 @@
                 <i class="mdi mdi-home-modern"></i>
               </div>
               <div class="col-md-7 align-self-center">
-                <h3 class="m-b-0 font-light"><%= lot.name %></h3>
+                <h2 class="m-b-0 font-light"><%= lot.number %></h2>
+
+                <h3 class="m-b-0 font-light"><%= lot.model.name %></h3>
+                <h4 class="m-b-0 font-light"><%= lot.address1 %></h4>
+                <h4 class="m-b-0 font-light"><%= lot.address2 %></h4>
+                <h5 class="m-b-0 font-light"><%= lot.state %>&nbsp;<%= lot.city %>&nbsp;<%= lot.zip %>&nbsp;</h5>
               </div>
               <div class="col-md-3 align-self-center text-right">
-                <span onclick="editProject(<%= project.id%>)"class="icon-list-actions green-color" data-toggle="tooltip" title="" data-original-title="Update"><i class="mdi mdi-pencil"></i></span>
-                <span onclick="disableProject(<%= project.id%>)" class="icon-list-actions red-color" data-toggle="tooltip" title="" data-original-title="Delete"><i class="mdi mdi-delete"></i></span>
+                <span onclick="disabledLot(<%= lot.id%>)" class="icon-list-actions red-color" data-toggle="tooltip" title="" data-original-title="Delete"><i class="mdi mdi-delete"></i></span>
               </div>
 
             </div>
@@ -48,3 +61,54 @@
     </div>
   </div>
 </div>
+
+
+
+
+<script type="text/javascript">
+
+    function newLot(){
+        $.get("/lots/new?projectId="+<%= @project.id %>,function(data){
+            $(".modal-inject").html(data);
+            $("#content_modal").modal('show');
+        })
+    }
+
+    function editLot(id){
+        $.get("/lots/"+id+"/edit?projectId="+<%= @project.id %>,function(data){
+            $(".modal-inject").html(data);
+            $("#content_modal").modal('show');
+        })
+    }
+
+    function disabledLot(id){
+        url= "/lot/"+id+"/";
+        console.log(url);
+        swal({
+            title: "Are you sure?",
+            text: "You are going to disable this builder!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Yes, disable it!",
+            closeOnConfirm: false
+        }, function(){
+
+
+            $.ajax({
+                url: url,
+                type: 'DELETE',
+                success: function(response) {
+                    swal("Deleted!", "Your builder has been disable.", "success");
+                    location.reload();
+                }
+            });
+        });
+
+    }
+</script>
+
+
+
+
+
