@@ -25,7 +25,7 @@ class TemplatesController < ApplicationController
           response = {success: false, data: "Template product not found!"}
         else
           product_template.update(template_params)
-          response = {success: true, data: "Template product updated successfully!"}
+          response = {success: true, data: "Template product updated successfully!", unit_name: product_template.product.unit.name}
         end
       end
     end

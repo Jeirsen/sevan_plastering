@@ -34,11 +34,11 @@
   	<% @model.templates.each do |template| %>
   		<div class="col-lg-3 col-md-6">
 		    <a onclick="openModalEditTemplate(this)" class="edit-template" style="cursor: pointer;">
-		      <div class="card" data-id="<%= template.id %>" data-product-id="<%= template.product_id %>">
+		      <div class="card" data-id="<%= template.id %>" data-quantity="<%= template.quantity %>" data-product-id="<%= template.product_id %>">
 		        <div class="d-flex flex-row">
 		          <div class="p-20">
 		            <h5 class="m-b-0 text-info">
-		              <small>Q<%= template.quantity %> <%= template.product.unit.name %></small>
+		              <small class="quantity">Q<%= template.quantity %> <%= template.product.unit.name %></small>
 		            </h5>
 		          </div>
 		          <div class="align-self-center m-l-20">
@@ -96,9 +96,44 @@
   </div>
 </div>
 
-
+<div class="modal fade" id="editProduct" role="dialog" aria-labelledby="editProduct">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h4 class="modal-title">Edit Template Product</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                  <label for="recipient-name" class="control-label">Product:</label>
+                  <input type="text" class="form-control" id="edit_product" readonly="true">
+                  <span class="label label-danger" style="display: none" id="danger_edit_product">Product is required!</span>
+              </div>
+              <div class="form-group">
+                  <label for="recipient-name" class="control-label">Quantity:</label>
+                  <input type="text" class="form-control" id="edit_product_quantity" required>
+                  <span class="label label-danger" style="display: none" id="danger_edit_quantity">Quantity is required!</span>
+              </div>
+              <div class="alert" id="edit_product_alert" style="display: none">
+              </div>
+            </form>
+            
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button onclick="editTemplateProduct()" ontype="button" class="btn btn-primary waves-effect waves-light">Edit</button>
+          </div>
+      </div>
+  </div>
+</div>
 
 <script type="text/javascript">
+	//For Template Products
+	var idProductTemplateForEditing = 0;
+	var product_id = 0;
+	var templateElement = "";
+
 	$(document).ready(function(){
 		 $("#add-product").select2({
 	    theme: "bootstrap",
@@ -234,11 +269,11 @@
 
 	  var element = '<div class="col-lg-3 col-md-6">\
 	    							<a onclick="openModalEditTemplate(this)" class="edit-template" style="cursor: pointer;">\
-	      							<div class="card" data-id="'+record_id+'" data-product-id="'+product_id+'">\
+	      							<div class="card" data-id="'+record_id+'" data-quantity="'+quantity+'" data-product-id="'+product_id+'">\
 	        							<div class="d-flex flex-row">\
 	          							<div class="p-20">\
 	            							<h5 class="m-b-0 text-info">\
-	              							<small>Q'+quantity +' '+ unit_name +'</small>\
+	              							<small class="quantity">Q'+quantity +' '+ unit_name +'</small>\
 	            							</h5>\
 	          							</div>\
 	          							<div class="align-self-center m-l-20">\
@@ -253,5 +288,94 @@
 	  $("#template_quantity").val("");
 	}
 
+	function openModalEditTemplate(element){
+		idProductTemplateForEditing = $(element).find(".card").attr("data-id");
+		product_id = $(element).find(".card").attr("data-product-id");
+		quantity = parseInt($(element).find(".card").attr("data-quantity"));
+		templateElement = element;
+		product_name = $(element).find("small");
+	
+	  $('#edit_product').val(product_name[1].innerText);
+	  $('#edit_product_quantity').val(quantity);
+	  $('#editProduct').modal('show');
+	}
+
+	function editTemplateProduct(){
+	  quantity = parseInt($("#edit_product_quantity").val());
+	  model_id = <%= @model.id %>
+
+	  if (!isNaN(quantity) || quantity !== null){
+	    template_object = {
+	      template : {
+	        id: idProductTemplateForEditing,
+	        model_id: model_id,
+	        product_id: product_id,
+	        quantity: quantity
+	      }
+	    }
+
+	    $.ajax({
+	      url: "<%= template_product_path %>",
+	      method: "POST",
+	      data: template_object,
+	      success: function (data) {
+	        if(data.success){
+	          updateProductElement(data.unit_name);
+	          $("#edit_product_alert").empty();
+	          $("#edit_product_alert").removeClass("alert-danger");
+	          $("#edit_product_alert").addClass("alert-success");
+	          message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+	                    <span aria-hidden="true">×</span>\
+	                    </button>';
+	          $("#edit_product_alert").append(message);
+	          $("#edit_product_alert").show();
+	          setTimeout(function(){
+	            $("#edit_product_alert").hide();
+	            $("#editProduct").modal('hide');
+	          },5000);
+	        }else{
+	          $("#edit_product_alert").empty();
+	          $("#edit_product_alert").removeClass("alert-success");
+	          $("#edit_product_alert").addClass("alert-danger");
+	          message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+	                    <span aria-hidden="true">×</span>\
+	                    </button>';
+	          $("#edit_product_alert").append(message);
+	          $("#edit_product_alert").show();
+	          setTimeout(function(){
+	            $("#edit_product_alert").hide();
+	          },5000);
+	        }
+	      },
+	      error: function (data) {
+	        $("#edit_product_alert").empty();
+	        $("#edit_product_alert").removeClass("alert-success");
+	        $("#edit_product_alert").addClass("alert-danger");
+	        message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+	                  <span aria-hidden="true">×</span>\
+	                  </button>';
+	        $("#edit_product_alert").append(message);
+	        $("#edit_product_alert").show();
+	        setTimeout(function(){
+	          $("#edit_product_alert").hide();
+	        },5000);
+	      }
+	    })
+
+	  }else{
+	    $("#danger_edit_quantity").show();
+	    setTimeout(function(){
+	        $('#danger_edit_quantity').hide();
+	    },5000);
+	  }
+	}
+
+	function updateProductElement(unit_name){
+	  quantity = parseInt($("#edit_product_quantity").val());
+	  $(templateElement).find(".quantity").text("Q" + quantity + " " + unit_name);
+	  $(templateElement).find(".card").attr('data-quantity', quantity); 
+	  templateElement = "";
+	  idProductTemplateForEditing = 0;
+	}
 
 </script>
