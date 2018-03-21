@@ -1,0 +1,22 @@
+<div class="row page-titles">
+	<div class="col-md-5 col-8 align-self-center">
+		<h3 class="text-themecolor">Sevan</h3>
+		<ol class="breadcrumb">
+	  	<li class="breadcrumb-item"><a href="<%= admin_users_path %>">Users</a></li>
+	    <li class="breadcrumb-item active"><%= @user.email %></li>
+	  </ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12 col-sm-12">
+		<h2 class="text-info"><%= @user.email %></h2>
+	</div>
+	<div class="col-md-4 col-sm-12">
+		<label class="font-weight-bold">Role: </label> <%= @user.role_name %>
+	</div>
+	
+	<div class="col-md-12 col-sm-12">
+    <a class="btn btn-outline-info" href="<%= edit_admin_user_path(@user) %>"><i class="fa fa-pencil"></i> Edit User</a>
+	</div>
+</div>

@@ -1,0 +1,42 @@
+<%= form_for [:admin,@user] do |f| %>
+	<div class="form-body">
+		<h3 class="card-title">User Info</h3>
+    <hr>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+       		<label class="control-label">Email</label>
+       		<%= f.text_field :email, :class => "form-control", :placeholder => "Email", required: true %>
+      	</div>
+      </div>
+      <div class="col-md-6">
+      	<div class="form-group">
+         	<label class="control-label">Role</label>
+         	<%= f.select :role, options_for_select(User.get_roles, @user.role),{}, {class: 'form-control select2', required: true, placeholder: "Select a role from the list"} %>
+        </div>
+     	</div>
+		</div>
+	</div>
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Save</button>
+    <a class="btn btn-inverse" href="<%= admin_users_path %>">Cancel</a>
+  </div>
+
+  <br>
+  
+  <% if @user.errors.any? %>
+    <div class="alert alert-danger">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">×</span> 
+      </button>
+      <h3 class="text-danger">
+        <i class="fa fa-times"></i> Error
+      </h3>
+      <% @user.errors.full_messages.each do |message| %>
+        <li style="list-style-type: none;"><%= message %></li>
+      <% end %>
+    </div>
+  <% end %>
+	
+<% end %>

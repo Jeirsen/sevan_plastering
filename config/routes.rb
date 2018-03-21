@@ -27,4 +27,8 @@ Rails.application.routes.draw do
   #templates
   post 'template-product' => 'templates#template_product', :as => 'template_product'
 
+  namespace :admin do
+    resources :users
+  end
+
 end
