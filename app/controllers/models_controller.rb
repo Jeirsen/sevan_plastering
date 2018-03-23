@@ -18,10 +18,31 @@ class ModelsController < ApplicationController
 		@model = Model.find(params[:id])
 	end
 
+	def edit
+		@model = Model.find(params[:id])
+		render :layout => false
+
+	end
+
+	def update
+
+		@model = Model.find(params[:id])
+		respond_to do |format|
+			if @model.update(model_params)
+
+				format.html { redirect_to project_path, notice: 'Model was successfully updated.' }
+				format.json { render :show, status: :ok, location: @model }
+			else
+				format.html { render :edit }
+				format.json { render json: @model.errors, status: :unprocessable_entity }
+			end
+		end
+	end
+
 	private
 
 	def model_params
-		params.require(:model).permit(:name, :builder_id)
+		params.require(:model).permit(:name, :image)
 	end
 
 end

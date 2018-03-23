@@ -1,0 +1,77 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="exampleModalLabel1">Edit Lot</h4>
+  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+</div>
+<div class="modal-body">
+  <%= form_with(scope: :model, url: model_update_path) do |form| %>
+    <% if @model.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(project.errors.count, "error") %> prohibited this project from being saved:</h2>
+
+        <ul>
+          <% @model.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+    <div class="form-group">
+      <label for="recipient-name" class="control-label">Name:</label>
+      <%= form.text_field :name, id: :project_name, class: "form-control", id: "name_model" %>
+      <span class="label label-danger" style="display: none" id="danger_name">Name is required!</span>
+    </div>
+    <div class="form-group">
+      <label for="recipient-name" class="control-label">Builder:</label>
+      <%= form.file_field :image, :class => "form-control", :onchange =>"updatePhoto(this);", id: "image_model"%>
+      <span class="label label-danger" style="display: none" id="danger_image">Image is required!</span>
+      <span class="label label-danger" style="display: none" id="danger_size"><strong>Warning!</strong> You can not upload images bigger than 2 MB.</span>
+
+    </div>
+    <img src="" id="image_upload">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <%= form.submit 'Save', class: "btn btn-danger waves-effect waves-light" %>
+  <% end %>
+
+  <script>
+      $(".select2").select2({
+          tags: true
+      });
+
+      $('form').submit(function() {
+
+          var name_model = $("#name_model").val();
+          var image_model = $("#image_model").val();
+
+          if (image_model == null || image_model == "" ) {
+              $("#danger_builder").show();
+              return false;
+          }
+
+          if (name_model == null || name_model == "" ) {
+              $("#danger_name").show();
+              return false;
+          }
+          return true;
+      });
+
+      const MAX_IMAGE_SIZE = 2048000;
+      function updatePhoto(input){
+          if (input.files && input.files[0]) {
+              if(input.files[0].size > MAX_IMAGE_SIZE){
+
+                  return;
+              }else {
+                  var reader = new FileReader();
+                  reader.onload = function (e) {
+                      $('#image_upload').attr('src', e.target.result);
+                  };
+                  reader.readAsDataURL(input.files[0]);
+              }
+          };
+      }
+  </script>
+</div>
+
+
+
+

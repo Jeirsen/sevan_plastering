@@ -1,9 +1,13 @@
-class Model < ApplicationRecord	
-	validates :name, presence: true
+class Model < ApplicationRecord
+
+	attr_accessor :avatar
+
 
 	belongs_to :builder
 	has_many :templates
 	Status = {:active => 1, :inactive => 0}
+
+
 
 	has_attached_file :image, styles: {
 			thumb: '100x100>',

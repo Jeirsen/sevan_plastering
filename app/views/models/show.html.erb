@@ -10,7 +10,7 @@
 
 <div class="row">
 	<div class="col-md-12 col-sm-12">
-		<h2 class="text-info"><%= @model.name %></h2>
+		<h2 class="text-info"><%= @model.name %> <button class="btn btn-primary" onclick="editModel(<%= @model.id %>)">Edit</button></h2>
 	</div>
 	<div class="col-md-12 col-sm-12">
 		<label class="font-weight-bold">Builder: </label> <%= @model.builder.name %>
@@ -128,7 +128,24 @@
   </div>
 </div>
 
+<div class="modal fade" id="content_modal_model" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content modal-inject-model">
+    </div>
+  </div>
+</div>
+
 <script type="text/javascript">
+
+  //edit  MODEL
+
+  function editModel(id){
+      $.get("/model/"+id+"/edit",function(data){
+          $(".modal-inject-model").html(data);
+          $("#content_modal_model").modal('show');
+      })
+  }
+
 	//For Template Products
 	var idProductTemplateForEditing = 0;
 	var product_id = 0;
