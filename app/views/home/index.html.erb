@@ -1,5 +1,52 @@
-<div class="container">
-    <h1>Welcome to sevan plastering!!</h1>
+<div class="row page-titles">
+	<div class="col-md-5 col-8 align-self-center">
+		<h3 class="text-themecolor">Sevan</h3>
+		<ol class="breadcrumb">
+		<li class="breadcrumb-item"><a href="<%= root_path %>">Home</a></li>
+		<li class="breadcrumb-item active">Orders</li>
+	  </ol>
+	</div>
 </div>
+
+<div class="row">
+	<div class="col-lg-12 col-xlg-6 m-b-30">
+		<button onclick="addNewOrder()" type="button" class="btn btn-outline-info"><i class="fa fa-plus"></i> Add new</button>
+	</div>	
+</div>
+
+
+<div class="row">
+	<% if !@orders.blank? %>
+		<% @orders.each do |order| %>
+			<div class="col-lg-4 col-md-4">
+				<a href="#">
+					<div class="card" style="width: 18rem;">
+					  <div class="card-body">
+					    <h5 class="card-title"><strong><%= order.order_number %> - <%= order.vendor.name %></strong></h5>
+					    <h6 class="card-subtitle mb-2 text-muted"><%= order.project.name %></h6>
+					    <h6 class="card-subtitle mb-2 text-muted">Lot: <%= order.lot.number %></h6>
+					    <small>Delivery Date: <%= order.delivery_date.strftime("%d/%m/%Y") %></small><br>
+					    <small>Needed By: <%= order.time_needed_by %></small>
+					  </div>
+					</div>	
+				</a>
+			</div>
+		<% end %>
+	<% else %>
+		<div class="col-md-12 col-sm-12">
+			<div class="alert alert-info" style="width: 100%">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+						<span aria-hidden="true">×</span>
+				</button>
+			  <h3 class="text-info">
+				<i class="fa fa-exclamation-circle"></i> Information
+				</h3> 
+				There are no orders created yet, please go and create some.
+			</div>
+		</div>
+	<% end %>
+</div>
+
+
   
 

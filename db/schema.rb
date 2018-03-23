@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180320183420) do
+ActiveRecord::Schema.define(version: 20180323023631) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,6 +27,15 @@ ActiveRecord::Schema.define(version: 20180320183420) do
     t.bigint "project_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "status", default: 1
+    t.bigint "model_id"
+    t.string "number"
+    t.string "address1"
+    t.string "address2"
+    t.string "city"
+    t.string "state"
+    t.string "zip"
+    t.index ["model_id"], name: "index_lots_on_model_id"
     t.index ["project_id"], name: "index_lots_on_project_id"
   end
 
@@ -38,6 +47,22 @@ ActiveRecord::Schema.define(version: 20180320183420) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["builder_id"], name: "index_models_on_builder_id"
+  end
+
+  create_table "orders", force: :cascade do |t|
+    t.integer "order_number"
+    t.datetime "delivery_date"
+    t.bigint "project_id"
+    t.integer "time_needed_by"
+    t.bigint "lot_id"
+    t.integer "status", default: 0
+    t.bigint "vendor_id"
+    t.string "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lot_id"], name: "index_orders_on_lot_id"
+    t.index ["project_id"], name: "index_orders_on_project_id"
+    t.index ["vendor_id"], name: "index_orders_on_vendor_id"
   end
 
   create_table "product_vendors", force: :cascade do |t|
@@ -128,8 +153,12 @@ ActiveRecord::Schema.define(version: 20180320183420) do
     t.integer "status", default: 1
   end
 
+  add_foreign_key "lots", "models"
   add_foreign_key "lots", "projects"
   add_foreign_key "models", "builders"
+  add_foreign_key "orders", "lots"
+  add_foreign_key "orders", "projects"
+  add_foreign_key "orders", "vendors"
   add_foreign_key "product_vendors", "products"
   add_foreign_key "product_vendors", "vendors"
   add_foreign_key "products", "units"
