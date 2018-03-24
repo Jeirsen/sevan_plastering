@@ -35,7 +35,7 @@ class LotsController < ApplicationController
 
     respond_to do |format|
       if @lot.save
-        format.html { redirect_to @lot, notice: 'Lot was successfully created.' }
+        format.html { redirect_to lots_path, notice: 'Lot was successfully created.' }
         format.json { render :show, status: :created, location: @lot }
       else
         format.html { render :new }
@@ -49,7 +49,7 @@ class LotsController < ApplicationController
   def update
     respond_to do |format|
       if @lot.update(lot_params)
-        format.html { redirect_to @lot, notice: 'Lot was successfully updated.' }
+        format.html { redirect_to lots_path, notice: 'Lot was successfully updated.' }
         format.json { render :show, status: :ok, location: @lot }
       else
         format.html { render :edit }

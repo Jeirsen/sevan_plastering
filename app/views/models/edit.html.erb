@@ -3,7 +3,7 @@
   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 </div>
 <div class="modal-body">
-  <%= form_with(scope: :model, url: model_update_path) do |form| %>
+  <%= form_with(scope: :model, url: model_update_path, multipart: true) do |form| %>
     <% if @model.errors.any? %>
       <div id="error_explanation">
         <h2><%= pluralize(project.errors.count, "error") %> prohibited this project from being saved:</h2>
@@ -22,7 +22,7 @@
     </div>
     <div class="form-group">
       <label for="recipient-name" class="control-label">Builder:</label>
-      <%= form.file_field :image, :class => "form-control", :onchange =>"updatePhoto(this);", id: "image_model"%>
+      <%= form.file_field :photo, :class => "form-control", :onchange =>"updatePhoto(this);", id: "image_model"%>
       <span class="label label-danger" style="display: none" id="danger_image">Image is required!</span>
       <span class="label label-danger" style="display: none" id="danger_size"><strong>Warning!</strong> You can not upload images bigger than 2 MB.</span>
 
