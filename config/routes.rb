@@ -26,6 +26,8 @@ Rails.application.routes.draw do
   get 'model/:id/edit' => 'models#edit'
   post 'model/:id' => 'models#update', :as => 'model_update'
 
+  #orders
+  get 'orders/:id' => 'orders#show', :as => 'order_detail'
 
 
 

@@ -19,14 +19,14 @@
 	<% if !@orders.blank? %>
 		<% @orders.each do |order| %>
 			<div class="col-lg-4 col-md-4">
-				<a href="#">
+				<a href="<%= order_detail_path(order.id) %>">
 					<div class="card" style="width: 18rem;">
 					  <div class="card-body">
 					    <h5 class="card-title"><strong><%= order.order_number %> - <%= order.vendor.name %></strong></h5>
 					    <h6 class="card-subtitle mb-2 text-muted"><%= order.project.name %></h6>
 					    <h6 class="card-subtitle mb-2 text-muted">Lot: <%= order.lot.number %></h6>
 					    <small>Delivery Date: <%= order.delivery_date.strftime("%d/%m/%Y") %></small><br>
-					    <small>Needed By: <%= order.time_needed_by %></small>
+					    <small>Needed By: <%= Order.TimeNeededBy(order.time_needed_by) %></small>
 					  </div>
 					</div>	
 				</a>
