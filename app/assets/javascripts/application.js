@@ -22,4 +22,5 @@
 //= require jquery.sparkline.min.js
 //= require custom.min.js
 //= require sweetalert.min.js
+//= require bootstrap-datepicker.min.js
 //= require_tree .

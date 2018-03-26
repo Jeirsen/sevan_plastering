@@ -5,11 +5,27 @@ class Order < ApplicationRecord
 
 	Status = {:saved => 0, :sent => 1, :view => 3, :closed => 4, :received => 5}
 	TimeNeededBy = {:firts_am => 0, :second_am => 1, :anytime => 2, :asap => 3, :pick_up => 4, :morning => 5, :noon => 6, :afternoon => 7, :saturday => 8}
+	TimeNeeded = {firts_am: 0, second_am: 1, anytime: 2, asap: 3, pick_up: 4, morning: 5, noon: 6, afternoon: 7, saturday: 8}
+
+	def self.get_time_needed_by
+		{
+			"-None-" => nil,
+			"First AM" => TimeNeeded[:firts_am],
+			"Second AM" => TimeNeeded[:second_am],
+			"Anytime" => TimeNeeded[:anytime],
+			"ASAP" => TimeNeeded[:asap],
+			"Pick Up" => TimeNeeded[:pick_up],
+			"Morning" => TimeNeeded[:morning],
+			"Noon" => TimeNeeded[:noon],
+			"Afternoon" => TimeNeeded[:afternoon],
+			"Saturday" => TimeNeeded[:saturday]
+		}
+	end
 
 	def self.TimeNeededBy(time_type)
 		case time_type
 		when Order::TimeNeededBy[:firts_am]
-			return "Firts AM"
+			return "First AM"
 		when Order::TimeNeededBy[:second_am]
 			return "Second AM"
 		when Order::TimeNeededBy[:anytime]

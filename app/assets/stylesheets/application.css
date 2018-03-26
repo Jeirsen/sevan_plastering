@@ -9,6 +9,7 @@
  *= require select2-bootstrap
  *= require font-awesome.css
  *= require sweetalert
+ *= require bootstrap-datepicker.min.css
  *= require_self
  *= require_tree .
 */

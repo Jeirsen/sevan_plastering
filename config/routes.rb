@@ -28,8 +28,9 @@ Rails.application.routes.draw do
 
   #orders
   get 'orders/:id' => 'orders#show', :as => 'order_detail'
-
-
+  get 'search-projects' => 'orders#search_projects', :as => 'search_projects'
+  get 'search-lots' => 'orders#search_lots', :as => 'search_lots'
+  get 'searc-model' => 'orders#search_model', :as => 'search_model'
 
   #templates
   post 'template-product' => 'templates#template_product', :as => 'template_product'

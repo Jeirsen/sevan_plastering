@@ -10,10 +10,10 @@
 
 <div class="row">
 	<div class="col-lg-12 col-xlg-6 m-b-30">
-		<button onclick="addNewOrder()" type="button" class="btn btn-outline-info"><i class="fa fa-plus"></i> Add new</button>
+		<button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#newOrder">
+			<i class="fa fa-plus"></i> Add new</button>
 	</div>	
 </div>
-
 
 <div class="row">
 	<% if !@orders.blank? %>
@@ -47,6 +47,236 @@
 	<% end %>
 </div>
 
+<!-- modals -->
+<div class="modal fade bs-example-modal-lg show" id="newOrder" role="dialog" aria-labelledby="newOrder">
+  <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h4 class="modal-title" id="exampleModalLabel1">Add Purchase Order</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+          	<form>
+          		<div class="row">
+          			<div class="col-md-6">
+          				<div class="form-group">
+	                  <label for="recipient-name" class="control-label">Delivery Date:</label>
+	                  <input type="text" class="form-control mydatepicker" placeholder="mm/dd/yyyy">
+	                  <span class="label label-danger" style="display: none" id="danger_delivery">Delivery Date is required!</span>
+              		</div>		
+          			</div>
+          			<div class="col-md-6">
+          				<div class="form-group">
+	                  <label for="recipient-name" class="control-label">Time needed by:</label>
+	                  <%= select_tag "time_needed_by", options_for_select(Order.get_time_needed_by.map { |e| [e[0], e[1]] }.sort), { :id => "select_time_needed", :class => "form-control"} %>
+	                  <span class="label label-danger" style="display: none" id="danger_time_needed">Time Needed By is required!</span>
+              		</div>		
+          			</div>
+          		</div>
+          		<div class="row">
+          			<div class="col-md-6">
+          				<div class="form-group">
+	                  <label for="recipient-name" class="control-label">Project:</label>
+	                  <select id="select-project"></select>
+	                  <span class="label label-danger" style="display: none" id="danger_project">Project is required!</span>
+              		</div>
+          			</div>
+          			<div class="col-md-6">
+          				<div class="form-group">
+	                  <label for="recipient-name" class="control-label">Lot:</label>
+	                  <select id="select-lot" disabled="true"></select>
+	                  <span class="label label-danger" style="display: none" id="danger_lot">Lot is required!</span>
+	                  <span class="label label-danger" style="display: none" id="danger_load_lot">Error while loading lots!!</span>
+              		</div>
+          			</div>
+          		</div>
+          		<div class="row">
+          			<div class="col-md-6">
+	          			<div class="form-group">
+	                  <label for="recipient-name" class="control-label">Model:</label>
+	                  <input type="text" data-model-id="" class="form-control" id="model_name" disabled="true">
+	                  <span class="label label-danger" style="display: none" id="danger_model"></span>
+              		</div>
+          			</div>
+          			<div class="col-md-6">
+          				<div class="form-group">
+	                  <label for="recipient-name" class="control-label">Vendor:</label>
+	                  <%= select_tag "vendors", options_for_select(Vendor.get_all.map { |e| [e.name, e.id] }.sort), { :id => "select_vendor", :class => "form-control", :include_blank => "- None -"} %>
+	                  <span class="label label-danger" style="display: none" id="danger_vendor"></span>
+              		</div>
+          			</div>
+          		</div>
+          		<div class="row">
+          			<div class="col-md-12">
+          				<div class="form-group">
+	                  <label for="recipient-name" class="control-label">Notes:</label>
+	                  <textarea class="form-control" rows="4" id="order_notes"></textarea>
+              		</div>
+          			</div>
+          		</div>
+             
+              <div class="alert" id="new_order_alert" style="display: none">
+              </div>
+          	</form>
+            
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button onclick="addNewOrder()" ontype="button" class="btn btn-danger waves-effect waves-light">Create Order</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+	var project_id = 0;
+
+	$(document).ready(function(){
+
+		jQuery('.mydatepicker, #datepicker').datepicker();
+		jQuery('#datepicker-autoclose').datepicker({
+        autoclose: true,
+        todayHighlight: true
+    });
+    jQuery('#date-range').datepicker({
+        toggleActive: true
+    });
+    jQuery('#datepicker-inline').datepicker({
+        todayHighlight: true
+    });
+
+	  $("#select-project").select2({
+	    theme: "bootstrap",
+	    ajax:{
+	      url: "<%= search_projects_path %>",
+	      dataType: 'json',
+	      data: function(params){
+	        return{
+	          q: params.term
+	        };
+	      },
+	      processResults: function (data) {
+	        return {
+	            results: data.data
+	        };
+	      },
+	    },
+	    minimumInputLength: 3,
+	    placeholder: {
+	      id: '-1',
+	      text: 'Enter project name ...'
+	    },
+	    escapeMarkup: function (markup) {
+	      return markup;
+	    },
+	    templateResult: function (project) {
+	      if (project.loading) return 'project.name';
+	      return $("<div>"+ project.name +"</div>")
+	    }, 
+	    templateSelection: function (project) {
+	      if (project === '' || project === null){
+	          return '<span>Enter project name ...</span>';
+	      }
+	      return $("<span>"+ project.name +"</span>")
+	    }
+	  });
+
+	  $("#select-lot").select2({
+	    theme: "bootstrap",
+	    minimumResultsForSearch: -1
+	  });
+
+	});
+
+	$('#select-project').on('change', function(){
+  	project_id = $("#select-project option:selected").val();
+  	LoadLotsByProject();
+	});	
+
+	function LoadLotsByProject(){
+		if (project_id !== 0 || project_id !== null || project_id || undefined){
+			$.ajax({
+	      url: "<%= search_lots_path %>",
+	      method: "GET",
+	      data: {project_id: project_id},
+	      success: function (data) {
+	        if(data.success){
+	        	$("#select-lot").empty();
+	        	$("#select-lot").append('<option value="0">Select an option</option>')
+	          $.each(data.data, function(){
+	            $("#select-lot").append('<option value="'+ this.id +'">'+ this.name +'</option>')
+	          });
+	          $("#select-lot").attr("disabled", false);
+	        }else{
+	          $("#danger_load_lot").show();
+	          setTimeout(function(){
+	            $("#danger_load_lot").hide();
+	          },5000);
+	        }
+	      },
+	      error: function (data) {
+	        $("#danger_load_lot").show();
+	          setTimeout(function(){
+	            $("#danger_load_lot").hide();
+	        },5000);
+	      }
+	    });
+		}else{
+			$("#danger_project").show();
+	    setTimeout(function(){
+	    	$("#danger_project").hide();
+	    },5000);
+		}
+	}
+
+	$('#select-lot').on('change', function(){
+  	lot_id = $("#select-lot option:selected").val();
+  	SearchModel();
+	});
+
+	function SearchModel(){
+		if (lot_id !== 0 || lot_id !== null || lot_id || undefined){
+			$.ajax({
+	      url: "<%= search_model_path %>",
+	      method: "GET",
+	      data: {lot_id: lot_id},
+	      success: function (data) {
+	      	debugger
+	        if(data.success){
+	          $("#model_name").val('');
+	          $("#model_name").val(data.model_name);
+	          $("#model_name").attr('data-model-id', data.model_id); 
+	        }else{
+	        	$("#danger_model").append(data.data);
+          	$("#danger_model").show();
+	          setTimeout(function(){
+	            $("#danger_model").hide();
+	          },5000);
+	        }
+	      },
+	      error: function (data) {
+	        $("#danger_model").append(data.data);
+          	$("#danger_model").show();
+	          setTimeout(function(){
+	            $("#danger_model").hide();
+	        },5000);
+	      }
+	    });
+		}else{
+			$("#danger_lot").show();
+	    setTimeout(function(){
+	    	$("#danger_lot").hide();
+	    },5000);
+		}
+	}
+
+	function addNewOrder(){
+		
+	}
+
+
+</script>
 
   
 

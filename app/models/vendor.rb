@@ -12,4 +12,8 @@ class Vendor < ApplicationRecord
 
   Status = {:active => 1, :inactive => 0}
 
+  def self.get_all
+    where status: Status[:active]
+  end 
+
 end
