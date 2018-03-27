@@ -6,6 +6,7 @@ class User < ApplicationRecord
 
   Roles = {normal: 0, admin: 1}
 
+  has_many :orders
 
   def role_name
   	return "Admin" if self.role == Roles[:admin]

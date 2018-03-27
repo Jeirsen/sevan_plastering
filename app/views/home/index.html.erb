@@ -61,7 +61,7 @@
           			<div class="col-md-6">
           				<div class="form-group">
 	                  <label for="recipient-name" class="control-label">Delivery Date:</label>
-	                  <input type="text" class="form-control mydatepicker" placeholder="mm/dd/yyyy" id="delivery_date">
+	                  <input type="text" class="form-control mydatepicker" placeholder="dd/mm/yyyy" id="delivery_date">
 	                  <span class="label label-danger" style="display: none" id="danger_delivery">Delivery Date is required!</span>
               		</div>		
           			</div>
@@ -135,7 +135,9 @@
 
 	$(document).ready(function(){
 
-		jQuery('.mydatepicker, #datepicker').datepicker();
+		jQuery('.mydatepicker, #datepicker').datepicker({
+			format:'dd/mm/yyyy'
+		});
 		jQuery('#datepicker-autoclose').datepicker({
         autoclose: true,
         todayHighlight: true
@@ -299,7 +301,6 @@
 	      data: order_object,
 	      success: function (data) {
 	        if(data.success){
-	        	debugger
 	          $("#new_order_alert").empty();
 	          $("#new_order_alert").removeClass("alert-danger");
 	          $("#new_order_alert").addClass("alert-success");

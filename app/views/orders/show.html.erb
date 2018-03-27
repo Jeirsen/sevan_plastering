@@ -8,13 +8,80 @@
 	</div>
 </div>
 
-<div>
-	Espacio para el encabezdo
+<div class="row">
+	<div class="col-md-12 col-sm-12">
+		<h2 class="text-info">Order Number - <%= @order.order_number %></h2>
+	</div>
+	<div class="col-md-4 col-sm-12">
+		<label class="font-weight-bold">Vendor: </label> <%= @order.vendor.name %>
+	</div>
+	<div class="col-md-4 col-sm-12">
+		<label class="font-weight-bold">Lot: </label> <%= @order.lot.number %>
+	</div>
+	<div class="col-md-4 col-sm-12">
+		<label class="font-weight-bold">Porject: </label> <%= @order.project.name %>
+	</div>
+	<div class="col-md-4 col-sm-12">
+		<label class="font-weight-bold">Model: </label> <%= @model %>
+	</div>
+	<div class="col-md-4 col-sm-12">
+		<label class="font-weight-bold">Time Needed By: </label> <%= Order.TimeNeededBy(@order.time_needed_by) %>
+	</div>
+	<div class="col-md-4 col-sm-12">
+		<label class="font-weight-bold">Delivery Date: </label> <%= @order.delivery_date.strftime("%d/%m/%Y") %>
+	</div>
+	<div class="col-md-4 col-sm-12">
+		<label class="font-weight-bold">Order By: </label> <%= @order.user.email %>
+	</div>
+	<div class="col-md-4 col-sm-12">
+		<label class="font-weight-bold">Time Order Made: </label> <%= @order.created_at.strftime("%d/%m/%Y - %H:%M: %S") %>
+	</div>
+	<div class="col-md-4 col-sm-12">
+		<label class="font-weight-bold">Status: </label> <%= Order.order_status(@order.status) %>
+	</div>
+	<div class="col-md-4 col-sm-12">
+		<label class="font-weight-bold">Order Total: </label> <%= @order.order_total %> $
+	</div>
 </div>
-
-<br>
 <br>
 
-<div>
-	Espacio para el detalle de la orden.....
+<div class="row" id="order_details">
+	<div class="col-md-12 col-sm-12" style="display: -webkit-inline-box;">
+		<h2 class="text-info">Purchase Order Details</h2>&nbsp;&nbsp;&nbsp;
+    <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#addOrderItem">
+      <i class="fa fa-plus"></i> Add New
+    </button>
+	</div>
+	<% if !@order.order_details.blank? %>
+		<% @order.order_details.each do |item| %>
+			<div class="col-lg-3 col-md-6">
+        <a onclick="EditOrderItem(this)" class="edit-item-order" style="cursor: pointer;">
+          <div class="card" data-item-id="<%= item.id %>">
+            <div class="d-flex flex-row">
+              <div class="p-20">
+                <h5 class="m-b-0 text-info">$<%= item.total %></h5>
+              </div>
+              <div class="align-self-center m-l-20">
+                <small class="text-muted m-b-0"><%= item.product.name %></small><br>
+                <small class="text-muted m-b-0">$<%= item.price %></small>
+                <small class="text-muted m-b-0">Q<%= item.quantity %></small>
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+	  <% end %>
+	<% else %>
+    <div class="col-md-12 col-sm-12">
+      <div class="alert alert-info" style="width: 100%">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+        <h3 class="text-info">
+          <i class="fa fa-exclamation-circle"></i> Information
+        </h3> 
+        There are no products related to this order, please go and add some.
+      </div>
+    </div>
+	<% end %>
 </div>

@@ -2,6 +2,8 @@ class OrdersController < ApplicationController
 	
 	def show
 		@order = Order.find(params[:id])
+		model = Model.find(@order.lot_id)
+		@model = model.name
 	end
 
 	def search_projects
@@ -38,7 +40,6 @@ class OrdersController < ApplicationController
 	end
 
 	def create_order
-		byebug
 		if (params[:order][:delivery_date].blank? or params[:order][:time_needed_by].blank? or params[:order][:project_id].blank? or params[:order][:lot_id].blank? or params[:order][:vendor_id].blank? or params[:order][:model_id].blank?)
 			response = {success: false, data: "Missing parameters"}	
 		else
@@ -49,9 +50,11 @@ class OrdersController < ApplicationController
       	next_order_number = OrderNumbers.create(:order_number => 1)
       	next_order_number.save
       	order.order_number = 1
+      	order.user_id = current_user.id
       else
       	next_order_number = OrderNumbers.find(1)
       	order.order_number = next_order_number.order_number
+      	order.user_id = current_user.id
      	end
 
       if !order.save
@@ -62,7 +65,6 @@ class OrdersController < ApplicationController
       	order_total = 0
       	template = Template.where(:model_id => params[:order][:model_id])
       	template.each do |model|
-      		byebug
       		product_vendor = vendor.product_vendors.where(:product_id => model.product_id, status: ProductVendor::Status[:active]).first
       		if !product_vendor.blank?
       			detail = OrderDetail.create(:order_id => order.id, :product_id => model.product_id, :quantity => model.quantity, :price => product_vendor.price, :total => (product_vendor.price * model.quantity))
@@ -82,7 +84,7 @@ class OrdersController < ApplicationController
 	private
 
   def order_params
-      params.require(:order).permit(:delivery_date, :project_id, :time_needed_by, :lot_id, :status, :vendor_id, :notes)
+      params.require(:order).permit(:delivery_date, :project_id, :time_needed_by, :lot_id, :status, :vendor_id, :notes, :user_id)
   end
 
 end
