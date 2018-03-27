@@ -61,7 +61,7 @@
           			<div class="col-md-6">
           				<div class="form-group">
 	                  <label for="recipient-name" class="control-label">Delivery Date:</label>
-	                  <input type="text" class="form-control mydatepicker" placeholder="mm/dd/yyyy">
+	                  <input type="text" class="form-control mydatepicker" placeholder="mm/dd/yyyy" id="delivery_date">
 	                  <span class="label label-danger" style="display: none" id="danger_delivery">Delivery Date is required!</span>
               		</div>		
           			</div>
@@ -95,6 +95,7 @@
 	          			<div class="form-group">
 	                  <label for="recipient-name" class="control-label">Model:</label>
 	                  <input type="text" data-model-id="" class="form-control" id="model_name" disabled="true">
+	                  <span class="label label-danger" style="display: none" id="danger_template">Model is required!</span>
 	                  <span class="label label-danger" style="display: none" id="danger_model"></span>
               		</div>
           			</div>
@@ -102,7 +103,7 @@
           				<div class="form-group">
 	                  <label for="recipient-name" class="control-label">Vendor:</label>
 	                  <%= select_tag "vendors", options_for_select(Vendor.get_all.map { |e| [e.name, e.id] }.sort), { :id => "select_vendor", :class => "form-control", :include_blank => "- None -"} %>
-	                  <span class="label label-danger" style="display: none" id="danger_vendor"></span>
+	                  <span class="label label-danger" style="display: none" id="danger_vendor">Vendor is required!</span>
               		</div>
           			</div>
           		</div>
@@ -242,7 +243,6 @@
 	      method: "GET",
 	      data: {lot_id: lot_id},
 	      success: function (data) {
-	      	debugger
 	        if(data.success){
 	          $("#model_name").val('');
 	          $("#model_name").val(data.model_name);
@@ -272,7 +272,142 @@
 	}
 
 	function addNewOrder(){
-		
+		if (!ValidateOrderData()){
+			delivery_date = $.trim($("#delivery_date").val());
+	  	time_needed_by = $("#select_time_needed").val();
+	  	project_id = $('#select-project :selected').val();
+	  	lot_id = $('#select-lot :selected').val();
+	  	model_id = parseInt($("#model_name").attr("data-model-id"));
+	  	vendor_id = $("#select_vendor").val();
+	  	notes = $("#order_notes").val();
+
+	    order_object = {
+	      order : {
+	        delivery_date: delivery_date,
+	        time_needed_by: time_needed_by,
+	        project_id: project_id,
+	        lot_id: lot_id,
+	        model_id: model_id,
+	        vendor_id: vendor_id,
+	        notes: notes
+	      }
+	    }
+
+	    $.ajax({
+	      url: "<%= create_order_path %>",
+	      method: "POST",
+	      data: order_object,
+	      success: function (data) {
+	        if(data.success){
+	        	debugger
+	          $("#new_order_alert").empty();
+	          $("#new_order_alert").removeClass("alert-danger");
+	          $("#new_order_alert").addClass("alert-success");
+	          message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+	                    <span aria-hidden="true">×</span>\
+	                    </button>';
+	          $("#new_order_alert").append(message);
+	          $("#new_order_alert").show();
+	          setTimeout(function(){
+	            $("#new_order_alert").hide();
+	            window.location.href = "orders/"+data.order_id
+	          },3000);
+	        }else{
+	          $("#new_order_alert").empty();
+	          $("#new_order_alert").removeClass("alert-success");
+	          $("#new_order_alert").addClass("alert-danger");
+	          message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+	                    <span aria-hidden="true">×</span>\
+	                    </button>';
+	          $("#new_order_alert").append(message);
+	          $("#new_order_alert").show();
+	          setTimeout(function(){
+	            $("#vendor_product_alert").hide();
+	          },5000);
+	        }
+	      },
+	      error: function (data) {
+	        $("#new_order_alert").empty();
+	        $("#new_order_alert").removeClass("alert-success");
+	        $("#new_order_alert").addClass("alert-danger");
+	        message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+	                  <span aria-hidden="true">×</span>\
+	                  </button>';
+	        $("#new_order_alert").append(message);
+	        $("#new_order_alert").show();
+	        setTimeout(function(){
+	          $("#new_order_alert").hide();
+	        },5000);
+	      }
+	    })
+		}	
+	}
+
+	function ValidateOrderData(){
+		delivery_date = $.trim($("#delivery_date").val());
+	  time_needed_by = $("#select_time_needed").val();
+	  project_id = $('#select-project :selected').val();
+	  lot_id = $('#select-lot :selected').val();
+	  model_id = parseInt($("#model_name").attr("data-model-id"));
+	  vendor_id = $("#select_vendor").val();
+	  error = false;
+
+	  if(delivery_date.length === 0)
+	  { 
+	    $("#danger_delivery").show();
+	    setTimeout(function(){
+	        $('#danger_delivery').hide();
+	    },5000);
+	    error = true;
+	  }
+
+	  if(time_needed_by === "")
+	  { 
+	    $("#danger_time_needed").show();
+	    setTimeout(function(){
+	        $('#danger_time_needed').hide();
+	    },5000);
+	    error = true;
+	  }
+
+	 	if(project_id === undefined || project_id === null)
+	  { 
+	    $("#danger_project").show();
+	    setTimeout(function(){
+	        $('#danger_project').hide();
+	    },5000);
+	    error = true;
+	  }
+
+	 	if(lot_id === undefined || lot_id === null)
+	  { 
+	    $("#danger_lot").show();
+	    setTimeout(function(){
+	        $('#danger_lot').hide();
+	    },5000);
+	    error = true;
+	  }
+
+	 	if(model_id === undefined || model_id === 0 || model_id === null)
+	  { 
+	    $("#danger_template").show();
+	    setTimeout(function(){
+	        $('#danger_template').hide();
+	    },5000);
+	    error = true;
+	  }
+
+	 	if(vendor_id === "")
+	  { 
+	    $("#danger_vendor").show();
+	    setTimeout(function(){
+	        $('#danger_vendor').hide();
+	    },5000);
+	    error = true;
+	  }
+
+
+	  return error;
 	}
 
 

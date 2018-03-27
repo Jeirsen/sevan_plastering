@@ -37,4 +37,52 @@ class OrdersController < ApplicationController
 		render json: response, status: 200
 	end
 
+	def create_order
+		byebug
+		if (params[:order][:delivery_date].blank? or params[:order][:time_needed_by].blank? or params[:order][:project_id].blank? or params[:order][:lot_id].blank? or params[:order][:vendor_id].blank? or params[:order][:model_id].blank?)
+			response = {success: false, data: "Missing parameters"}	
+		else
+      #Create a new order
+      next_order_number = OrderNumbers.find(1)
+      order = Order.new(order_params)
+      if next_order_number.blank?
+      	next_order_number = OrderNumbers.create(:order_number => 1)
+      	next_order_number.save
+      	order.order_number = 1
+      else
+      	next_order_number = OrderNumbers.find(1)
+      	order.order_number = next_order_number.order_number
+     	end
+
+      if !order.save
+        response = {success: false, data: "Server exception creating the new order"}
+      else
+      	vendor_id = params[:order][:vendor_id].to_i
+      	vendor = Vendor.find(vendor_id)
+      	order_total = 0
+      	template = Template.where(:model_id => params[:order][:model_id])
+      	template.each do |model|
+      		byebug
+      		product_vendor = vendor.product_vendors.where(:product_id => model.product_id, status: ProductVendor::Status[:active]).first
+      		if !product_vendor.blank?
+      			detail = OrderDetail.create(:order_id => order.id, :product_id => model.product_id, :quantity => model.quantity, :price => product_vendor.price, :total => (product_vendor.price * model.quantity))
+      			order_total += (product_vendor.price * model.quantity)
+      		end
+      	end
+
+      	order.update(order_total: order_total)
+      	next_order_number.update(order_number: next_order_number.order_number + 1)
+
+        response = {success: true, data: "Order created successfully!", order_id: order.id}
+      end
+		end
+		render json: response, status: 200
+	end
+
+	private
+
+  def order_params
+      params.require(:order).permit(:delivery_date, :project_id, :time_needed_by, :lot_id, :status, :vendor_id, :notes)
+  end
+
 end
