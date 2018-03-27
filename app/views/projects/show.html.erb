@@ -31,19 +31,22 @@
       <a href="#" onclick="editLot(<%= lot.id%>)">
         <div class="card">
           <div class="card-body card-padding-small">
-            <div class="d-flex flex-row">
-              <div class="round round-sm align-self-center round-info">
-                <i class="mdi mdi-home-modern"></i>
+            <div class="d-flex  flex-row">
+              <div class="col-md-3 boder-right">
+                <h2 class="m-b-3 font-light"><%= lot.number %></h2>
+
+                <div class="round-big round round-sm round-info">
+                  <i class="mdi mdi-home-modern"></i>
+                </div>
+
               </div>
               <div class="col-md-7 align-self-center">
-                <h2 class="m-b-0 font-light"><%= lot.number %></h2>
-
-                <h3 class="m-b-0 font-light"><%= lot.model.name %></h3>
+                <h2 class="m-b-0 font-light"><%= lot.model.name %></h2>
                 <h4 class="m-b-0 font-light"><%= lot.address1 %></h4>
-                <h4 class="m-b-0 font-light"><%= lot.address2 %></h4>
-                <h5 class="m-b-0 font-light"><%= lot.state %>&nbsp;<%= lot.city %>&nbsp;<%= lot.zip %>&nbsp;</h5>
+                <h6 class="m-b-0 font-light"><i><%= lot.address2 %></i></h6>
+                <h5 class="m-b-0 font-light"><strong><%= lot.state %>&nbsp;<%= lot.city %>&nbsp;<%= lot.zip %>&nbsp</strong></h5>
               </div>
-              <div class="col-md-3 align-self-center text-right">
+              <div class="col-md-2 align-self-center text-right">
                 <span onclick="disabledLot(<%= lot.id%>)" class="icon-list-actions red-color" data-toggle="tooltip" title="" data-original-title="Delete"><i class="mdi mdi-delete"></i></span>
               </div>
 

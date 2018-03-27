@@ -527,6 +527,12 @@ html body .bg-white {
 /*******************
 Rounds
 *******************/
+.round-big {
+    width: 55px !important;
+    height: 55px !important;
+    font-size: 45px !important;
+}
+
 .round {
   line-height: 48px;
   color: #ffffff;
@@ -8024,5 +8030,9 @@ input[type=checkbox]:not(:disabled).tabbed:focus ~ .lever::after {
 
 .red-color {
     color: darkred;
+}
+
+.boder-right {
+    border-right: 1px solid #1e88e5;
 }
 
