@@ -20,4 +20,8 @@ class User < ApplicationRecord
       "Normal" => Roles[:normal]
     }
   end
+
+  def is_admin
+    return self.role == Roles[:admin]
+  end
 end

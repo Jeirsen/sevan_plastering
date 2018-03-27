@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180323023631) do
+ActiveRecord::Schema.define(version: 20180327035822) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,7 +46,27 @@ ActiveRecord::Schema.define(version: 20180323023631) do
     t.integer "status", default: 1
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "photo_file_name"
+    t.string "photo_content_type"
+    t.integer "photo_file_size"
+    t.datetime "photo_updated_at"
     t.index ["builder_id"], name: "index_models_on_builder_id"
+  end
+
+  create_table "order_details", force: :cascade do |t|
+    t.bigint "order_id"
+    t.bigint "product_id"
+    t.integer "quantity"
+    t.decimal "price", precision: 5, scale: 2
+    t.decimal "total", precision: 5, scale: 2
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_order_details_on_order_id"
+    t.index ["product_id"], name: "index_order_details_on_product_id"
+  end
+
+  create_table "order_numbers", force: :cascade do |t|
+    t.integer "order_number"
   end
 
   create_table "orders", force: :cascade do |t|
@@ -60,8 +80,11 @@ ActiveRecord::Schema.define(version: 20180323023631) do
     t.string "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "order_total", precision: 5, scale: 2
+    t.bigint "user_id"
     t.index ["lot_id"], name: "index_orders_on_lot_id"
     t.index ["project_id"], name: "index_orders_on_project_id"
+    t.index ["user_id"], name: "index_orders_on_user_id"
     t.index ["vendor_id"], name: "index_orders_on_vendor_id"
   end
 
@@ -156,6 +179,8 @@ ActiveRecord::Schema.define(version: 20180323023631) do
   add_foreign_key "lots", "models"
   add_foreign_key "lots", "projects"
   add_foreign_key "models", "builders"
+  add_foreign_key "order_details", "orders"
+  add_foreign_key "order_details", "products"
   add_foreign_key "orders", "lots"
   add_foreign_key "orders", "projects"
   add_foreign_key "orders", "vendors"
