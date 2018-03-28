@@ -154,7 +154,7 @@
           </div>
           <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button onclick="editItemOrder()" ontype="button" class="btn btn-danger waves-effect waves-light">Create</button>
+              <button onclick="editItemOrder()" ontype="button" class="btn btn-danger waves-effect waves-light">Edit</button>
           </div>
       </div>
   </div>
@@ -352,7 +352,125 @@
 	}
 
 	function editItemOrder(){
-		
+		if (!validateItemEditOrderData()){
+	  	quantity = parseInt($("#order_edit_quantity").val());
+  		price = parseFloat($("#order_edit_price").val());
+  		total = (quantity * price);
+
+	    order_object = {
+	      order_detail : {
+	        id: idItemForEditing,
+	        quantity: quantity,
+	        price: price,
+	        total: total
+	      }
+	    }
+
+	    $.ajax({
+	      url: "<%= edit_order_item_path %>",
+	      method: "POST",
+	      data: order_object,
+	      success: function (data) {
+	        if(data.success){
+	          updateOrderItem();
+	          $("#total_order").text("");
+	          $("#total_order").text(data.order_total + " $");
+	          $("#order_edit_alert").empty();
+	          $("#order_edit_alert").removeClass("alert-danger");
+	          $("#order_edit_alert").addClass("alert-success");
+	          message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+	                    <span aria-hidden="true">×</span>\
+	                    </button>';
+	          $("#order_edit_alert").append(message);
+	          $("#order_edit_alert").show();
+	          setTimeout(function(){
+	            $("#order_edit_alert").hide();
+	            $("#editOrderItem").modal('hide');
+	          },5000);
+	        }else{
+	          $("#order_edit_alert").empty();
+	          $("#order_edit_alert").removeClass("alert-success");
+	          $("#order_edit_alert").addClass("alert-danger");
+	          message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+	                    <span aria-hidden="true">×</span>\
+	                    </button>';
+	          $("#order_edit_alert").append(message);
+	          $("#order_edit_alert").show();
+	          setTimeout(function(){
+	            $("#order_edit_alert").hide();
+	          },5000);
+	        }
+	      },
+	      error: function (data) {
+	        $("#order_edit_alert").empty();
+	        $("#order_edit_alert").removeClass("alert-success");
+	        $("#order_edit_alert").addClass("alert-danger");
+	        message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+	                  <span aria-hidden="true">×</span>\
+	                  </button>';
+	        $("#order_edit_alert").append(message);
+	        $("#order_edit_alert").show();
+	        setTimeout(function(){
+	          $("#order_edit_alert").hide();
+	        },5000);
+	      }
+	    })
+	  }
+	}
+
+	function updateOrderItem(){
+		product_name = $("#order_edit_product").val();
+		id = $(itemOrderElement).find(".card").attr("data-item-id");
+		quantity = parseInt($("#order_edit_quantity").val());
+  	price = parseFloat($("#order_edit_price").val());
+  	total = (quantity * price);
+  	var element = '<div class="col-lg-3 col-md-6">\
+        						<a onclick="EditOrderItem(this)" class="edit-item-order" style="cursor: pointer;">\
+          						<div class="card" data-item-id="'+id+'" data-quantity="'+quantity+'" data-price="'+price+'">\
+            						<div class="d-flex flex-row">\
+              						<div class="p-20">\
+                						<h5 class="m-b-0 text-info">$'+total+'</h5>\
+              						</div>\
+              						<div class="align-self-center m-l-20">\
+                						<small class="text-muted m-b-0">'+product_name+'</small><br>\
+                						<small class="text-muted m-b-0">$'+price+'</small>\
+                						<small class="text-muted m-b-0">Q'+quantity+'</small>\
+              						</div>\
+            						</div>\
+          						</div>\
+        						</a>\
+      						</div>';
+
+	  $("#order_details").append(element);
+  	$(itemOrderElement).parent().remove();
+  	itemOrderElement = "";
+  	itemOrderElement = 0;
+	}
+
+	function validateItemEditOrderData(){
+	  quantity = parseInt($("#order_edit_quantity").val());
+  	price = parseFloat($("#order_edit_price").val());
+	  error = false;
+
+	  if(quantity === "" || quantity === 0)
+	  { 
+	    $("#danger_edit_quantity").show();
+	    setTimeout(function(){
+	        $('#danger_edit_quantity').hide();
+	    },5000);
+	    error = true;
+	  }
+
+	  if(price === "" || price === 0)
+	  { 
+	    $("#danger_edit_price").show();
+	    setTimeout(function(){
+	        $('#danger_edit_price').hide();
+	    },5000);
+	    error = true;
+	  }
+
+	  return error;
 	}
 
 
