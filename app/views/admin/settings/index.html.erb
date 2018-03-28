@@ -1,0 +1,54 @@
+<div class="row page-titles">
+	<div class="col-md-5 col-8 align-self-center">
+		<h3 class="text-themecolor">Sevan</h3>
+		<ol class="breadcrumb">
+		<li class="breadcrumb-item"><a href="<%= root_path %>">Admin</a></li>
+		<li class="breadcrumb-item active">Settings</li>
+		</ol>
+	</div>
+</div>
+
+<% order_number = OrderNumbers.first %>
+
+<div class="row">
+	<div class="col-lg-6 col-md-6">
+		<a href="<%= '#' %>">
+			<div class="card">
+				<div class="card-body">
+					<div class="d-flex flex-row">
+						<div class="round round-lg align-self-center round-info">
+							<i class="fa fa-address-card"></i>
+						</div>
+						<div class="m-l-10 align-self-center">
+							<h3 class="m-b-0 font-light">Order Number</h3>
+							<h5 class="text-muted m-b-0">Next: <%= order_number.order_number rescue 0 %></h5>
+						</div>
+						<div class="col-md-2 align-self-center text-right">
+		                	<span onclick="edit_setting(<%= order_number.id %>)" class="icon-list-actions green-color" data-toggle="tooltip" title="" data-original-title="Update"><i class="mdi mdi-pencil"></i></span>
+		              	</div>
+					</div>
+				</div>
+			</div>
+		</a>
+	</div>
+</div>
+
+
+<div class="modal fade" id="content_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  	<div class="modal-dialog" role="document">
+    	<div class="modal-content modal-inject">
+    	</div>
+  	</div>
+</div>
+
+
+<script type="text/javascript">
+
+    function edit_setting(id){
+        $.get("/admin/settings/" + id + "/edit",function(data){
+            $(".modal-inject").html(data);
+            $("#content_modal").modal('show');
+        })
+    }
+
+</script>

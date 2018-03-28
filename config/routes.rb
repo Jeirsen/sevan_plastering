@@ -40,6 +40,9 @@ Rails.application.routes.draw do
 
   namespace :admin do
     resources :users
+    get 'settings' => 'settings#index'
+    get 'settings/:setting_id/edit' => 'settings#edit'
+    put 'settings/:setting_id/edit' => 'settings#update'
   end
 
 end
