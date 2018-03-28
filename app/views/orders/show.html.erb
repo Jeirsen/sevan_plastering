@@ -40,7 +40,7 @@
 		<label class="font-weight-bold">Status: </label> <%= Order.order_status(@order.status) %>
 	</div>
 	<div class="col-md-4 col-sm-12">
-		<label class="font-weight-bold">Order Total: </label> <%= @order.order_total %> $
+		<label class="font-weight-bold">Order Total: </label> <strong id="total_order"><%= @order.order_total %> $</strong>
 	</div>
 </div>
 <br>
@@ -56,7 +56,7 @@
 		<% @order.order_details.each do |item| %>
 			<div class="col-lg-3 col-md-6">
         <a onclick="EditOrderItem(this)" class="edit-item-order" style="cursor: pointer;">
-          <div class="card" data-item-id="<%= item.id %>">
+          <div class="card" data-item-id="<%= item.id %>" data-quantity="<%= item.quantity %>" data-price="<%= item.price %>">
             <div class="d-flex flex-row">
               <div class="p-20">
                 <h5 class="m-b-0 text-info">$<%= item.total %></h5>
@@ -85,3 +85,275 @@
     </div>
 	<% end %>
 </div>
+
+<!-- Modals -->
+<div class="modal fade" id="addOrderItem" role="dialog" aria-labelledby="addOrderItem">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h4 class="modal-title" id="exampleModalLabel1">Add Item to order</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+          	<form>
+              <div class="form-group">
+                  <label for="recipient-name" class="control-label">Product:</label>
+                  <select id="add-products"></select>
+                  <span class="label label-danger" style="display: none" id="danger_product">Product is required!</span>
+              </div>
+              <div class="form-group">
+                  <label for="recipient-name" class="control-label">Quantity:</label>
+                  <input type="number" class="form-control" id="order_quantity">
+                  <span class="label label-danger" style="display: none" id="danger_quantity">Quantity is required!</span>
+              </div>
+              <div class="form-group">
+                  <label for="recipient-name" class="control-label">Unit Price:</label>
+                  <input type="number" class="form-control" id="order_price">
+                  <span class="label label-danger" style="display: none" id="danger_price"></span>
+              </div>
+              <div class="alert" id="order_new_alert" style="display: none">
+              </div>
+          	</form>
+            
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button onclick="addNewItemToOrder()" ontype="button" class="btn btn-danger waves-effect waves-light">Create</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editOrderItem" role="dialog" aria-labelledby="editOrderItem">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h4 class="modal-title" id="exampleModalLabel1">Edit Item to order</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+          	<form>
+              <div class="form-group">
+                  <label for="recipient-name" class="control-label">Product:</label>
+                  <input type="text" class="form-control" id="order_edit_product" readonly="true">
+              </div>
+              <div class="form-group">
+                  <label for="recipient-name" class="control-label">Quantity:</label>
+                  <input type="number" class="form-control" id="order_edit_quantity">
+                  <span class="label label-danger" style="display: none" id="danger_edit_quantity">Quantity is required!</span>
+              </div>
+              <div class="form-group">
+                  <label for="recipient-name" class="control-label">Unit Price:</label>
+                  <input type="number" class="form-control" id="order_edit_price">
+                  <span class="label label-danger" style="display: none" id="danger_edit_price"></span>
+              </div>
+              <div class="alert" id="order_edit_alert" style="display: none">
+              </div>
+          	</form>
+            
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button onclick="editItemOrder()" ontype="button" class="btn btn-danger waves-effect waves-light">Create</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+	var idItemForEditing = 0;
+	var itemOrderElement = "";
+
+	$(document).ready(function(){
+
+	  $("#add-products").select2({
+	    theme: "bootstrap",
+	    ajax:{
+	      url: "<%= search_products_path %>",
+	      dataType: 'json',
+	      data: function(params){
+	        return{
+	          q: params.term
+	        };
+	      },
+	      processResults: function (data) {
+	        return {
+	            results: data.data
+	        };
+	      },
+	    },
+	    minimumInputLength: 3,
+	    placeholder: {
+	      id: '-1',
+	      text: 'Enter product name ...'
+	    },
+	    escapeMarkup: function (markup) {
+	      return markup;
+	    },
+	    templateResult: function (product) {
+	      if (product.loading) return 'product.name';
+	      return $("<div>"+ product.name +"</div>")
+	    }, 
+	    templateSelection: function (product) {
+	      if (product === '' || product === null){
+	          return '<span>Enter product name ...</span>';
+	      }
+	      return $("<span>"+ product.name +"</span>")
+	    }
+	  });
+	});
+
+	function addNewItemToOrder(){
+		if (!validateItemOrderData()){
+	   	product_id = $('#add-products :selected').val();
+	  	quantity = parseInt($("#order_quantity").val());
+  		price = parseFloat($("#order_price").val());
+  		total = (quantity * price);
+	    order_id = <%= @order.id %>
+
+	    order_object = {
+	      order_detail : {
+	        product_id: product_id,
+	        quantity: quantity,
+	        price: price,
+	        order_id: order_id,
+	        total: total
+	      }
+	    }
+
+	    $.ajax({
+	      url: "<%= add_item_path %>",
+	      method: "POST",
+	      data: order_object,
+	      success: function (data) {
+	        if(data.success){
+	          appendOrderItem(data.order_detail_id);
+	          $("#total_order").text("");
+	          $("#total_order").text(data.order_total + " $");
+	          $("#order_new_alert").empty();
+	          $("#order_new_alert").removeClass("alert-danger");
+	          $("#order_new_alert").addClass("alert-success");
+	          message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+	                    <span aria-hidden="true">×</span>\
+	                    </button>';
+	          $("#order_new_alert").append(message);
+	          $("#order_new_alert").show();
+	          setTimeout(function(){
+	            $("#order_new_alert").hide();
+	            $("#addOrderItem").modal('hide');
+	          },5000);
+	        }else{
+	          $("#order_new_alert").empty();
+	          $("#order_new_alert").removeClass("alert-success");
+	          $("#order_new_alert").addClass("alert-danger");
+	          message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+	                    <span aria-hidden="true">×</span>\
+	                    </button>';
+	          $("#order_new_alert").append(message);
+	          $("#order_new_alert").show();
+	          setTimeout(function(){
+	            $("#order_new_alert").hide();
+	          },5000);
+	        }
+	      },
+	      error: function (data) {
+	        $("#order_new_alert").empty();
+	        $("#order_new_alert").removeClass("alert-success");
+	        $("#order_new_alert").addClass("alert-danger");
+	        message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+	                  <span aria-hidden="true">×</span>\
+	                  </button>';
+	        $("#order_new_alert").append(message);
+	        $("#order_new_alert").show();
+	        setTimeout(function(){
+	          $("#order_new_alert").hide();
+	        },5000);
+	      }
+	    })
+	  }
+	}
+
+	function appendOrderItem(detail_item_id){
+		product_name = $('#add-products').select2('data')[0].name;
+	  quantity = parseInt($("#order_quantity").val());
+  	price = parseFloat($("#order_price").val());
+  	total = (quantity * price);
+
+	  var element = '<div class="col-lg-3 col-md-6">\
+        						<a onclick="EditOrderItem(this)" class="edit-item-order" style="cursor: pointer;">\
+          						<div class="card" data-item-id="'+detail_item_id+'" data-quantity="'+quantity+'" data-price="'+price+'">\
+            						<div class="d-flex flex-row">\
+              						<div class="p-20">\
+                						<h5 class="m-b-0 text-info">$'+total+'</h5>\
+              						</div>\
+              						<div class="align-self-center m-l-20">\
+                						<small class="text-muted m-b-0">'+product_name+'</small><br>\
+                						<small class="text-muted m-b-0">$'+price+'</small>\
+                						<small class="text-muted m-b-0">Q'+quantity+'</small>\
+              						</div>\
+            						</div>\
+          						</div>\
+        						</a>\
+      						</div>';
+
+	  $("#order_details").append(element);
+	  $("#quantity").val("");
+	  $("#order_price").val("");
+	}
+
+	function validateItemOrderData(){
+	  product_id = $('#add-products :selected').val();
+	  quantity = parseInt($("#order_quantity").val());
+  	price = parseFloat($("#order_price").val());
+	  error = false;
+
+	  if(product_id === "" || product_id === undefined)
+	  { 
+	    $("#danger_product").show();
+	    setTimeout(function(){
+	        $('#danger_product').hide();
+	    },5000);
+	    error = true;
+	  }
+
+	  if(quantity === "" || quantity === 0)
+	  { 
+	    $("#danger_quantity").show();
+	    setTimeout(function(){
+	        $('#danger_quantity').hide();
+	    },5000);
+	    error = true;
+	  }
+
+	  if(price === "" || price === 0)
+	  { 
+	    $("#danger_price").show();
+	    setTimeout(function(){
+	        $('#danger_price').hide();
+	    },5000);
+	    error = true;
+	  }
+
+	  return error;
+	}
+
+	function EditOrderItem(element){
+	  idItemForEditing = $(element).find(".card").attr("data-item-id");
+	  quantity = $(element).find(".card").attr("data-quantity");
+	  price = $(element).find(".card").attr("data-price");
+	  itemOrderElement = element;
+	  small_elements = $(element).find("small");
+	  product_name = small_elements[0].innerText;
+	  $('#order_edit_product').val(product_name);
+	  $('#order_edit_quantity').val(quantity);
+	  $('#order_edit_price').val(price);
+	  $('#editOrderItem').modal('show');
+	}
+
+	function editItemOrder(){
+		
+	}
+
+
+</script>

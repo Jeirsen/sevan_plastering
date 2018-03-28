@@ -32,6 +32,8 @@ Rails.application.routes.draw do
   get 'search-lots' => 'orders#search_lots', :as => 'search_lots'
   get 'searc-model' => 'orders#search_model', :as => 'search_model'
   post 'create-order' => 'orders#create_order', :as => 'create_order'
+  post 'add-item-order' => 'orders#add_order_item', :as => 'add_item'
+  post 'edit-item-order' => 'orders#edit_order_item', :as => 'edit_order_item'
 
   #templates
   post 'template-product' => 'templates#template_product', :as => 'template_product'

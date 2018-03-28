@@ -81,10 +81,66 @@ class OrdersController < ApplicationController
 		render json: response, status: 200
 	end
 
+  def add_order_item
+    if (params[:order_detail][:order_id].blank? or params[:order_detail][:product_id].blank? or params[:order_detail][:quantity].blank? or params[:order_detail][:price].blank? or params[:order_detail][:total].blank?)
+      response = {success: false, data: "Missing parameters"} 
+    else
+      #Add new item to the order
+      order_detail = OrderDetail.new(order_detail_params)
+      if !order_detail.save
+          response = {success: false, data: "Server exception adding the new item to the order"}
+      else
+        order_total = 0
+        order_id = params[:order_detail][:order_id].to_i
+        order = Order.find(order_id)
+        full_order_detail = OrderDetail.where(:order_id => order_id)
+        full_order_detail.each do |item|
+          order_total = order_total + item.total
+        end
+        order.update(order_total: order_total)
+        response = {success: true, data: "Item added successfully!", order_detail_id: order_detail.id, order_total: order_total}
+      end
+    end
+    render json: response, status: 200
+  end
+
+  def edit_order_item
+    if (params[:order_detail][:id].blank? or params[:order_detail][:quantity].blank? or params[:order_detail][:price].blank? or params[:order_detail][:total].blank?)
+      response = {success: false, data: "Missing parameters"} 
+    else
+      #Edit item to the order
+      order_item_id = params[:order_detail][:id].to_i
+      order_detail = OrderDetail.find(order_item_id)
+      if (order_detail.blank?)
+        response = {success: false, data: "Order item not found!"}
+      else
+        order_detail.update_attributes(update_item_order_params)
+        order_total = 0
+        order_id = order_detail.order_id
+        order = Order.find(order_id)
+        full_order_detail = OrderDetail.where(:order_id => order_id)
+        full_order_detail.each do |item|
+          order_total = order_total + item.total
+        end
+        order.update(order_total: order_total)
+        response = {success: true, data: "Item updated successfully!", order_total: order_total}
+      end
+    end
+    render json: response, status: 200
+  end
+
 	private
 
   def order_params
       params.require(:order).permit(:delivery_date, :project_id, :time_needed_by, :lot_id, :status, :vendor_id, :notes, :user_id)
+  end
+
+  def order_detail_params
+    params.require(:order_detail).permit(:order_id, :product_id, :quantity, :price, :total)
+  end
+
+  def update_item_order_params
+    params.require(:order_detail).permit(:quantity, :price, :total)
   end
 
 end
