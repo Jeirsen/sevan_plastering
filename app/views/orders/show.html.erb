@@ -31,10 +31,10 @@
 		<label class="font-weight-bold">Delivery Date: </label> <%= @order.delivery_date.strftime("%d/%m/%Y") %>
 	</div>
 	<div class="col-md-4 col-sm-12">
-		<label class="font-weight-bold">Order By: </label> <%= @order.user.email %>
+		<label class="font-weight-bold">Order By: </label> <%= @order.user.first_name %>
 	</div>
 	<div class="col-md-4 col-sm-12">
-		<label class="font-weight-bold">Time Order Made: </label> <%= @order.created_at.strftime("%d/%m/%Y - %H:%M: %S") %>
+		<label class="font-weight-bold">Time Order Made: </label> <%= @order.created_at.strftime("%d/%m/%Y - %H:%M") %>
 	</div>
 	<div class="col-md-4 col-sm-12">
 		<label class="font-weight-bold">Status: </label> <%= Order.order_status(@order.status) %>
