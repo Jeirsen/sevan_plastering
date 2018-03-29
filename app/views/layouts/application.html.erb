@@ -37,7 +37,7 @@
 
             <ul class="navbar-nav my-lg-0">
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><%= current_user.email %></a>
+                <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><%= current_user.full_name %></a>
                 <div class="dropdown-menu dropdown-menu-right scale-up">
                   <ul class="dropdown-user">
                     <li><a data-method="delete" href="<%= destroy_user_session_path %>"><i class="fa fa-power-off"></i> Logout</a></li>
@@ -79,10 +79,16 @@
                   </a>
                 </li>
                 <% if current_user.is_admin %>
-                <li>
+                <li <%= 'class=active' if controller_name == 'users' %>>
                   <a href="<%= admin_users_path %>" >
-                    <i class="mdi mdi-home-variant"></i>
+                    <i class="mdi mdi-account"></i>
                     <span class="hide-menu">Admin Users</span>
+                  </a>
+                </li>
+                <li <%= 'class=active' if controller_name == 'settings' %>>
+                  <a href="<%= admin_settings_path %>" >
+                    <i class="mdi mdi-settings"></i>
+                    <span class="hide-menu">Settings</span>
                   </a>
                 </li>
                 <% end %>

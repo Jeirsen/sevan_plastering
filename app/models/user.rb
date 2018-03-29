@@ -22,6 +22,16 @@ class User < ApplicationRecord
   end
 
   def is_admin
-    return self.role == Roles[:admin]
+    self.role == Roles[:admin]
+  end
+
+  def full_name
+    full_name = "#{self.first_name} #{self.last_name}"
+    if !full_name.present?
+      return "(Pending)"
+    else
+      return full_name
+    end
+    
   end
 end

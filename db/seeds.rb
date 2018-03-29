@@ -1,1 +1,1 @@
-admin = User.create(email: 'admin@mail.com', password: 'qwer1234', role: User::Role[:admin])
+jeirsen = User.create(email: 'jeirsen@gmail.com', password: 'qwer1234', role: 1)
