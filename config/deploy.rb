@@ -2,7 +2,7 @@
 lock "3.10.1"
 
 # Change these
-server '159.203.90.80', roles: [:web, :app, :db], primary: true
+server '165.227.90.44', roles: [:web, :app, :db], primary: true
 
 set :application, "sevan-plastering"
 set :repo_url, "git@github.com:Jeirsen/sevan_plastering.git"
