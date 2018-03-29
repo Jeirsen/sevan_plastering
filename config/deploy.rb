@@ -5,7 +5,7 @@ lock "3.10.1"
 server '159.203.90.80', roles: [:web, :app, :db], primary: true
 
 set :application, "sevan-plastering"
-set :repo_url, "git@github.com:webesteban/sevan_plastering.git"
+set :repo_url, "git@github.com:Jeirsen/sevan_plastering.git"
 set :user,            'deploy'
 set :puma_threads,    [4, 16]
 set :puma_workers,    0
