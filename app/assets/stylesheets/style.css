@@ -29,16 +29,16 @@ File: scss
 /*Normal Color*/
 /*Extra Variable*/
 /*Preloader*/
-@import url(/assets/font-awesome.css);
-@import url(/assets/simple-line-icons.css);
-@import url(/assets/weather-icons.min.css);
-@import url(/assets/linea.css);
-@import url(/assets/themify-icons.css);
-@import url(/assets/flag-icon.min.css);
-@import url(/assets/materialdesignicons.min.css);
+@import url(font-awesome.css);
+@import url(simple-line-icons.css);
+@import url(weather-icons.min.css);
+@import url(linea.css);
+@import url(themify-icons.css);
+@import url(flag-icon.min.css);
+@import url(materialdesignicons.min.css);
 @import url("https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700");
-@import url(/assets/spinners.css);
-@import url(/assets/animate.css);
+@import url(spinners.css);
+@import url(animate.css);
 .preloader {
   width: 100%;
   height: 100%;
