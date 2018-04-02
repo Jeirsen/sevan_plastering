@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title" id="exampleModalLabel1">Edit Lot</h4>
+  <h4 class="modal-title" id="exampleModalLabel1">Edit Model</h4>
   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 </div>
 <div class="modal-body">
@@ -21,11 +21,10 @@
       <span class="label label-danger" style="display: none" id="danger_name">Name is required!</span>
     </div>
     <div class="form-group">
-      <label for="recipient-name" class="control-label">Builder:</label>
+      <label for="recipient-name" class="control-label">Model Image:</label>
       <%= form.file_field :photo, :class => "form-control", :onchange =>"updatePhoto(this);", id: "image_model"%>
       <span class="label label-danger" style="display: none" id="danger_image">Image is required!</span>
       <span class="label label-danger" style="display: none" id="danger_size"><strong>Warning!</strong> You can not upload images bigger than 2 MB.</span>
-
     </div>
     <img src="" id="image_upload" width="100%">
     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
