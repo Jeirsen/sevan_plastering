@@ -42,7 +42,7 @@ class ModelsController < ApplicationController
 	private
 
 	def model_params
-		params.require(:model).permit(:name, :photo)
+		params.require(:model).permit(:builder_id, :name, :photo)
 	end
 
 end
