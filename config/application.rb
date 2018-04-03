@@ -16,8 +16,19 @@ module SevanplasteringPorders
     # -- all .rb files in that directory are automatically loaded.
 
     # config/application.rb
-	config.assets.initialize_on_precompile = false
-  config.assets.paths << Rails.root.join("app", "assets", "fonts")
+  	config.assets.initialize_on_precompile = false
+    config.assets.paths << Rails.root.join("app", "assets", "fonts")
+
+
+    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.smtp_settings = {
+      address:              'smtp.gmail.com',
+      port:                 587,
+      domain:               'gmail.com',
+      user_name:            '<username>',
+      password:             '<password>',
+      authentication:       'plain',
+      enable_starttls_auto: true  }
 
   end
 end

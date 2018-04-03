@@ -129,6 +129,16 @@ class OrdersController < ApplicationController
     render json: response, status: 200
   end
 
+  def send_email
+    @order = Order.find params[:id]
+    begin
+      OrderMailer.send_to_vendor(@order).deliver_now 
+    rescue Exception => e
+      
+    end
+    redirect_to @order, notice: "Mail sent"
+  end
+
 	private
 
   def order_params
