@@ -17,16 +17,9 @@
       <header class="topbar">
         <nav class="navbar top-navbar navbar-expand-md navbar-light">
           <div class="navbar-header">
-            <a class="navbar-brand" href="<%= root_path %>">
-              <b>
-                <img src="logo-icon.png" alt="homepage" class="dark-logo" />
-                <img src="logo-light-icon.png" alt="homepage" class="light-logo" />
-              </b>
-              <span>
-                <img src="logo-text.png" alt="homepage" class="dark-logo" />
-                <img src="logo-light-text.png" class="light-logo" alt="homepage" />
-              </span>
-            </a>
+            <span class="text-center">
+              <a class="navbar-brand" style="color:#fff;font-size: 25px" href="<%= root_path %>"><strong>SMV STUCCO INC</strong></a>
+            </span>
           </div>
 
           <div class="navbar-collapse">
@@ -53,41 +46,40 @@
         <div class="scroll-sidebar">
           <nav class="sidebar-nav">
             <ul id="sidebarnav">
-              <li class="nav-small-cap">MENU</li>
                 <li>
                   <a href="<%= vendors_path %>" >
-                    <i class="mdi mdi-factory"></i>
+                    <i class="fa fa-truck"></i>
                     <span class="hide-menu">Vendors</span>
                   </a>
                 </li>
                 <li>
                   <a href="<%= builders_path %>" >
-                    <i class="mdi mdi-home-modern"></i>
+                    <i class="fa fa-institution"></i>
                     <span class="hide-menu">Builders</span>
                   </a>
                 </li>
                 <li>
                   <a href="<%= units_path %>" >
-                    <i class="mdi mdi-cube-outline"></i>
+                    <i class="fa fa-cube"></i>
                     <span class="hide-menu">Units</span>
                   </a>
                 </li>
                 <li>
                   <a href="<%= products_path %>" >
-                    <i class="mdi mdi-home-variant"></i>
+                    <i class="fa fa-plus-square"></i>
                     <span class="hide-menu">Products</span>
                   </a>
                 </li>
                 <% if current_user.is_admin %>
                 <li <%= 'class=active' if controller_name == 'users' %>>
                   <a href="<%= admin_users_path %>" >
-                    <i class="fa fa-user"></i>
+                    <i class="fa fa-user-circle-o"></i>
                     <span class="hide-menu">Users</span>
                   </a>
                 </li>
                 <li <%= 'class=active' if controller_name == 'settings' %>>
                   <a href="<%= admin_settings_path %>" >
-                    <i class="mdi mdi-settings"></i>
+                    <i class="fa fa-gear"></i>
                     <span class="hide-menu">Settings</span>
                   </a>
                 </li>
@@ -96,7 +88,7 @@
                 <% if user_signed_in? %>
                 <li>
                   <a href="<%= destroy_user_session_path %>" data-method="delete">
-                    <i class="mdi mdi-exit-to-app"></i>
+                    <i class="fa fa-sign-out"></i>
                     <span class="hide-menu">Log Out</span>
                   </a>
                 </li>
