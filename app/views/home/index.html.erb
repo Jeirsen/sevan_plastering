@@ -17,7 +17,7 @@
 
 <div class="row">
 	<% if !@orders.blank? %>
-		<% @orders.each do |order| %>
+		<% @orders.order("order_number desc").each do |order| %>
 			<div class="col-lg-4 col-md-4">
 				<a href="<%= order_detail_path(order.id) %>">
 					<div class="card" style="width: 18rem;">
@@ -26,7 +26,8 @@
 					    <h6 class="card-subtitle mb-2 text-muted"><%= order.project.name %></h6>
 					    <h6 class="card-subtitle mb-2 text-muted">Lot: <%= order.lot.number %></h6>
 					    <small>Delivery Date: <%= order.delivery_date.strftime("%d/%m/%Y") %></small><br>
-					    <small>Needed By: <%= Order.TimeNeededBy(order.time_needed_by) %></small>
+					    <small>Needed By: <%= Order.TimeNeededBy(order.time_needed_by) %></small><br>
+					    <small>Status: <%= Order.order_status(order.status) %></small>
 					  </div>
 					</div>	
 				</a>

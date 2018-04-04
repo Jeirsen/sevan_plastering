@@ -25,10 +25,11 @@ module SevanplasteringPorders
       address:              'smtp.gmail.com',
       port:                 587,
       domain:               'gmail.com',
-      user_name:            '<username>',
-      password:             '<password>',
+      user_name:            'svmstucco@gmail.com',
+      password:             'jorgemontoya2018',
       authentication:       'plain',
-      enable_starttls_auto: true  }
+      enable_starttls_auto: true  
+    }
 
   end
 end

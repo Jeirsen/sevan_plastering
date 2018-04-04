@@ -129,14 +129,40 @@ class OrdersController < ApplicationController
     render json: response, status: 200
   end
 
-  def send_email
-    @order = Order.find params[:id]
+  def send_mail
+    @order = Order.find params[:id].to_i
     begin
       OrderMailer.send_to_vendor(@order).deliver_now 
+      response = {success: true, data: "Mail sent successfully!"}
+      @order.update(:status => Order::Status[:sent])
     rescue Exception => e
-      
+      response = {success: false, data: "Mail error exception!"}
     end
-    redirect_to @order, notice: "Mail sent"
+    render json: response, status: 200
+  end
+
+  def remove_item
+    if (params[:id].blank?)
+        response = {success: false, data: "Missing parameters"}
+    else
+      order_item_id = params[:id].to_i
+      order_detail = OrderDetail.find(order_item_id)
+      if (order_detail.blank?)
+        response = {success: false, data: "Order item not found!"}
+      else
+        order_id = order_detail.order_id
+        order_detail.destroy
+        order_total = 0
+        order = Order.find(order_id)
+        full_order_detail = OrderDetail.where(:order_id => order_id)
+        full_order_detail.each do |item|
+          order_total = order_total + item.total
+        end
+        order.update(order_total: order_total)
+        response = {success: true, data: "Item removed successfully!", order_total: order_total}
+      end
+    end
+    render json: response, status: 200
   end
 
 	private

@@ -37,7 +37,7 @@
 		<label class="font-weight-bold">Time Order Made: </label> <%= @order.created_at.strftime("%d/%m/%Y - %H:%M") %>
 	</div>
 	<div class="col-md-4 col-sm-12">
-		<label class="font-weight-bold">Status: </label> <%= Order.order_status(@order.status) %>
+		<label class="font-weight-bold">Status: </label> <span id="order_status"><%= Order.order_status(@order.status) %><span>
 	</div>
 	<div class="col-md-4 col-sm-12">
 		<label class="font-weight-bold">Order Total: </label> <strong id="total_order"><%= @order.order_total %> $</strong>
@@ -46,12 +46,26 @@
 <br>
 
 <div class="row" id="order_details">
-	<div class="col-md-12 col-sm-12" style="display: -webkit-inline-box;">
-		<h2 class="text-info">Purchase Order Details</h2>&nbsp;&nbsp;&nbsp;
-    <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#addOrderItem">
-      <i class="fa fa-plus"></i> Add New
-    </button>
+	<div class="col-lg-4 col-md-4 col-sm-12">
+		<h2 class="text-info">Purchase Order Details</h2>
 	</div>
+	<div class="col-lg-8 col-md-8 col-sm-12" style="padding-bottom: 10px">
+    <% if @order.status != Order::Status[:saved] %>
+	    <button type="button" class="btn btn-outline-info" disabled="true">
+	    	<i class="fa fa-plus"></i> Add New
+	    </button>
+			<button id="send_email" type="button" class="btn btn-outline-info" disabled="true">
+      	<i class="fa fa-envelope-o"></i> Order Sent
+    	</button>
+    <% else %>
+	    <button id="new_item" type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#addOrderItem">
+	    	<i class="fa fa-plus"></i> Add New
+	    </button>
+    	<button id="send_email" type="button" class="btn btn-outline-info" onclick="sendOrderMail()">
+      	<i class="fa fa-envelope-o"></i> Send Order
+    	</button>
+    <% end %>
+	</div>    
 	<% if !@order.order_details.blank? %>
 		<% @order.order_details.each do |item| %>
 			<div class="col-lg-3 col-md-6">
@@ -154,11 +168,36 @@
           </div>
           <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button onclick="removeItemOrder()" ontype="button" class="btn btn-danger waves-effect waves-light">Remove Item</button>
-              <button onclick="editItemOrder()" ontype="button" class="btn btn-danger waves-effect waves-light">Edit</button>
+              <% if @order.status == Order::Status[:saved] %>
+              	<button onclick="removeItemOrder()" ontype="button" class="btn btn-danger waves-effect waves-light">Remove Item</button>
+              	<button onclick="editItemOrder()" ontype="button" class="btn btn-danger waves-effect waves-light">Edit</button>
+              <% end %>
           </div>
       </div>
   </div>
+</div>
+
+<!-- Message Modal -->
+<div id="messageModal" class="modal fade" role="dialog" aria-labelledby="messageModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Alert Modal</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="success_alert" class="alert alert-success" role="alert" style="display:none">
+								  <p id="success_message"></p>
+								</div>
+								<div id="fail_alert" class="alert alert-danger" role="alert" style="display:none">
+									<p id="error_message"></p>
+								</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info waves-effect" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript">
@@ -475,7 +514,89 @@
 	}
 
 	function removeItemOrder(){
-		
+    $.ajax({
+      url: "<%= remove_order_item_path %>",
+      method: "DELETE",
+      data: {id: idItemForEditing},
+      success: function (data) {
+        if(data.success){
+          $("#success_message").empty();
+          $("#success_message").append(data.data);
+          $("#success_alert").show();
+          $("#total_order").text("");
+	        $("#total_order").text(data.order_total + " $");
+          $("#messageModal").modal('show');
+          $(itemOrderElement).parent().remove();
+          setTimeout(function(){
+            $("#success_alert").hide();
+            $("#messageModal").modal('hide');
+          },5000);
+        }else{
+          $("#error_message").empty();
+					$("#error_message").append(data.data);
+          $("#fail_alert").show();
+          $("#messageModal").modal('show')
+          setTimeout(function(){
+            $("#fail_alert").hide();
+            $("#messageModal").modal('hide');
+          },5000);
+        }
+      },
+      error: function (data) {
+        $("#error_message").empty();
+				$("#error_message").append(data.data);
+        $("#fail_alert").show();
+        $("#messageModal").modal('show')
+        setTimeout(function(){
+          $("#fail_alert").hide();
+          $("#messageModal").modal('hide');
+        },5000);
+      }
+    })
+	}
+
+	function sendOrderMail(){
+	  order_id = <%= @order.id %>
+	  $.ajax({
+      url: "<%= send_mail_path %>",
+      method: "POST",
+      data: {id: order_id},
+      success: function (data) {
+        if(data.success){
+          $("#success_message").empty();
+          $("#success_message").append(data.data);
+          $("#success_alert").show();
+          $("#messageModal").modal('show');
+          $("#new_item").attr("disabled", true);
+          $("#send_email").attr("disabled", true);
+          $("#order_status").empty();
+          $("#order_status").append("Sent");
+          setTimeout(function(){
+            $("#success_alert").hide();
+            $("#messageModal").modal('hide');
+          },5000);
+        }else{
+          $("#error_message").empty();
+					$("#error_message").append(data.data);
+          $("#fail_alert").show();
+          $("#messageModal").modal('show')
+          setTimeout(function(){
+            $("#fail_alert").hide();
+            $("#messageModal").modal('hide');
+          },5000);
+        }
+      },
+      error: function (data) {
+        $("#error_message").empty();
+				$("#error_message").append(data.data);
+        $("#fail_alert").show();
+        $("#messageModal").modal('show')
+        setTimeout(function(){
+          $("#fail_alert").hide();
+          $("#messageModal").modal('hide');
+        },5000);
+      }
+    })
 	}
 
 

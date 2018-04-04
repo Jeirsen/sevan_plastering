@@ -46,7 +46,7 @@
     </button>
 	</div>
 	<% if !@vendor.vendor_emails.blank? %>
-		<% @vendor.vendor_emails.each do |email| %>
+		<% @vendor.vendor_emails.where(:status => Vendor::Status[:active]).each do |email| %>
 			<div class="col-lg-4 col-md-6">
 				<a onclick="openModalVendorEmail(this)" class="edit-vendor-email" style="cursor: pointer;">
 		    	<div class="card" data-email-id="<%= email.id %>" data-email-status="<%= email.status %>">
@@ -90,7 +90,7 @@
     </button>
   </div>
   <% if !@vendor.product_vendors.blank? %>
-    <% @vendor.product_vendors.each do |product| %>
+    <% @vendor.product_vendors.where(:status => ProductVendor::Status[:active]).each do |product| %>
       <div class="col-lg-3 col-md-6">
         <a onclick="openModalVendorProduct(this)" class="edit-vendor-product" style="cursor: pointer;">
           <div class="card" data-id="<%= product.id %>" data-product-id="<%= product.product_id %>" data-product-status="<%= product.status %>">

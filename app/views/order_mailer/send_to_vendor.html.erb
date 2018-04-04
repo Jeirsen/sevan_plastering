@@ -1,54 +1,64 @@
-<table>
-	<tr>
-		<td colspan="5">Purchase Order</td>
-	</tr>
-	<tr>
-		<td>Number:</td>
-		<td colspan="4"><%= @order.order_number %></td>
-	</tr>
-	<tr>
-		<td>Vendor:</td>
-		<td colspan="4"><%= @order.vendor.name %></td>
-	</tr>
-	<tr>
-		<td>Delivery Date:</td>
-		<td colspan="4"><%= @order.delivery_date %></td>
-	</tr>
-	<tr>
-		<td>Time Needed:</td>
-		<td colspan="4"><%= Order.TimeNeededBy @order.time_needed_by %></td>
-	</tr>
-	<tr>
-		<td>Project:</td>
-		<td colspan="4"><%= @order.project.name %></td>
-	</tr>
-	<tr>
-		<td>Lot:</td>
-		<td colspan="4"><%= @order.lot.number %></td>
-	</tr>
-	<tr>
-		<td>Address:</td>
-		<td colspan="4"><%= @order.lot.full_address %></td>
-	</tr>
-	<tr>
-		<td>Product</td>
-		<td>Unit of Measure</td>
-		<td>Quantity</td>
-		<td>Price</td>
-		<td>Line Total</td>
-	</tr>
-	<% @order.order_details.each do |order_detail| %>
-	<tr>
-		<td><%= order_detail.product.name %></td>
-		<td><%= order_detail.unit.name %></td>
-		<td><%= order_detail.quantity %></td>
-		<td><%= order_detail.price %></td>
-		<td><%= order_detail.total %></td>
-	</tr>
-	<% end -%>
-	<tr>
-		<td colspan="4" style="text-align: right;">Total</td>
-		<td><%= @order.order_total %></td>
+<div class="table-responsive">
+	<table class="table">
+		<tr>
+			<td colspan="5">Purchase Order</td>
+		</tr>
+		<tr>
+			<td>Number:</td>
+			<td colspan="4"><%= @order.order_number %></td>
+		</tr>
+		<tr>
+			<td>Vendor:</td>
+			<td colspan="4"><%= @order.vendor.name %></td>
+		</tr>
+		<tr>
+			<td>Delivery Date:</td>
+			<td colspan="4"><%= @order.delivery_date.strftime("%d/%m/%Y") %></td>
+		</tr>
+		<tr>
+			<td>Time Needed:</td>
+			<td colspan="4"><%= Order.TimeNeededBy @order.time_needed_by %></td>
+		</tr>
+		<tr>
+			<td>Project:</td>
+			<td colspan="4"><%= @order.project.name %></td>
+		</tr>
+		<tr>
+			<td>Lot:</td>
+			<td colspan="4"><%= @order.lot.number %></td>
+		</tr>
+		<tr>
+			<td>Address:</td>
+			<td colspan="4"><%= @order.lot.full_address %></td>
+		</tr>
+	</table>
+</div>
 
-	</tr>
-</table>
+<div class="table-responsive">
+	<table class="table">
+		<thead>
+      <tr>
+				<td>Product</td>
+				<td>Unit of Measure</td>
+				<td>Quantity</td>
+				<td>Price</td>
+				<td>Line Total</td>
+			</tr>
+    </thead>
+		<tbody>
+			<% @order.order_details.each do |order_detail| %>
+				<tr>
+					<td><%= order_detail.product.name %></td>
+					<td><%= order_detail.product.unit.name %></td>
+					<td><%= order_detail.quantity %></td>
+					<td><%= order_detail.price %></td>
+					<td><%= order_detail.total %></td>
+				</tr>
+			<% end -%>
+			<tr>
+				<td colspan="4" style="text-align: right;">Total</td>
+				<td><%= @order.order_total %></td>
+			</tr>
+		</tbody>
+	</table>
+</div>
