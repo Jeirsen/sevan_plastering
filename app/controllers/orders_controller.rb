@@ -1,5 +1,7 @@
 class OrdersController < ApplicationController
 	
+  before_action :validate_products, only: [:create_order]
+
 	def show
 		@order = Order.find(params[:id])
 		model = Model.find(@order.lot_id)
@@ -166,6 +168,33 @@ class OrdersController < ApplicationController
   end
 
 	private
+
+  def validate_products
+    if (params[:order][:vendor_id].blank? or params[:order][:model_id].blank?)
+      response = {success: false, data: "Missing parameters"} 
+      render json: response, status: 200
+    else
+      vendor_id = params[:order][:vendor_id].to_i
+      model_id = params[:order][:model_id].to_i
+      modelo = ""
+      vendor = Vendor.find(vendor_id)
+      modelo = Model.find(model_id)
+      template = Template.where(:model_id => params[:order][:model_id])
+      template.each do |model|
+        product_vendor = vendor.product_vendors.where(:product_id => model.product_id, status: ProductVendor::Status[:active]).first
+        if product_vendor.blank?
+          product = Product.where(:id => model.product_id).first
+          if product.blank?
+            response = {success: false, data: "Product #{model.product_id} not found on products database."}
+            render json: response, status: 200
+          else
+            response = {success: false, data: "Warning: the creation of the order was stopped, product #{product.name} from #{modelo.name} template it is not associated to product vendor #{vendor.name}. Please enter to products vendor details and add it, before continue."}
+            render json: response, status: 200
+          end
+        end
+      end
+    end
+  end
 
   def order_params
       params.require(:order).permit(:delivery_date, :project_id, :time_needed_by, :lot_id, :status, :vendor_id, :notes, :user_id)

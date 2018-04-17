@@ -47,7 +47,7 @@ class VendorsController < ApplicationController
       else
         if (params[:vendor_email][:id].to_i == 0 )
           #Create a new vendor email
-          vendor_email = VendorEmail.where(email: params[:vendor_email][:email]).first
+          vendor_email = VendorEmail.where(email: params[:vendor_email][:email], vendor_id:params[:vendor_email][:vendor_id]).first
           if (vendor_email.blank?)
             email = VendorEmail.new(vendor_email_params)
             if !email.save
@@ -65,7 +65,7 @@ class VendorsController < ApplicationController
           if (vendor_email.blank?)
             response = {success: false, data: "Vendor email not found!"}
           else
-            email = VendorEmail.where(email: params[:vendor_email][:email]).first
+            email = VendorEmail.where(email: params[:vendor_email][:email], vendor_id:params[:vendor_email][:vendor_id]).first
             if (email.blank?)
               vendor_email.update(vendor_email_params)
               response = {success: true, data: "Vendor email updated successfully!"}
