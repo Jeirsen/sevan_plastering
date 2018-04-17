@@ -18,3 +18,14 @@
 i {
     cursor: pointer;
 }
+
+
+.shadow-loading {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 1000;
+    background: rgba(37, 37, 37, 0.52);
+    padding-top: 100px;
+    display: none;
+}

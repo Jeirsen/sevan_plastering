@@ -2,6 +2,12 @@
   <h4 class="modal-title" id="exampleModalLabel1">Edit Model</h4>
   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 </div>
+<div class="shadow-loading text-center">
+
+  <i class="fa fa-spinner fa-spin" style="font-size:50px; color: #fff"></i>
+
+
+</div>
 <div class="modal-body">
   <%= form_with(scope: :model, url: model_update_path, multipart: true) do |form| %>
     <% if @model.errors.any? %>
@@ -50,9 +56,10 @@
               $("#danger_name").show();
               return false;
           }
+          $('.shadow-loading').fadeIn('fast');
+
           return true;
       });
-
       const MAX_IMAGE_SIZE = 2048000;
       function updatePhoto(input){
           if (input.files && input.files[0]) {
@@ -68,6 +75,11 @@
               }
           };
       }
+
+
+      $("form").bind('ajax:complete', function() {
+          location = '<%= model_detail_path(@model) %>';
+      });
   </script>
 </div>
 
