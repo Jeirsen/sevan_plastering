@@ -68,7 +68,7 @@
 	</div>    
 	<% if !@order.order_details.blank? %>
 		<% @order.order_details.each do |item| %>
-			<div class="col-lg-3 col-md-6">
+			<div class="col-lg-4 col-md-6">
         <a onclick="EditOrderItem(this)" class="edit-item-order" style="cursor: pointer;">
           <div class="card" data-item-id="<%= item.id %>" data-quantity="<%= item.quantity %>" data-price="<%= item.price %>">
             <div class="d-flex flex-row">
@@ -320,7 +320,7 @@
   	price = parseFloat($("#order_price").val());
   	total = (quantity * price);
 
-	  var element = '<div class="col-lg-3 col-md-6">\
+	  var element = '<div class="col-lg-4 col-md-6">\
         						<a onclick="EditOrderItem(this)" class="edit-item-order" style="cursor: pointer;">\
           						<div class="card" data-item-id="'+detail_item_id+'" data-quantity="'+quantity+'" data-price="'+price+'">\
             						<div class="d-flex flex-row">\
@@ -464,7 +464,7 @@
 		quantity = parseInt($("#order_edit_quantity").val());
   	price = parseFloat($("#order_edit_price").val());
   	total = (quantity * price);
-  	var element = '<div class="col-lg-3 col-md-6">\
+  	var element = '<div class="col-lg-4 col-md-6">\
         						<a onclick="EditOrderItem(this)" class="edit-item-order" style="cursor: pointer;">\
           						<div class="card" data-item-id="'+id+'" data-quantity="'+quantity+'" data-price="'+price+'">\
             						<div class="d-flex flex-row">\
