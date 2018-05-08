@@ -1,63 +1,63 @@
-<div class="table-responsive">
-	<table class="table">
+<div class="table-responsive" align="center">
+	<table class="table" width="80%" border="1">
 		<tr>
-			<td colspan="5">Purchase Order</td>
+			<td colspan="5" style="font-size: 20px;font-weight: bold;text-align: center">SMV STUCCO INC NEW PURCHASE ORDER</td>
 		</tr>
 		<tr>
-			<td>Number:</td>
-			<td colspan="4"><%= @order.order_number %></td>
+			<td style="font-weight: bold; text-align: center;font-size: 14px">Number:</td>
+			<td colspan="4" style="text-align: right;font-size: 14px"><%= @order.order_number %></td>
 		</tr>
 		<tr>
-			<td>Vendor:</td>
-			<td colspan="4"><%= @order.vendor.name %></td>
+			<td style="font-weight: bold; text-align: center;font-size: 14px">Vendor:</td>
+			<td colspan="4" style="text-align: right;font-size: 14px"><%= @order.vendor.name %></td>
 		</tr>
 		<tr>
-			<td>Delivery Date:</td>
-			<td colspan="4"><%= @order.delivery_date.strftime("%d/%m/%Y") %></td>
+			<td style="font-weight: bold; text-align: center;font-size: 14px">Delivery Date:</td>
+			<td colspan="4" style="text-align: right;font-size: 14px"><%= @order.delivery_date.strftime("%d/%m/%Y") %></td>
 		</tr>
 		<tr>
-			<td>Time Needed:</td>
-			<td colspan="4"><%= Order.TimeNeededBy @order.time_needed_by %></td>
+			<td style="font-weight: bold; text-align: center;font-size: 14px">Time Needed:</td>
+			<td colspan="4" style="text-align: right;font-size: 14px"><%= Order.TimeNeededBy @order.time_needed_by %></td>
 		</tr>
 		<tr>
-			<td>Project:</td>
-			<td colspan="4"><%= @order.project.name %></td>
+			<td style="font-weight: bold; text-align: center;font-size: 14px">Project:</td>
+			<td colspan="4" style="text-align: right;font-size: 14px"><%= @order.project.name %></td>
 		</tr>
 		<tr>
-			<td>Lot:</td>
-			<td colspan="4"><%= @order.lot.number %></td>
+			<td style="font-weight: bold; text-align: center;font-size: 14px">Lot:</td>
+			<td colspan="4" style="text-align: right;font-size: 14px"><%= @order.lot.number %></td>
 		</tr>
 		<tr>
-			<td>Address:</td>
-			<td colspan="4"><%= @order.lot.full_address %></td>
+			<td style="font-weight: bold; text-align: center;font-size: 14px">Address:</td>
+			<td colspan="4" style="text-align: right;font-size: 14px"><%= @order.lot.full_address %></td>
 		</tr>
 	</table>
 </div>
-
-<div class="table-responsive">
-	<table class="table">
-		<thead>
-      <tr>
-				<td>Product</td>
-				<td>Unit of Measure</td>
-				<td>Quantity</td>
-				<td>Price</td>
-				<td>Line Total</td>
-			</tr>
+<br>
+<div class="table-responsive" align="center">
+	<table class="table" width="80%" border="1">
+	<thead>
+     	<tr>
+			<td style="font-weight: bold;text-align: center;font-size: 14px">Product</td>
+			<td style="font-weight: bold;text-align: center;font-size: 14px">Unit of Measure</td>
+			<td style="font-weight: bold;text-align: center;font-size: 14px">Quantity</td>
+			<td style="font-weight: bold;text-align: center;font-size: 14px">Price</td>
+			<td style="font-weight: bold;text-align: center;font-size: 14px">Line Total</td>
+		</tr>
     </thead>
 		<tbody>
 			<% @order.order_details.each do |order_detail| %>
 				<tr>
-					<td><%= order_detail.product.name %></td>
-					<td><%= order_detail.product.unit.name %></td>
-					<td><%= order_detail.quantity %></td>
-					<td><%= order_detail.price %></td>
-					<td><%= order_detail.total %></td>
+					<td style="text-align: center;font-size: 14px"><%= order_detail.product.name %></td>
+					<td style="text-align: center;font-size: 14px"><%= order_detail.product.unit.name %></td>
+					<td style="text-align: center;font-size: 14px"><%= order_detail.quantity %></td>
+					<td style="text-align: center;font-size: 14px"><%= order_detail.price %></td>
+					<td style="text-align: center;font-size: 14px"><%= order_detail.total %></td>
 				</tr>
 			<% end -%>
 			<tr>
-				<td colspan="4" style="text-align: right;">Total</td>
-				<td><%= @order.order_total %></td>
+				<td colspan="4" style="text-align: center;font-weight: bold;font-size: 18px">TOTAL</td>
+				<td style="font-weight: bold;font-size: 18px;text-align: center;"><%= @order.order_total %></td>
 			</tr>
 		</tbody>
 	</table>

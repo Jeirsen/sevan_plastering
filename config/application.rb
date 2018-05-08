@@ -28,7 +28,7 @@ module SevanplasteringPorders
       user_name:            'svmstucco@gmail.com',
       password:             'jorgemontoya2018',
       authentication:       'plain',
-      enable_starttls_auto: true  
+      enable_starttls_auto: true
     }
 
   end
