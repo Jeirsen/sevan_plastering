@@ -75,6 +75,11 @@
                   <%= select_tag "unit_type", options_for_select(Unit.get_all.map { |e| [e.name, e.id] }.sort), { :id => "select_unit", :class => "form-control", :include_blank => "-None-"} %>
                   <span class="label label-danger" style="display: none" id="danger_unit">Product unit is required!</span>
               </div>
+              <div class="form-group">
+                  <label for="recipient-name" class="control-label">Category:</label>
+                  <%= select_tag "catergory_type", options_for_select(Product.categories.map{|e| [e[:name], e[:id]]}.sort), { :id => "select_category", :class => "form-control", :include_blank => "-None-"} %>
+                  <span class="label label-danger" style="display: none" id="danger_category">Category unit is required!</span>
+              </div>
               <div class="alert" id="product_alert" style="display: none">
               </div>
           	</form>
@@ -133,11 +138,13 @@ function addProduct(){
   if (!validateProductData()){
     name = $.trim($("#product_name").val());
     unit_id = parseInt($("#select_unit").val());
+    category = parseInt($("#select_category").val())
 
     product_object = {
       product : {
         name: name,
-        unit_id: unit_id
+        unit_id: unit_id,
+        category: category
       }
     }
 
@@ -194,6 +201,7 @@ function addProduct(){
 function validateProductData(){
   product_name = $.trim($("#product_name").val());
   unit_id = $("#select_unit").val();
+  category = $("#select_category").val();
   error = false;
 
   if(product_name.length === 0)
@@ -214,6 +222,15 @@ function validateProductData(){
     error = true;
   }
 
+  if(category === "")
+  { 
+    $("#danger_category").show();
+    setTimeout(function(){
+        $('#danger_category').hide();
+    },5000);
+    error = true;
+  }
+
   return error;
 }
 
@@ -221,6 +238,7 @@ function appendProduct(product_id){
   name = $.trim($("#product_name").val());
   unit_id = parseInt($("#select_unit").val());
   unit_name = $("#select_unit option:selected").text();
+  category_name = $("#select_category option:selected").text();
 
   var element = '<div class="col-lg-3 col-md-6 col-sm-12">\
                   <a onclick="openModalEditProduct(this)" style="cursor: pointer;">\
@@ -229,6 +247,8 @@ function appendProduct(product_id){
                         <div class="d-flex flex-row">\
                           <div class="align-self-center">\
                             <small class="m-b-0">' + name + '</small>\
+                            <br/>\
+                            <small class="m-b-0"> CATEGORY - ' + category_name.toUpperCase(); + '</small>\
                             <h4 class="text-muted m-b-0 text-info" data-unit-id="' + unit_id +'">' + unit_name +'</h4>\
                           </div>\
                         </div>\
