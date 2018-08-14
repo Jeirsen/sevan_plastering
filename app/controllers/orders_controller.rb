@@ -2,10 +2,9 @@ class OrdersController < ApplicationController
 	
   before_action :validate_products, only: [:create_order]
 
-	def show
+  def show
 		@order = Order.find(params[:id])
-		model = Model.find(@order.lot_id)
-		@model = model.name
+		@model = @order.lot.model.name
 	end
 
 	def search_projects
@@ -41,7 +40,8 @@ class OrdersController < ApplicationController
 		render json: response, status: 200
 	end
 
-	def create_order
+  def create_order
+    byebug
 		if (params[:order][:delivery_date].blank? or params[:order][:time_needed_by].blank? or params[:order][:project_id].blank? or params[:order][:lot_id].blank? or params[:order][:vendor_id].blank? or params[:order][:model_id].blank?)
 			response = {success: false, data: "Missing parameters"}	
 		else

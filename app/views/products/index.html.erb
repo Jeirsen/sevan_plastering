@@ -26,6 +26,10 @@
               <div class="d-flex flex-row">
                 <div class="align-self-center">
                   <small class="m-b-0"><%= product.name %></small>
+                  <br/>
+                  <small class="m-b-0">
+                    CATEGORY - <%= product.category === 1 ? 'STUCCO' : 'PONE' %>
+                  </small>
                   <h4 class="text-muted m-b-0 text-info" data-unit-id="<%= product.unit_id %>"><%= product.unit.name %></h4>
                 </div>
               </div>
