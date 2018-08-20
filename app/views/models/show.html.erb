@@ -66,14 +66,47 @@
 
 <!-- modals -->
 <div class="modal fade" id="addProduct" role="dialog" aria-labelledby="addProduct">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-md" role="document">
       <div class="modal-content">
           <div class="modal-header">
-              <h4 class="modal-title">Add Template Product</h4>
+              <h4 class="modal-title">Add Template Product(s)</h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           </div>
           <div class="modal-body">
-            <form>
+          	<div class="alert" id="template_alert" style="display: none"></div>
+          	<div class="table-responsive">
+          		<table class="table table-bordered" id="template-products">
+          			<thead>
+          				<tr>
+          					<th>Product</th>
+          					<th>Quantity</th>
+          				</tr>
+          			</thead>	
+          			<tbody>
+          				<% if !@products.blank? %>
+          					<% @products.each do |product| %>
+          						<tr>
+          							<td product-id="<%= product.id %>" style="padding: 5px;vertical-align: top;">
+          								<%= product.name %>
+          							</td>
+          							<td style="padding: 5px;vertical-align: top;">
+          								<input type="number" min="0" max="1000" name="quantity" value="0" placeholder="Enter a quantity" class="form-control"></input>
+          								<span class="label label-danger" style="display: none" id='danger_quantity_<%=product.id%>'>
+          									Quantity is required!
+          								</span>
+          							</td>
+          						</tr>
+          					<% end %>
+          				<% else %>
+          					<h2>
+          						There's no existing products, please go and create some.
+          					</h2>
+          				<% end %>
+          			</tbody>
+          		</table>
+          	</div>
+
+            <!--<form>
               <div class="form-group">
                   <label for="recipient-name" class="control-label">Product:</label>
                   <select id="add-product"></select>
@@ -82,11 +115,11 @@
               <div class="form-group">
                   <label for="recipient-name" class="control-label">Quantity:</label>
                   <input type="number" class="form-control" id="template_quantity" required>
-                  <span class="label label-danger" style="display: none" id="danger_quantity">Quantity is required!</span>
+                  
               </div>
-              <div class="alert" id="template_alert" style="display: none">
-              </div>
-            </form>
+            </form>-->
+
+
           </div>
           <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -151,158 +184,114 @@
 	var product_id = 0;
 	var templateElement = "";
 
-	$(document).ready(function(){
-		$("#add-product").select2({
-	    theme: "bootstrap",
-	    ajax:{
-	      url: "<%= search_products_path %>",
-	      dataType: 'json',
-	      data: function(params){
-	        return{
-	          q: params.term
-	        };
-	      },
-	      processResults: function (data) {
-	        return {
-	            results: data.data
-	        };
-	      },
-	    },
-	    minimumInputLength: 3,
-	    placeholder: {
-	      id: '-1',
-	      text: 'Enter product name ...'
-	    },
-	    escapeMarkup: function (markup) {
-	      return markup;
-	    },
-	    templateResult: function (product) {
-	      if (product.loading) return 'product.name';
-	      return $("<div>"+ product.name +"</div>")
-	    }, 
-	    templateSelection: function (product) {
-	      if (product === '' || product === null){
-	          return '<span>Enter product name ...</span>';
-	      }
-	      return $("<span>"+ product.name +"</span>")
-	    }
-	  });
-	});
-
 	function addTemplateProduct(){
 		if (!validateTemplateData()){
-	    product_id = $('#add-product :selected').val();
-	    quantity = parseInt($("#template_quantity").val());
-	    model_id = <%= @model.id %>
+			model_id = <%= @model.id %>
+			let success = true;
+		    $("#template-products").find('tbody tr').each(function (i, el) {
+		        var tds = $(el).find('td');
+		        let quantity = $(tds).find("input").val();
+		        let product_name = $.trim($(tds).eq(0).text());
+		        product_id = $(tds).attr("product-id");
+		        if (quantity > 0){
+		        	template_object = {
+				    	template : {
+				        	id: 0,
+				        	model_id: model_id,
+				        	product_id: product_id,
+					    	quantity: quantity
+				      	}
+				    }
 
-	    template_object = {
-	      template : {
-	        id: 0,
-	        model_id: model_id,
-	        product_id: product_id,
-	        quantity: quantity
-	      }
-	    }
+				    $.ajax({
+				    	url: "<%= template_product_path %>",
+				      	method: "POST",
+				      	data: template_object,
+				      	success: function (data) {
+				        	if(data.success){
+				        		if (data.id !== undefined){
+				        			appendTemplateProduct(data.id, product_id, data.unit_name, quantity, product_name);
+				        		}
+					        }else{
+					        	$("#template_alert").empty();
+					          	$("#template_alert").removeClass("alert-success");
+					          	$("#template_alert").addClass("alert-danger");
+					          	message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+					                 	<span aria-hidden="true">×</span>\
+					                </button>';
+					          	$("#template_alert").append(message);
+					          	$("#template_alert").show();
+					          	setTimeout(function(){
+					            	$("#template_alert").hide();
+					          	},5000);
+					          	success = false;
+					          	return false;
+					        }
+				      	},
+				      	error: function (data) {
+				        	$("#template_alert").empty();
+				        	$("#template_alert").removeClass("alert-success");
+				        	$("#template_alert").addClass("alert-danger");
+				        	message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+				                		<span aria-hidden="true">×</span>\
+				                	</button>';
+				        	$("#template_alert").append(message);
+				        	$("#template_alert").show();
+				        	setTimeout(function(){
+				          		$("#template_alert").hide();
+				        	},5000);
+				        	success = false;
+					        return false;
+				      	}
+				    })
+		        }
+		  	});
 
-	    $.ajax({
-	      url: "<%= template_product_path %>",
-	      method: "POST",
-	      data: template_object,
-	      success: function (data) {
-	        if(data.success){
-	          appendTemplateProduct(data.id, product_id, data.unit_name);
-	          $("#template_alert").empty();
-	          $("#template_alert").removeClass("alert-danger");
-	          $("#template_alert").addClass("alert-success");
-	          message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
-	                    <span aria-hidden="true">×</span>\
-	                    </button>';
-	          $("#template_alert").append(message);
-	          $("#template_alert").show();
-	          setTimeout(function(){
-	            $("#template_alert").hide();
-	            $("#addProduct").modal('hide');
-	          },5000);
-	        }else{
-	          $("#template_alert").empty();
-	          $("#template_alert").removeClass("alert-success");
-	          $("#template_alert").addClass("alert-danger");
-	          message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
-	                    <span aria-hidden="true">×</span>\
-	                    </button>';
-	          $("#template_alert").append(message);
-	          $("#template_alert").show();
-	          setTimeout(function(){
-	            $("#template_alert").hide();
-	          },5000);
-	        }
-	      },
-	      error: function (data) {
-	        $("#template_alert").empty();
-	        $("#template_alert").removeClass("alert-success");
-	        $("#template_alert").addClass("alert-danger");
-	        message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
-	                  <span aria-hidden="true">×</span>\
-	                  </button>';
-	        $("#template_alert").append(message);
-	        $("#template_alert").show();
-	        setTimeout(function(){
-	          $("#template_alert").hide();
-	        },5000);
-	      }
-	    })
-	  }
+		  	if (success){
+		  		$("#addProduct").modal('hide');
+		  	}
+	  	}
 	}
 
 	function validateTemplateData(){
-	  product_id = $('#add-product :selected').val();
-	  quantity = parseInt($("#template_quantity").val());
-	  error = false;
-
-	  if(product_id === undefined || product_id === null || product_id === 0)
-	  { 
-	    $("#danger_product").show();
-	    setTimeout(function(){
-	        $('#danger_product').hide();
-	    },5000);
-	    error = true;
-	  }
-
-	  if(quantity === "" || quantity === 0)
-	  { 
-	    $("#danger_quantity").show();
-	    setTimeout(function(){
-	        $('#danger_quantity').hide();
-	    },5000);
-	    error = true;
-	  }
-
-	  return error;
+		error = false;
+		$("#template-products").find('tbody tr').each(function (i, el) {
+	        var tds = $(el).find('td');
+	        quantity = $(tds).find("input").val();
+	        product_id = $(tds).attr("product-id");
+	        //console.log(tds.eq(1).val())
+	        if (quantity === "" || quantity === null || quantity === undefined){
+	        	$('#danger_quantity_'+product_id).show();
+			    setTimeout(function(){
+			        $("#danger_quantity_"+product_id).hide();
+			    },5000);
+			    error = true;
+			    return false; 
+	        }
+	  	});
+		return error;
 	}
 
-	function appendTemplateProduct(record_id, product_id, unit_name){
-		quantity = $("#template_quantity").val();
-	  product_name = $('#add-product').select2('data')[0].name;
+	function appendTemplateProduct(record_id, product_id, unit_name, quantity, product_name){
+		var element = '<div class="col-lg-3 col-md-6">\
+		    							<a onclick="openModalEditTemplate(this)" class="edit-template" style="cursor: pointer;">\
+		      							<div class="card" data-id="'+record_id+'" data-quantity="'+quantity+'" data-product-id="'+product_id+'">\
+		        							<div class="d-flex flex-row">\
+		          							<div class="p-20">\
+		            							<h5 class="m-b-0 text-info">\
+		              							<small class="quantity">Q'+quantity +' '+ unit_name +'</small>\
+		            							</h5>\
+		          							</div>\
+		          							<div class="align-self-center m-l-20">\
+		            							<small class="text-muted m-b-0">'+product_name+'</small>\
+		          							</div>\
+		        							</div>\
+		      							</div>\
+		    							</a>\
+	  								</div>';
 
-	  var element = '<div class="col-lg-3 col-md-6">\
-	    							<a onclick="openModalEditTemplate(this)" class="edit-template" style="cursor: pointer;">\
-	      							<div class="card" data-id="'+record_id+'" data-quantity="'+quantity+'" data-product-id="'+product_id+'">\
-	        							<div class="d-flex flex-row">\
-	          							<div class="p-20">\
-	            							<h5 class="m-b-0 text-info">\
-	              							<small class="quantity">Q'+quantity +' '+ unit_name +'</small>\
-	            							</h5>\
-	          							</div>\
-	          							<div class="align-self-center m-l-20">\
-	            							<small class="text-muted m-b-0">'+product_name+'</small>\
-	          							</div>\
-	        							</div>\
-	      							</div>\
-	    							</a>\
-  								</div>';
-
-	  $("#model_template").append(element);
-	  $("#template_quantity").val("");
+		$("#model_template").append(element);
+		$("#template_quantity").val("");
 	}
 
 	function openModalEditTemplate(element){

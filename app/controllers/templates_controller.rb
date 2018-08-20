@@ -14,9 +14,8 @@ class TemplatesController < ApplicationController
           else
             response = {success: true, data: "Product added successfully!", id: product_template.id, unit_name: product_template.product.unit.name}
           end
-          
         else
-          response = {success: false, data: "This product is already registered to this template!"}
+          response = {success: true, data: "This product is already registered to this template!"}
         end
       else
         #Edit existing template product

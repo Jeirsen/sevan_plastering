@@ -16,6 +16,7 @@ class ModelsController < ApplicationController
 
 	def show
 		@model = Model.find(params[:id])
+		@products = Product.where(:status => Product::Status[:active], :category => Product::Categories[:stucco])
 	end
 
 	def edit
