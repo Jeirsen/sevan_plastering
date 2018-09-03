@@ -22,7 +22,7 @@ class ProjectsController < ApplicationController
   # GET /projects/1/edit
   def edit
     @builders = Builder.all
-    render :layout => false
+    render :layout => true
   end
 
   # POST /projects
@@ -32,7 +32,7 @@ class ProjectsController < ApplicationController
 
     respond_to do |format|
       if @project.save
-        format.html { redirect_to builders_path, notice: 'Project was successfully created.' }
+        format.html { redirect_to builder_path(@project.builder_id), notice: 'Project was successfully created.' }
         format.json { render :show, status: :created, location: @project }
       else
         format.html { render :new }

@@ -5,8 +5,8 @@ class Product < ApplicationRecord
 
 	def self.categories
 	[
-        {id: Categories[:stucco], name: "Stucco"},
-        {id: Categories[:foam], name: "Foam"}
+        	{id: Categories[:stucco], name: "Stucco"},
+        	{id: Categories[:foam], name: "Foam"}
 	]
 	end
 end

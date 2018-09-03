@@ -41,7 +41,6 @@ class OrdersController < ApplicationController
 	end
 
   def create_order
-    byebug
 		if (params[:order][:delivery_date].blank? or params[:order][:time_needed_by].blank? or params[:order][:project_id].blank? or params[:order][:lot_id].blank? or params[:order][:vendor_id].blank? or params[:order][:model_id].blank?)
 			response = {success: false, data: "Missing parameters"}	
 		else

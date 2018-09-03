@@ -30,6 +30,23 @@ class ProductsController < ApplicationController
     render json: response, status: 200
   end
 
+  def prioritize
+    if(params[:product][:id].blank? or params[:product][:prioritize].blank?)
+      response = {success: false, data: "Missing parameters"}
+    else
+      prioritize = params[:product][:prioritize]
+      product_id = params[:product][:id]
+      product = Product.where(id: product_id).first
+      if product.nil?
+        response = {success: false, data: "Product not found!"}
+      else
+        product.update(product_params)
+        response = {success: true, data: "Product updated successfully!"}
+      end
+    end
+    render json: response, status: 200
+  end
+
   def search_products
     q = params[:q].to_s
     results = Product.select('products.id, products.name').where("products.name ILIKE ? AND products.status = #{Product::Status[:active]}", "%#{q}%").limit(5).map { |product| {id: product.id, name: product.name} }
@@ -39,7 +56,7 @@ class ProductsController < ApplicationController
   private
 
   def product_params
-      params.require(:product).permit(:name, :unit_id, :status, :category)
+      params.require(:product).permit(:name, :unit_id, :status, :category, :prioritize)
   end
 
 end

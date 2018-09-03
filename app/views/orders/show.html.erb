@@ -3,7 +3,7 @@
 		<h3 class="text-themecolor">Sevan</h3>
 		<ol class="breadcrumb">
 			<li class="breadcrumb-item"><a href="<%= root_path %>">Home</a></li>
-			<li class="breadcrumb-item active">Sevan Order: <%= @order.order_number %></li>
+			<li> &nbsp; - Sevan Order: <%= @order.order_number %></li>
 		</ol>	
 	</div>
 </div>
@@ -28,13 +28,13 @@
 		<label class="font-weight-bold">Time Needed By: </label> <%= Order.TimeNeededBy(@order.time_needed_by) %>
 	</div>
 	<div class="col-md-4 col-sm-12">
-		<label class="font-weight-bold">Delivery Date: </label> <%= @order.delivery_date.strftime("%d/%m/%Y") %>
+		<label class="font-weight-bold">Delivery Date: </label> <%= @order.delivery_date.strftime("%m/%d/%Y") %>
 	</div>
 	<div class="col-md-4 col-sm-12">
 		<label class="font-weight-bold">Order By: </label> <%= @order.user.first_name %>
 	</div>
 	<div class="col-md-4 col-sm-12">
-		<label class="font-weight-bold">Time Order Made: </label> <%= @order.created_at.strftime("%d/%m/%Y - %H:%M") %>
+		<label class="font-weight-bold">Time Order Made: </label> <%= @order.created_at.strftime("%m/%d/%Y - %H:%M") %>
 	</div>
 	<div class="col-md-4 col-sm-12">
 		<label class="font-weight-bold">Status: </label> <span id="order_status"><%= Order.order_status(@order.status) %><span>

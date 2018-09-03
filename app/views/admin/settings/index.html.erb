@@ -3,7 +3,7 @@
 		<h3 class="text-themecolor">Sevan</h3>
 		<ol class="breadcrumb">
 		<li class="breadcrumb-item"><a href="<%= root_path %>">Admin</a></li>
-		<li class="breadcrumb-item active">Settings</li>
+		<li> &nbsp; - Settings</li>
 		</ol>
 	</div>
 </div>
@@ -12,19 +12,21 @@
 
 <div class="row">
 	<div class="col-lg-6 col-md-6">
-		<a href="<%= '#' %>">
+		<a onclick="edit_setting(<%= order_number.id %>)">
 			<div class="card">
 				<div class="card-body">
 					<div class="d-flex flex-row">
-						<div class="round round-lg align-self-center round-info">
+						<div class="col-md-2 round round-lg align-self-center round-info">
 							<i class="fa fa-address-card"></i>
 						</div>
-						<div class="m-l-10 align-self-center">
+						<div class="col-md-9 align-self-center">
 							<h3 class="m-b-0 font-light">Order Number</h3>
 							<h5 class="text-muted m-b-0">Next: <%= order_number.order_number rescue 0 %></h5>
 						</div>
-						<div class="col-md-2 align-self-center text-right">
-		                	<span onclick="edit_setting(<%= order_number.id %>)" class="icon-list-actions green-color" data-toggle="tooltip" title="" data-original-title="Update"><i class="mdi mdi-pencil"></i></span>
+						<div class="col-md-2 align-self-center">
+		                	<span onclick="edit_setting(<%= order_number.id %>)" class="icon-list-actions" data-toggle="tooltip" title="" data-original-title="Update">
+								<i class="fa fa-pencil"></i>
+							</span>
 		              	</div>
 					</div>
 				</div>

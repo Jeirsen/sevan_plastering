@@ -3,7 +3,7 @@
 		<h3 class="text-themecolor">Sevan</h3>
 		<ol class="breadcrumb">
 	  	<li class="breadcrumb-item"><a href="<%= root_path %>">Home</a></li>
-	    <li class="breadcrumb-item active">Products</li>
+	    <li> &nbsp; - Products</li>
 	  </ol>
 	</div>
 </div>
@@ -13,12 +13,16 @@
 		<button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#newProduct">
 			<i class="fa fa-plus"></i> Add new
 		</button>
+
+    <button type="button" class="btn btn-outline-success pull-right" data-toggle="modal" data-target="#prioritizeProduct">
+			<i class="fa fa-pencil"></i> Prioritize
+		</button>
 	</div>	
 </div>
 
 <div class="row" id="products">
 	<% if !@products.blank? %>
-		<% @products.each do |product| %>
+		<% @products.order("prioritize DESC").each do |product| %>
   		<div class="col-lg-3 col-md-6 col-sm-12">
         <a onclick="openModalEditProduct(this)" style="cursor: pointer;">
           <div class="card" data-product-id="<%= product.id %>" data-product-status="<%= product.status %>">
@@ -30,7 +34,12 @@
                   <span class="m-b-0" data-category-id="<%= product.category %>">
                   <%= product.category === 1 ? 'STUCCO' : 'FOAM' %>
                   </span>
-                  <h4 class="text-muted m-b-0 text-info" data-unit-id="<%= product.unit_id %>"><%= product.unit.name %></h4>
+                  <h4 class="text-muted m-b-0 text-info" data-unit-id="<%= product.unit_id %>">
+                    <%= product.unit.name %>
+                  </h4>
+                  <h5 class="text-info">
+                    <span class="badge <%= product.prioritize ? "badge-success" : "badge-warning" %>"><%= product.prioritize ? "Prioritized" : "Not Prioritized" %></span>
+                  </h5>
                 </div>
               </div>
             </div>
@@ -92,6 +101,53 @@
   </div>
 </div>
 
+<div class="modal fade" id="prioritizeProduct" tabindex="-1" role="dialog" aria-labelledby="prioritizeProduct">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h4 class="modal-title">Prioritize Product(s)</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+          	<div class="table-responsive">
+              <div class="alert" id="prioritize_alert" style="display: none"></div>
+          		<table class="table table-bordered" id="prioritize-products">
+          			<thead>
+          				<tr>
+          					<th>Product</th>
+          					<th>Prioritize</th>
+          				</tr>
+          			</thead>	
+          			<tbody>
+          				<% if !@products.blank? %>
+          					<% @products.each do |product| %>
+          						<tr>
+          							<td product-id="<%= product.id %>" style="padding: 5px;vertical-align: top;">
+          								<%= product.name %>
+          							</td>
+          							<td style="padding: 5px;vertical-align: top;">
+          								<input type="checkbox" id="priorizate<%=product.id%>" class="filled-in" value="<%= product.prioritize %>">
+                          <label for="priorizate<%=product.id%>"> <%= product.prioritize == false ? "Inactive" : "Active" %></label>
+          							</td>
+          						</tr>
+          					<% end %>
+          				<% else %>
+          					<h2>
+          						There's no existing products, please go and create some.
+          					</h2>
+          				<% end %>
+          			</tbody>
+          		</table>
+          	</div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button onclick="prioritizaProducts()" ontype="button" class="btn btn-danger waves-effect waves-light">Update</button>
+          </div>
+      </div>
+  </div>
+</div>
+
 <div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-labelledby="editProduct">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -138,6 +194,49 @@ var idProductForEditing = 0;
 var statusProduct = 0;
 var unitId = 0;
 var productElement = "";
+
+function prioritizaProducts(){
+  let success = true;
+  $("#prioritize-products").find('tbody tr').each(function (i, el) {
+    var tds = $(el).find('td');
+    let input_prioritize = $(tds).find("input").prop("checked");
+    let product_id = $(tds).attr("product-id");
+    product_object = {
+      product : {
+        id: product_id,
+        prioritize: input_prioritize
+      }
+    }
+    $.ajax({
+      url: "<%= prioritize_product_path %>",
+      method: "POST",
+      data: product_object,
+      success: function (data) {
+        success = true;
+      },
+      error: function (data) {
+        $("#prioritize_alert").empty();
+        $("#prioritize_alert").removeClass("alert-success");
+        $("#prioritize_alert").addClass("alert-danger");
+        message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+              <span aria-hidden="true">×</span>\
+            </button>';
+        $("#prioritize_alert").append(message);
+        $("#prioritize_alert").show();
+        setTimeout(function(){
+          $("#prioritize_alert").hide();
+        },5000);
+        success = false;
+        return false;
+      }
+    })
+    
+  });
+
+  if (success){
+    window.location.replace("/products");
+  }
+}
 
 function addProduct(){
   if (!validateProductData()){
@@ -240,7 +339,6 @@ function validateProductData(){
 }
 
 function appendProduct(product_id){
-debugger;
   name = $.trim($("#product_name").val());
   unit_id = parseInt($("#select_unit").val());
   unit_name = $("#select_unit option:selected").text();
@@ -257,6 +355,7 @@ debugger;
                             <br/>\
                             <span class="m-b-0" data-category-id="'+ category_id +'">' + category_name.toUpperCase() + '</span>\
                             <h4 class="text-muted m-b-0 text-info" data-unit-id="' + unit_id +'">' + unit_name +'</h4>\
+                            <h5 class="text-info">Prioritize<span class="badge badge-success">false</span></h5>\
                           </div>\
                         </div>\
                       </div>\

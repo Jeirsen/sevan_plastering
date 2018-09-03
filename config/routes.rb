@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   resources :products
   post 'admin-product' => 'products#admin_product', :as => 'admin_product'
   get 'search-products' => 'products#search_products', :as => 'search_products'
+  post 'prioritize-product' => 'products#prioritize', :as => 'prioritize_product'
 
   #units
   get 'units' => 'units#index', :as => 'units'

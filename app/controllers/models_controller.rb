@@ -26,11 +26,9 @@ class ModelsController < ApplicationController
 	end
 
 	def update
-
 		@model = Model.find(params[:id])
 		respond_to do |format|
 			if @model.update(model_params)
-
 				format.html { redirect_to project_path, notice: 'Model was successfully updated.' }
 				format.json { render :show, status: :ok, location: @model }
 			else

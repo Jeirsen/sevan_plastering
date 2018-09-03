@@ -3,7 +3,7 @@
 		<h3 class="text-themecolor">Sevan</h3>
 		<ol class="breadcrumb">
 		<li class="breadcrumb-item"><a href="<%= root_path %>">Home</a></li>
-		<li class="breadcrumb-item active">Orders</li>
+		<li> &nbsp; - Orders</li>
 	  </ol>
 	</div>
 </div>
@@ -25,7 +25,7 @@
 					    <h5 class="card-title"><strong><%= order.order_number %> - <%= order.vendor.name %></strong></h5>
 					    <h6 class="card-subtitle mb-2 text-muted"><%= order.project.name %></h6>
 					    <h6 class="card-subtitle mb-2 text-muted">Lot: <%= order.lot.number %></h6>
-					    <small>Delivery Date: <%= order.delivery_date.strftime("%d/%m/%Y") %></small><br>
+					    <small>Delivery Date: <%= order.delivery_date.strftime("%m/%d/%Y") %></small><br>
 					    <small>Needed By: <%= Order.TimeNeededBy(order.time_needed_by) %></small><br>
 					    <small>Status: <%= Order.order_status(order.status) %></small>
 					  </div>
@@ -62,7 +62,7 @@
           			<div class="col-md-6">
           				<div class="form-group">
 	                  <label for="recipient-name" class="control-label">Delivery Date:</label>
-	                  <input type="text" class="form-control mydatepicker" placeholder="dd/mm/yyyy" id="delivery_date">
+	                  <input type="text" class="form-control mydatepicker" placeholder="mm/dd/yyyy" id="delivery_date">
 	                  <span class="label label-danger" style="display: none" id="danger_delivery">Delivery Date is required!</span>
               		</div>		
           			</div>
@@ -137,7 +137,7 @@
 	$(document).ready(function(){
 
 		jQuery('.mydatepicker, #datepicker').datepicker({
-			format:'dd/mm/yyyy'
+			format:'mm/dd/yyyy'
 		});
 		jQuery('#datepicker-autoclose').datepicker({
         autoclose: true,

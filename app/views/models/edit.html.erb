@@ -43,22 +43,16 @@
       });
 
       $('form').submit(function() {
+            var name_model = $("#name_model").val();
+            //var image_model = $("#image_model").val();
 
-          var name_model = $("#name_model").val();
-          var image_model = $("#image_model").val();
+            if (name_model == null || name_model == "" ) {
+                $("#danger_name").show();
+                return false;
+            }
+            $('.shadow-loading').fadeIn('fast');
 
-          if (image_model == null || image_model == "" ) {
-              $("#danger_builder").show();
-              return false;
-          }
-
-          if (name_model == null || name_model == "" ) {
-              $("#danger_name").show();
-              return false;
-          }
-          $('.shadow-loading').fadeIn('fast');
-
-          return true;
+            return true;
       });
       const MAX_IMAGE_SIZE = 2048000;
       function updatePhoto(input){
