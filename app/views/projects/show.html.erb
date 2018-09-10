@@ -26,7 +26,7 @@
 </div>
 
 <div class="row">
-  <% @project.lots.each do |lot| %>
+  <% @project.lots.where(:status => Lot::Status[:active]).each do |lot| %>
     <div class="col-lg-5 col-md-5">
       <a href="#" onclick="editLot(<%= lot.id%>)">
         <div class="card">
@@ -64,9 +64,6 @@
     </div>
   </div>
 </div>
-
-
-
 
 <script type="text/javascript">
 

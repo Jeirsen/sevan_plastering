@@ -2,17 +2,18 @@
   <h4 class="modal-title" id="exampleModalLabel1">Edit Model</h4>
   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 </div>
+
 <div class="shadow-loading text-center">
-
   <i class="fa fa-spinner fa-spin" style="font-size:50px; color: #fff"></i>
-
-
 </div>
+
 <div class="modal-body">
   <%= form_with(scope: :model, url: model_update_path, multipart: true) do |form| %>
     <% if @model.errors.any? %>
       <div id="error_explanation">
-        <h2><%= pluralize(project.errors.count, "error") %> prohibited this project from being saved:</h2>
+        <h2>
+          <%= pluralize(project.errors.count, "error") %> prohibited this project from being saved:
+        </h2>
 
         <ul>
           <% @model.errors.full_messages.each do |message| %>
@@ -32,12 +33,19 @@
       <span class="label label-danger" style="display: none" id="danger_image">Image is required!</span>
       <span class="label label-danger" style="display: none" id="danger_size"><strong>Warning!</strong> You can not upload images bigger than 2 MB.</span>
     </div>
-    <img src="" id="image_upload" width="100%">
+    <div class="form-group">
+      <%= form.check_box :status, class: "filled-in", id:"edit_model_status"  %>
+      <label for="edit_model_status">Active</label>
+    </div>
+    <div>
+      <img src="" id="image_upload" width="100%">
+    </div>
     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
     <%= form.submit 'Save', class: "btn btn-danger waves-effect waves-light" %>
   <% end %>
 
   <script>
+      let status = null;
       $(".select2").select2({
           tags: true
       });
@@ -45,13 +53,13 @@
       $('form').submit(function() {
             var name_model = $("#name_model").val();
             //var image_model = $("#image_model").val();
-
+            status = $("#edit_model_status").prop("checked");
             if (name_model == null || name_model == "" ) {
                 $("#danger_name").show();
                 return false;
             }
-            $('.shadow-loading').fadeIn('fast');
 
+            $('.shadow-loading').fadeIn('fast');
             return true;
       });
       const MAX_IMAGE_SIZE = 2048000;
@@ -70,9 +78,12 @@
           };
       }
 
-
       $("form").bind('ajax:complete', function() {
-          location = '<%= model_detail_path(@model) %>';
+        if (status == true){
+          location = '<%= model_detail_path(@model) %>'
+        }else{
+          location = '<%= builder_path(@model.builder_id) %>';
+        }
       });
   </script>
 </div>

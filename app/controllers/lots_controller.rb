@@ -49,7 +49,7 @@ class LotsController < ApplicationController
   def update
     respond_to do |format|
       if @lot.update(lot_params)
-        format.html { redirect_to lots_path, notice: 'Lot was successfully updated.' }
+        format.html { redirect_to project_path(@lot.project_id), notice: 'Lot was successfully updated.' }
         format.json { render :show, status: :ok, location: @lot }
       else
         format.html { render :edit }
@@ -76,6 +76,6 @@ class LotsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def lot_params
-      params.require(:lot).permit(:name, :project_id, :model_id, :address1, :address2, :number, :zip, :city, :state)
+      params.require(:lot).permit(:name, :project_id, :model_id, :address1, :address2, :number, :zip, :city, :state, :status)
     end
 end

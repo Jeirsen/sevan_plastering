@@ -37,6 +37,7 @@ Rails.application.routes.draw do
   post 'edit-item-order' => 'orders#edit_order_item', :as => 'edit_order_item'
   post 'send-order-mail' => 'orders#send_mail', :as => 'send_mail'
   delete 'remove-order-item' => 'orders#remove_item', :as => 'remove_order_item'
+  get 'search_orders_by' => 'orders#search_orders_by', :as => 'search_orders_by'
 
   #templates
   post 'template-product' => 'templates#template_product', :as => 'template_product'

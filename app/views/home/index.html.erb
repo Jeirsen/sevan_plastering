@@ -9,13 +9,42 @@
 </div>
 
 <div class="row">
+	<div class="col-lg-12">
+		<!--<input name="search" type="radio" id="by_order" value="by_order" class="with-gap">
+		<label for="by_order">By # Order</label> 
+		<input name="search" type="radio" id="by_project" value="by_project" class="with-gap">
+		<label for="by_project">By Project</label> 
+		<input name="search" type="radio" id="by_lot" value="by_lot" class="with-gap">
+		<label for="by_lot">By Lot</label> 
+		<input name="search" type="radio" id="by_model" value="by_model" class="with-gap">
+		<label for="by_model">By Lot</label>-->
+	</div>
 	<div class="col-lg-12 col-xlg-6 m-b-30">
-		<button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#newOrder">
-			<i class="fa fa-plus"></i> Add new</button>
-	</div>	
+		<div class="input-group stylish-input-group">
+				<input type="number" class="form-control" placeholder="Search ..." id="search_value">
+				<span class="input-group-addon">
+						<button class="btn btn-info" id="search_by">
+								<span class="fa fa-search"></span>
+						</button>  
+				</span>
+		</div>
+		<br/>
+		<div class="alert alert-danger" style="display:none" id="err_seacrh">
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">×</span>
+			</button>
+			<h3 class="text-danger">
+			<i class="fa fa-exclamation-circle"></i> Error
+			</h3> 
+			Please enter an order number to search
+		</div>
+	</div>
+	<button class="right-side-toggle waves-effect waves-light btn-info btn btn-circle btn-sm pull-right m-l-10" data-toggle="modal" data-target="#newOrder">
+		<i class="fa fa-plus text-white"></i>
+	</button>
 </div>
 
-<div class="row">
+<div class="row" id="list_orders">
 	<% if !@orders.blank? %>
 		<% @orders.order("order_number desc").each do |order| %>
 			<div class="col-lg-4 col-md-4">
@@ -238,6 +267,55 @@
   	lot_id = $("#select-lot option:selected").val();
   	SearchModel();
 	});
+
+	$('#search_by').on('click', function(){
+		let option = $('input[name=search]:checked').val();
+		let value = $('#search_value').val();
+
+		if (value === undefined || value == ''){
+			$("#err_seacrh").show();
+			setTimeout(function(){
+				$("#err_seacrh").hide();
+			},4000);
+		}else{
+			search_orders(value)
+		}
+	})
+
+	function search_orders(id){
+		$.ajax({
+			url: "<%= search_orders_by_path %>",
+			method: "GET",
+			data: {value: id},
+			success: function (data) {
+				if(data.success){
+					$("#list_orders").empty();
+					let item = '<div class="col-lg-4 col-md-4">\
+												<a href="/orders/'+data.order.id+'">\
+													<div class="card" style="width: 18rem;">\
+					  								<div class="card-body">\
+					    								<h5 class="card-title"><strong>' + data.order.order_number +" - "+ data.order.vendor_name + '</strong></h5>\
+					    								<h6 class="card-subtitle mb-2 text-muted">'+ data.order.project_name + '</h6>\
+					    								<h6 class="card-subtitle mb-2 text-muted">Lot: ' + data.order.lot + '</h6>\
+					    								<small>Delivery Date: ' + data.order.delivery_date + '</small><br>\
+					    								<small>Needed By: ' + data.order.time_needed_by + '</small><br>\
+					    								<small>Status: ' + data.order.status + '</small>\
+					  								</div>\
+													</div>\
+												</a>\
+											</div>';
+
+					$("#list_orders").append(item);
+					$('#search_value').val("");
+				}else{
+					console.log(data.data);
+				}
+			},
+			error: function (data) {
+				
+			}
+		});
+	}
 
 	function SearchModel(){
 		if (lot_id !== 0 || lot_id !== null || lot_id || undefined){

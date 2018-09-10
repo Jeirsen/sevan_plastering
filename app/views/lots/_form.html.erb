@@ -19,7 +19,6 @@
     <span class="label label-danger" style="display: none" id="danger_builder">Model is required!</span>
   </div>
 
-
   <div class="form-group">
     <label for="recipient-name" class="control-label">Number:</label>
     <%= form.text_field :number, id: :lot_number, class: "form-control", id: "number_lot" %>
@@ -58,10 +57,15 @@
     </div>
   </div>
 
+  <div class="form-group">
+    <%= form.check_box :status, class: "filled-in", id:"edit_lot_status"  %>
+    <label for="edit_lot_status">Active</label>
+  </div>
 
   <div class="actions">
     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-    <%= form.submit 'Save', class: "btn btn-danger waves-effect waves-light" %>  </div>
+    <%= form.submit 'Save', class: "btn btn-danger waves-effect waves-light" %>  
+  </div>
 <% end %>
 
 <script>

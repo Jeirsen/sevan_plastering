@@ -22,14 +22,13 @@ class ModelsController < ApplicationController
 	def edit
 		@model = Model.find(params[:id])
 		render :layout => false
-
 	end
 
 	def update
 		@model = Model.find(params[:id])
 		respond_to do |format|
 			if @model.update(model_params)
-				format.html { redirect_to project_path, notice: 'Model was successfully updated.' }
+				format.html { redirect_to builder_path(@model.builder_id), notice: 'Model was successfully updated.' }
 				format.json { render :show, status: :ok, location: @model }
 			else
 				format.html { render :edit }
@@ -41,7 +40,7 @@ class ModelsController < ApplicationController
 	private
 
 	def model_params
-		params.require(:model).permit(:builder_id, :name, :photo)
+		params.require(:model).permit(:builder_id, :name, :photo, :status)
 	end
 
 end

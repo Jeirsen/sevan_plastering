@@ -176,6 +176,31 @@ class OrdersController < ApplicationController
     render json: response, status: 200
   end
 
+  def search_orders_by
+    if (params[:value].blank?)
+        response = {success: false, data: "Missing parameters"}
+    else
+      value = params[:value].to_i
+      order = Order.find_by(:order_number => value)
+      if order.nil?
+        response = {success: false, data: "Order #{value} not found."}
+      else
+        order = {
+            id: order.id,
+            order_number: order.order_number,
+            vendor_name: order.vendor.name,
+            project_name: order.project.name,
+            lot: order.lot.number,
+            delivery_date: order.delivery_date.strftime("%m/%d/%Y"),
+            time_needed_by: Order.TimeNeededBy(order.time_needed_by),
+            status: Order.order_status(order.status)
+        }
+        response = {success: true, data: "DONE", order: order}
+      end
+    end
+    render json: response, status: 200
+  end
+
 	private
 
   def validate_products
