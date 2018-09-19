@@ -28,7 +28,7 @@
 		<label class="font-weight-bold">Time Needed By: </label> <%= Order.TimeNeededBy(@order.time_needed_by) %>
 	</div>
 	<div class="col-md-4 col-sm-12">
-		<label class="font-weight-bold">Delivery Date: </label> <%= @order.delivery_date.strftime("%m/%d/%Y") %>
+		<label class="font-weight-bold">Delivery Date: </label> <%= @order.delivery_date.nil? ? 'Error Date' : @order.delivery_date.strftime("%m/%d/%Y") %>
 	</div>
 	<div class="col-md-4 col-sm-12">
 		<label class="font-weight-bold">Order By: </label> <%= @order.user.first_name %>

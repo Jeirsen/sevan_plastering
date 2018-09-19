@@ -54,7 +54,7 @@
 					    <h5 class="card-title"><strong><%= order.order_number %> - <%= order.vendor.name %></strong></h5>
 					    <h6 class="card-subtitle mb-2 text-muted"><%= order.project.name %></h6>
 					    <h6 class="card-subtitle mb-2 text-muted">Lot: <%= order.lot.number %></h6>
-					    <small>Delivery Date: <%= order.delivery_date.strftime("%m/%d/%Y") %></small><br>
+					    <small>Delivery Date: <%= order.delivery_date.nil? ? 'Error Date' : order.delivery_date.strftime("%m/%d/%Y") %></small><br>
 					    <small>Needed By: <%= Order.TimeNeededBy(order.time_needed_by) %></small><br>
 					    <small>Status: <%= Order.order_status(order.status) %></small>
 					  </div>
@@ -355,6 +355,7 @@
 	function addNewOrder(){
 		if (!ValidateOrderData()){
 			delivery_date = $.trim($("#delivery_date").val());
+			delivery_date = new Date(delivery_date);
 	  	time_needed_by = $("#select_time_needed").val();
 	  	project_id = $('#select-project :selected').val();
 	  	lot_id = $('#select-lot :selected').val();
