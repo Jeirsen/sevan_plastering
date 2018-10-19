@@ -221,9 +221,11 @@ class OrdersController < ApplicationController
           if product.blank?
             response = {success: false, data: "Product #{model.product_id} not found on products database."}
             render json: response, status: 200
+            return
           else
-            response = {success: false, data: "Warning: the creation of the order was stopped, product #{product.name} from #{modelo.name} template it is not associated to product vendor #{vendor.name}. Please enter to products vendor details and add it, before continue."}
+            response = {success: false, data: "Warning: the creation of the order was stopped!!, product (#{product.name}) from #{modelo.name} template it is not associated to product vendor #{vendor.name}. Please go to products vendor option and add it, before continue."}
             render json: response, status: 200
+            return
           end
         end
       end
