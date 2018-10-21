@@ -71,7 +71,7 @@ class VendorsController < ApplicationController
               response = {success: true, data: "Vendor email updated successfully!"}
             else
               if (vendor_email.id != email.id)
-                response = {success: false, data: "The email #{vendor_email.email} is already registered!"}
+                response = {success: false, data: "The email #{email.email} is already registered!"}
               else
                 vendor_email.update(vendor_email_params)
                 response = {success: true, data: "Vendor email updated successfully!"}

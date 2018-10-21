@@ -5,8 +5,8 @@ class Order < ApplicationRecord
 	belongs_to :user
 	has_many :order_details
 
-	Status = {:saved => 0, :sent => 1, :view => 3, :closed => 4, :received => 5}
-	OrderStatus = {saved: 0, sent: 1, view: 3, closed: 4, received: 5}
+	Status = {:saved => 0, :sent => 1, :view => 3, :closed => 4, :received => 5, :deleted => 6}
+	OrderStatus = {saved: 0, sent: 1, view: 3, closed: 4, received: 5, :deleted => 6}
 	TimeNeededBy = {:firts_am => 0, :second_am => 1, :anytime => 2, :asap => 3, :pick_up => 4, :morning => 5, :noon => 6, :afternoon => 7, :saturday => 8}
 	TimeNeeded = {firts_am: 0, second_am: 1, anytime: 2, asap: 3, pick_up: 4, morning: 5, noon: 6, afternoon: 7, saturday: 8}
 
@@ -37,6 +37,8 @@ class Order < ApplicationRecord
 			return "Closed"
 		when Order::OrderStatus[:received]
 			return "Received"
+		when Order::OrderStatus[:deleted]
+			return "Deleted"
 		end
 		
 	end

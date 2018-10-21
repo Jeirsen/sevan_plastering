@@ -50,6 +50,7 @@
 		<h2 class="text-info">Purchase Order Details</h2>
 	</div>
 	<div class="col-lg-8 col-md-8 col-sm-12" style="padding-bottom: 10px">
+
     <% if @order.status != Order::Status[:saved] %>
 	    <button type="button" class="btn btn-outline-info" disabled="true">
 	    	<i class="fa fa-plus"></i> Add New
@@ -57,12 +58,19 @@
 			<button id="send_email" type="button" class="btn btn-outline-info" disabled="true">
       	<i class="fa fa-envelope-o"></i> Order Sent
     	</button>
+    <% elsif @order.status == Order::Status[:deleted] %>
+		<div class="col-lg-4 col-md-4 col-sm-12">
+			<h2 class="text-danger">This Order was deleted</h2>
+		</div>
     <% else %>
+    	<button id="delete_order" type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#removeOrder">
+	    	<i class="fa fa-trash"></i> Delete Order
+	    </button>
 	    <button id="new_item" type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#addOrderItem">
 	    	<i class="fa fa-plus"></i> Add New
 	    </button>
     	<button id="send_email" type="button" class="btn btn-outline-info" onclick="sendOrderMail()">
-      	<i class="fa fa-envelope-o"></i> Send Order
+      		<i class="fa fa-envelope-o"></i> Send Order
     	</button>
     <% end %>
 	</div>    
@@ -98,6 +106,28 @@
       </div>
     </div>
 	<% end %>
+</div>
+
+<!-- Modals -->
+<div class="modal fade" id="removeOrder" role="dialog" aria-labelledby="removeOrder">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h4 class="modal-title" id="exampleModalLabel1">Delete Order</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+          	<form>
+              <p>Are you sure that you want to remove this order?</p>
+               <div class="alert" id="order_remove_alert" style="display: none"></div>
+          	</form>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button onclick="removeOrder()" ontype="button" class="btn btn-danger waves-effect waves-light">Remove</button>
+          </div>
+      </div>
+  </div>
 </div>
 
 <!-- Modals -->
@@ -243,6 +273,45 @@
 	    }
 	  });
 	});
+
+	function removeOrder(){
+		order_id = <%= @order.id %>
+		$.ajax({
+	      url: "<%= remove_order_path %>",
+	      method: "POST",
+	      data: {order_id: order_id},
+	      success: function (data) {
+	        if(data.success){
+	        	window.location.replace("<%= root_path %>")
+	        }else{
+	          $("#order_remove_alert").empty();
+	          $("#order_remove_alert").removeClass("alert-success");
+	          $("#order_remove_alert").addClass("alert-danger");
+	          message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+	                    <span aria-hidden="true">×</span>\
+	                    </button>';
+	          $("#order_remove_alert").append(message);
+	          $("#order_new_alert").show();
+	          setTimeout(function(){
+	            $("#order_remove_alert").hide();
+	          },5000);
+	        }
+	      },
+	      error: function (data) {
+	        $("#order_remove_alert").empty();
+	        $("#order_remove_alert").removeClass("alert-success");
+	        $("#order_remove_alert").addClass("alert-danger");
+	        message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+	                  <span aria-hidden="true">×</span>\
+	                  </button>';
+	        $("#order_remove_alert").append(message);
+	        $("#order_remove_alert").show();
+	        setTimeout(function(){
+	          $("#order_remove_alert").hide();
+	        },5000);
+	      }
+	    })
+	}
 
 	function addNewItemToOrder(){
 		if (!validateItemOrderData()){

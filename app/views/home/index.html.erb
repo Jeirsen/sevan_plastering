@@ -20,8 +20,9 @@
 		<label for="by_model">By Lot</label>-->
 	</div>
 	<div class="col-lg-12 col-xlg-6 m-b-30">
+		<div class="alert alert-info" id="search_result" style="display:none"></div>
 		<div class="input-group stylish-input-group">
-				<input type="number" class="form-control" placeholder="Search ..." id="search_value">
+				<input type="number" min="1" class="form-control" placeholder="Search ..." id="search_value">
 				<span class="input-group-addon">
 						<button class="btn btn-info" id="search_by">
 								<span class="fa fa-search"></span>
@@ -76,6 +77,7 @@
 		</div>
 	<% end %>
 </div>
+<%= will_paginate @orders %>
 
 <!-- modals -->
 <div class="modal fade bs-example-modal-lg show" id="newOrder" role="dialog" aria-labelledby="newOrder">
@@ -308,7 +310,13 @@
 					$("#list_orders").append(item);
 					$('#search_value').val("");
 				}else{
-					console.log(data.data);
+					console.log(data)
+					$("#search_result").empty();
+					$("#search_result").append(data.data);
+					$("#search_result").show();
+					setTimeout(function(){
+		            	$("#search_result").hide();
+		          	},5000);
 				}
 			},
 			error: function (data) {

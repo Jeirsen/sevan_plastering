@@ -6,6 +6,9 @@ Rails.application.routes.draw do
   devise_for :users
   root 'home#index'
 
+  #History Orders
+  get 'archived-orders' => 'home#history', :as => 'history_orders'
+
   #vendors
   resources :vendors
   post 'vendor-email' => 'vendors#vendor_email', :as => 'vendor_email'
@@ -38,6 +41,7 @@ Rails.application.routes.draw do
   post 'send-order-mail' => 'orders#send_mail', :as => 'send_mail'
   delete 'remove-order-item' => 'orders#remove_item', :as => 'remove_order_item'
   get 'search_orders_by' => 'orders#search_orders_by', :as => 'search_orders_by'
+  post 'remove-order' => 'orders#remove_order', :as => 'remove_order'
 
   #templates
   post 'template-product' => 'templates#template_product', :as => 'template_product'

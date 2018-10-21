@@ -29,3 +29,10 @@ i {
     padding-top: 100px;
     display: none;
 }
+
+.pagination {
+    display: inline-block;
+    padding-left: 0;
+    list-style: none;
+    border-radius: .25rem;
+}

@@ -181,7 +181,7 @@ class OrdersController < ApplicationController
         response = {success: false, data: "Missing parameters"}
     else
       value = params[:value].to_i
-      order = Order.find_by(:order_number => value)
+      order = Order.find_by(:order_number => value, :status => [Order::Status[:saved], Order::Status[:sent], Order::Status[:view]])
       if order.nil?
         response = {success: false, data: "Order #{value} not found."}
       else
@@ -197,6 +197,22 @@ class OrdersController < ApplicationController
         }
         response = {success: true, data: "DONE", order: order}
       end
+    end
+    render json: response, status: 200
+  end
+
+  def remove_order
+    if params[:order_id].blank?
+      response = {success: false, data: "Missing parameters"}
+    else
+      order_id = params[:order_id]
+      order = Order.find(order_id)
+        if order.nil?
+          response = {success: false, data: "Order #{order_id} not found."}
+        else
+          order.update_attributes(:status => Order::Status[:deleted])
+          response = {success: true, data: "Order removed successfully."}
+        end
     end
     render json: response, status: 200
   end
