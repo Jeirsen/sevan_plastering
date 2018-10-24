@@ -53,7 +53,7 @@
 </div>
 
 <div class="row" id="projects">
-  <% @builder.models.where(:status => Model::Status[:active]).each do |model| %>  
+  <% @builder.models.where(:status => Model::Status[:active]).order(:name => "asc").each do |model| %>  
     <div class="col-lg-3 col-md-3">
       <a href="<%= model_detail_path(model.id) %>" style="cursor: pointer;">
         <div class="card" data-model-id="<%= model.id %>"> 
