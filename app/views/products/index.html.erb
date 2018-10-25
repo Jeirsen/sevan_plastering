@@ -22,7 +22,7 @@
 
 <div class="row" id="products">
 	<% if !@products.blank? %>
-		<% @products.order("prioritize DESC").each do |product| %>
+		<% @products.order(prioritize: :desc, name: :asc).each do |product| %>
   		<div class="col-lg-3 col-md-6 col-sm-12">
         <a onclick="openModalEditProduct(this)" style="cursor: pointer;">
           <div class="card" data-product-id="<%= product.id %>" data-product-status="<%= product.status %>">
@@ -181,8 +181,13 @@
         </form>
       </div>
       <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button onclick="editProduct()" ontype="button" class="btn btn-primary waves-effect waves-light">Edit</button>
+          <div class="col-md-6 pull-left">
+            <button onclick="removeProduct()" type="button" class="btn btn-danger pull-left" >Remove</button> 
+          </div>
+          <div class="col-md-6" style="text-align: right;">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button onclick="editProduct()" ontype="button" class="btn btn-primary waves-effect waves-light">Edit</button>
+          </div>
       </div>
     </div>
   </div>
@@ -236,6 +241,46 @@ function prioritizaProducts(){
   if (success){
     window.location.replace("/products");
   }
+}
+
+function removeProduct(){
+    // $.ajax({
+    //   url: "<%=  %>",
+    //   method: "POST",
+    //   data: {id: idProductForEditing},
+    //   success: function (data) {
+    //     if(data.success){
+    //       removeProductElement();
+    //       $("#product_edit_alert").empty();
+    //       $("#product_edit_alert").removeClass("alert-danger");
+    //       $("#product_edit_alert").addClass("alert-success");
+    //       message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+    //                 <span aria-hidden="true">×</span>\
+    //                 </button>';
+    //       $("#product_edit_alert").append(message);
+    //       $("#product_edit_alert").show();
+    //     }else{
+    //       $("#product_edit_alert").empty();
+    //       $("#product_edit_alert").removeClass("alert-success");
+    //       $("#product_edit_alert").addClass("alert-danger");
+    //       message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+    //                 <span aria-hidden="true">×</span>\
+    //                 </button>';
+    //       $("#product_edit_alert").append(message);
+    //       $("#product_edit_alert").show();
+    //     }
+    //   },
+    //   error: function (data) {
+    //     $("#product_edit_alert").empty();
+    //     $("#product_edit_alert").removeClass("alert-success");
+    //     $("#product_edit_alert").addClass("alert-danger");
+    //     message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+    //               <span aria-hidden="true">×</span>\
+    //               </button>';
+    //     $("#product_edit_alert").append(message);
+    //     $("#product_edit_alert").show();
+    //   }
+    // })
 }
 
 function addProduct(){
