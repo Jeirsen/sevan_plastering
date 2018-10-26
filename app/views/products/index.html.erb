@@ -244,43 +244,36 @@ function prioritizaProducts(){
 }
 
 function removeProduct(){
-    // $.ajax({
-    //   url: "<%=  %>",
-    //   method: "POST",
-    //   data: {id: idProductForEditing},
-    //   success: function (data) {
-    //     if(data.success){
-    //       removeProductElement();
-    //       $("#product_edit_alert").empty();
-    //       $("#product_edit_alert").removeClass("alert-danger");
-    //       $("#product_edit_alert").addClass("alert-success");
-    //       message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
-    //                 <span aria-hidden="true">×</span>\
-    //                 </button>';
-    //       $("#product_edit_alert").append(message);
-    //       $("#product_edit_alert").show();
-    //     }else{
-    //       $("#product_edit_alert").empty();
-    //       $("#product_edit_alert").removeClass("alert-success");
-    //       $("#product_edit_alert").addClass("alert-danger");
-    //       message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
-    //                 <span aria-hidden="true">×</span>\
-    //                 </button>';
-    //       $("#product_edit_alert").append(message);
-    //       $("#product_edit_alert").show();
-    //     }
-    //   },
-    //   error: function (data) {
-    //     $("#product_edit_alert").empty();
-    //     $("#product_edit_alert").removeClass("alert-success");
-    //     $("#product_edit_alert").addClass("alert-danger");
-    //     message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
-    //               <span aria-hidden="true">×</span>\
-    //               </button>';
-    //     $("#product_edit_alert").append(message);
-    //     $("#product_edit_alert").show();
-    //   }
-    // })
+    $.ajax({
+      url: "<%= remove_product_path %>",
+      method: "POST",
+      data: {id: idProductForEditing},
+      success: function (data) {
+        if(data.success){
+          $(productElement).remove()
+          $("#editProductModal").modal('hide');
+        }else{
+          $("#product_edit_alert").empty();
+          $("#product_edit_alert").removeClass("alert-success");
+          $("#product_edit_alert").addClass("alert-danger");
+          message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                    <span aria-hidden="true">×</span>\
+                    </button>';
+          $("#product_edit_alert").append(message);
+          $("#product_edit_alert").show();
+        }
+      },
+      error: function (data) {
+        $("#product_edit_alert").empty();
+        $("#product_edit_alert").removeClass("alert-success");
+        $("#product_edit_alert").addClass("alert-danger");
+        message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                  <span aria-hidden="true">×</span>\
+                  </button>';
+        $("#product_edit_alert").append(message);
+        $("#product_edit_alert").show();
+      }
+    })
 }
 
 function addProduct(){
@@ -400,7 +393,7 @@ function appendProduct(product_id){
                             <br/>\
                             <span class="m-b-0" data-category-id="'+ category_id +'">' + category_name.toUpperCase() + '</span>\
                             <h4 class="text-muted m-b-0 text-info" data-unit-id="' + unit_id +'">' + unit_name +'</h4>\
-                            <h5 class="text-info">Prioritize<span class="badge badge-success">false</span></h5>\
+                            <h5 class="text-info"><span class="badge badge-warning"> Not Prioritized </span></h5>\
                           </div>\
                         </div>\
                       </div>\

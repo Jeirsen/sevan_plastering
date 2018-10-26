@@ -30,6 +30,22 @@ class ProductsController < ApplicationController
     render json: response, status: 200
   end
 
+  def remove_product
+    if(params[:id].blank?)
+      response = {success: false, data: "Missing parameters"}
+    else
+      product_id = params[:id]
+      product = Product.where(id: product_id).first
+      if product.nil?
+        response = {success: false, data: "Product not found!"}
+      else
+        product.update_attributes(:status => Product::Status[:inactive])
+        response = {success: true, data: "Product removed successfully!"}
+      end
+    end
+    render json: response, status: 200
+  end
+
   def prioritize
     if(params[:product][:id].blank? or params[:product][:prioritize].blank?)
       response = {success: false, data: "Missing parameters"}
