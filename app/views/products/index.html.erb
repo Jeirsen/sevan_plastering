@@ -114,16 +114,14 @@
           		<table class="table table-bordered" id="prioritize-products">
           			<thead>
           				<tr>
-                    <th>Row </th>
           					<th>Product</th>
           					<th>Prioritize</th>
           				</tr>
           			</thead>	
           			<tbody>
           				<% if !@active_products.blank? %>
-          					<% @active_products.where(:status => Product::Status[:active]).order(prioritize: :desc, name: :asc).each_with_index do |product, index| %>
+          					<% @active_products.where(:status => Product::Status[:active]).order(prioritize: :desc, name: :asc).each do |product| %>
           						<tr>
-                        <td><%= index %></td>
           							<td product-id="<%= product.id %>" style="padding: 5px;vertical-align: top;">
           								<%= product.name %>
           							</td>
@@ -225,7 +223,6 @@ function prioritizaProducts(){
       data: product_object,
       success: function (data) {
         success = true;
-        window.location.replace("<%= products_path %>");
       },
       error: function (data) {
         $("#prioritize_alert").empty();
@@ -245,9 +242,8 @@ function prioritizaProducts(){
     })
     
   });
-
   if (success){
-    window.location.replace("/products");
+    window.location.replace("<%= products_path %>");
   }
 }
 

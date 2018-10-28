@@ -52,7 +52,7 @@ class ProductsController < ApplicationController
       response = {success: false, data: "Missing parameters"}
     else
       prioritize = params[:product][:prioritize]
-      product_id = params[:product][:id]
+      product_id = params[:product][:id].to_i
       product = Product.where(id: product_id).first
       if product.nil?
         response = {success: false, data: "Product not found!"}
@@ -73,7 +73,7 @@ class ProductsController < ApplicationController
   private
 
   def product_params
-      params.require(:product).permit(:name, :unit_id, :status, :category, :prioritize)
+      params.require(:product).permit(:id, :name, :unit_id, :status, :category, :prioritize)
   end
 
 end
