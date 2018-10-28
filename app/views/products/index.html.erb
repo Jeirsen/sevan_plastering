@@ -207,6 +207,8 @@ var productElement = "";
 
 function prioritizaProducts(){
   let success = true;
+  let count = $("#prioritize-products").find('tbody tr').length
+  let index = 1
   $("#prioritize-products").find('tbody tr').each(function (i, el) {
     var tds = $(el).find('td');
     let input_prioritize = $(tds).find("input").prop("checked");
@@ -223,6 +225,11 @@ function prioritizaProducts(){
       data: product_object,
       success: function (data) {
         success = true;
+        console.log(`${count} -- ${index}`)
+        if (count == index){
+          window.location.replace("<%= products_path %>")
+        }
+        index++
       },
       error: function (data) {
         $("#prioritize_alert").empty();
@@ -240,11 +247,8 @@ function prioritizaProducts(){
         return false;
       }
     })
-    
+
   });
-  if (success){
-    window.location.replace("<%= products_path %>");
-  }
 }
 
 function removeProduct(){
