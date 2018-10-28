@@ -2,6 +2,7 @@ class ProductsController < ApplicationController
 
 	def index
   	@products = Product.where(:status => Product::Status[:active]).paginate(:page => params[:page], :per_page => 40)
+    @active_products  = Product.where(:status => Product::Status[:active])
   end
 
 	def admin_product
