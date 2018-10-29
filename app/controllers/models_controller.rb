@@ -37,6 +37,22 @@ class ModelsController < ApplicationController
 		end
 	end
 
+	def remove_model
+	    if (params[:model][:id].blank?)
+	        response = {success: false, data: "Missing parameters"}
+	    else
+	    	model_id = params[:model][:id]
+			model = Model.find(model_id)
+			if (model.blank?)
+				response = {success: false, data: "Model not found!"}
+			else
+				model.update(:status => Model::Status[:inactive])
+				response = {success: true, data: "Model removed successfully!"}
+			end
+	    end
+	    render json: response, status: 200
+	 end
+
 	private
 
 	def model_params

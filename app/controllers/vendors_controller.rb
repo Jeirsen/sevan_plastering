@@ -116,6 +116,22 @@ class VendorsController < ApplicationController
       render json: response, status: 200
     end
 
+    def remove_product_vendor
+      if (params[:id].blank?)
+          response = {success: false, data: "Missing parameters"}
+      else
+        product_vendor_id = params[:id]
+        product_vendor = ProductVendor.find(product_vendor_id)
+        if (product_vendor.blank?)
+          response = {success: false, data: "Product not found!"}
+        else
+          product_vendor.update(:status => ProductVendor::Status[:inactive])
+          response = {success: true, data: "Product removed successfully!"}
+        end
+      end
+      render json: response, status: 200
+    end
+
     private
 
     def vendor_params

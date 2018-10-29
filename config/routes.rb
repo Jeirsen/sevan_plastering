@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   resources :vendors
   post 'vendor-email' => 'vendors#vendor_email', :as => 'vendor_email'
   post 'vendor-product' => 'vendors#vendor_product', :as => 'vendor_product'
+  delete 'remove-product-vendor' => 'vendors#remove_product_vendor', :as => 'remove_product_vendor'
 
   #products
   resources :products
@@ -31,6 +32,7 @@ Rails.application.routes.draw do
   get 'model/:id/show' => 'models#show', :as => 'model_detail'
   get 'model/:id/edit' => 'models#edit'
   post 'model/:id' => 'models#update', :as => 'model_update'
+  delete 'remove-model' => 'models#remove_model', :as => 'remove_model'
 
   #orders
   get 'orders/:id' => 'orders#show', :as => 'order_detail'
@@ -47,6 +49,7 @@ Rails.application.routes.draw do
 
   #templates
   post 'template-product' => 'templates#template_product', :as => 'template_product'
+  delete 'remove-product-template' => 'templates#remove_template_product', :as => 'remove_template_product'
 
   namespace :admin do
     resources :users

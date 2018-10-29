@@ -252,26 +252,15 @@ function prioritizaProducts(){
 }
 
 function removeProduct(){
-    $.ajax({
-      url: "<%= remove_product_path %>",
-      method: "POST",
-      data: {id: idProductForEditing},
-      success: function (data) {
-        if(data.success){
-          $(productElement).remove()
-          $("#editProductModal").modal('hide');
-        }else{
-          $("#product_edit_alert").empty();
-          $("#product_edit_alert").removeClass("alert-success");
-          $("#product_edit_alert").addClass("alert-danger");
-          message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
-                    <span aria-hidden="true">×</span>\
-                    </button>';
-          $("#product_edit_alert").append(message);
-          $("#product_edit_alert").show();
-        }
-      },
-      error: function (data) {
+  $.ajax({
+    url: "<%= remove_product_path %>",
+    method: "POST",
+    data: {id: idProductForEditing},
+    success: function (data) {
+      if(data.success){
+        $(productElement).remove()
+        $("#editProductModal").modal('hide');
+      }else{
         $("#product_edit_alert").empty();
         $("#product_edit_alert").removeClass("alert-success");
         $("#product_edit_alert").addClass("alert-danger");
@@ -281,7 +270,18 @@ function removeProduct(){
         $("#product_edit_alert").append(message);
         $("#product_edit_alert").show();
       }
-    })
+    },
+    error: function (data) {
+      $("#product_edit_alert").empty();
+      $("#product_edit_alert").removeClass("alert-success");
+      $("#product_edit_alert").addClass("alert-danger");
+      message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                <span aria-hidden="true">×</span>\
+                </button>';
+      $("#product_edit_alert").append(message);
+      $("#product_edit_alert").show();
+    }
+  })
 }
 
 function addProduct(){

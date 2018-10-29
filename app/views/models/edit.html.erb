@@ -40,8 +40,16 @@
     <div>
       <img src="" id="image_upload" width="100%">
     </div>
-    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-    <%= form.submit 'Save', class: "btn btn-danger waves-effect waves-light" %>
+
+    <div class="modal-footer">
+      <div class="col-md-6 pull-left">
+          <button onclick="removeModel()" type="button" class="btn btn-danger pull-left" >Remove</button> 
+      </div>
+      <div class="col-md-6" style="text-align: right;">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <%= form.submit 'Save', class: "btn btn-primary waves-effect waves-light" %>
+      </div>
+    </div>
   <% end %>
 
   <script>
@@ -76,6 +84,27 @@
                   reader.readAsDataURL(input.files[0]);
               }
           };
+      }
+
+      function removeModel(){
+        model_object = {
+          model : {
+            id: <%= @model.id %>
+          }
+        }
+        $.ajax({
+          url: "<%= remove_model_path %>",
+          method: "DELETE",
+          data: model_object,
+          success: function (data) {
+            if(data.success){
+              window.location.replace('<%= builder_path(@model.builder_id) %>')
+            }
+          },
+          error: function (data) {
+            console.log('Se genero un error al intentar eliminar este modelo')
+          }
+        })
       }
 
       $("form").bind('ajax:complete', function() {

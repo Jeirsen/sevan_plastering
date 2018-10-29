@@ -15,7 +15,7 @@
 
   <div class="form-group">
     <label for="recipient-name" class="control-label">Model:</label>
-    <%= form.select :model_id, options_for_select(@models.map { |e| [e.name,e.id] }, lot.model_id),{}, {:multiple => false, :class => 'form-control select2', style: "width:100% !important", id: "model_lot"} %>
+    <%= form.select :model_id, options_for_select(@models.where(:status => Model::Status[:active]).map { |e| [e.name,e.id] }, lot.model_id),{}, {:multiple => false, :class => 'form-control select2', style: "width:100% !important", id: "model_lot"} %>
     <span class="label label-danger" style="display: none" id="danger_builder">Model is required!</span>
   </div>
 

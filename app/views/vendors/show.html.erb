@@ -195,7 +195,7 @@
           </div>
           <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button onclick="editVendorEmail(<%= @vendor.id %>)" ontype="button" class="btn btn-primary waves-effect waves-light">Edit</button>
+              <button onclick="editVendorEmail(<%= @vendor.id %>)" ontype="button" class="btn btn-primary waves-effect waves-light">Save</button>
           </div>
       </div>
   </div>
@@ -252,7 +252,7 @@
                   <span class="label label-danger" style="display: none" id="danger_edit_price">Price is required!</span>
               </div>
               <div class="form-group">
-                <input type="checkbox" id="edit_vendor_product_status" class="filled-in">
+                <input type="checkbox" id="edit_vendor_product_status" class="filled-in" onclick="return false;">
                 <label for="edit_vendor_product_status">Active</label>
               </div>
               <div class="alert" id="vendor_edit_product_alert" style="display: none">
@@ -261,8 +261,13 @@
             
           </div>
           <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button onclick="editVendorProduct()" ontype="button" class="btn btn-primary waves-effect waves-light">Edit</button>
+              <div class="col-md-6 pull-left">
+                <button onclick="removeProduct()" type="button" class="btn btn-danger pull-left" >Remove</button> 
+              </div>
+              <div class="col-md-6 pull-left" style="text-align: right;">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button onclick="editVendorProduct()" ontype="button" class="btn btn-primary waves-effect waves-light">Save</button>
+              </div>
           </div>
       </div>
   </div>
@@ -424,6 +429,40 @@ function validateProductData(){
   }
 
   return error;
+}
+
+function removeProduct(){
+  $.ajax({
+    url: "<%= remove_product_vendor_path %>",
+    method: "DELETE",
+    data: {id: idProductForEditing},
+    success: function (data) {
+      if(data.success){
+        $(productElement).remove()
+        $("#editVendorProduct").modal('hide');
+      }else{
+        $("#vendor_edit_product_alert").empty();
+        $("#vendor_edit_product_alert").removeClass("alert-success");
+        $("#vendor_edit_product_alert").addClass("alert-danger");
+        message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                  <span aria-hidden="true">×</span>\
+                  </button>';
+        $("#vendor_edit_product_alert").append(message);
+        $("#vendor_edit_product_alert").show();
+      }
+    },
+    error: function (data) {
+      $("#vendor_edit_product_alert").empty();
+      $("#vendor_edit_product_alert").removeClass("alert-success");
+      $("#vendor_edit_product_alert").addClass("alert-danger");
+      message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                <span aria-hidden="true">×</span>\
+                </button>';
+      $("#vendor_edit_product_alert").append(message);
+      $("#vendor_edit_product_alert").show();
+    }
+
+  })
 }
 
 function editVendorProduct(){
