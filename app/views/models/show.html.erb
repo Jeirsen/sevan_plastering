@@ -108,11 +108,11 @@
           			</tbody>
           		</table>
           	</div>
-
+          	<span id="working" class="badge badge-info" style="display: none">Working on it, please wait a moment.</span>
           </div>
-          <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button onclick="addTemplateProduct()" ontype="button" class="btn btn-primary waves-effect waves-light">Add</button>
+          <div class="modal-footer" id="footer_add">
+  			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+     		<button onclick="addTemplateProduct()" ontype="button" class="btn btn-primary waves-effect waves-light">Add</button>
           </div>
       </div>
   </div>
@@ -164,14 +164,17 @@
 
 <script type="text/javascript">
 
-  //edit  MODEL
+	$(document).on("wheel", "input[type=number]", function (e) {
+	    $(this).blur();
+	});
 
-  function editModel(id){
-      $.get("/model/"+id+"/edit",function(data){
+	//edit  MODEL
+	function editModel(id){
+	    $.get("/model/"+id+"/edit",function(data){
           $(".modal-inject-model").html(data);
           $("#content_modal_model").modal('show');
-      })
-  }
+	     })
+	}
 
 	//For Template Products
 	var idProductTemplateForEditing = 0;
@@ -184,6 +187,8 @@
 			let success = true;
 			let count = $("#template-products").find('tbody tr').length
   			let index = 1
+  			$("#footer_add").hide()
+  			$("#working").show()
 		    $("#template-products").find('tbody tr').each(function (i, el) {
 		        var tds = $(el).find('td');
 		        let quantity = $(tds).find("input").val();
@@ -202,16 +207,14 @@
 				    $.ajax({
 				    	url: "<%= template_product_path %>",
 				      	method: "POST",
+				      	async: false,
 				      	data: template_object,
 				      	success: function (data) {
 				        	if(data.success){
-				        		if (data.id !== undefined){
-				        			appendTemplateProduct(data.id, product_id, data.unit_name, quantity, product_name);
-				        		}
+				        		// if (data.id !== undefined){
+				        		// 	appendTemplateProduct(data.id, product_id, data.unit_name, quantity, product_name);
+				        		// }
 				        		console.log(`${count} -- ${index}`)
-						        if (count == index){
-						          window.location.replace("<%= model_detail_path(@model.id) %>")
-						        }
 						        index++
 					        }else{
 					        	$("#template_alert").empty();
@@ -226,6 +229,8 @@
 					            	$("#template_alert").hide();
 					          	},5000);
 					          	success = false;
+					          	$("#footer_add").show()
+					          	$("#working").hide()
 					          	return false;
 					        }
 				      	},
@@ -242,6 +247,8 @@
 				          		$("#template_alert").hide();
 				        	},5000);
 				        	success = false;
+				        	$("#footer_add").show()
+				        	$("#working").hide()
 					        return false;
 				      	}
 				    })
