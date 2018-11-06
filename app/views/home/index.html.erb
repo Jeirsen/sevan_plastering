@@ -166,20 +166,16 @@
 	var project_id = 0;
 
 	$(document).ready(function(){
+		let today = new Date();
 
 		jQuery('.mydatepicker, #datepicker').datepicker({
-			format:'mm/dd/yyyy'
+			format:'mm/dd/yyyy',
+			todayHighlight: true,
+			startDate: today,
+			autoclose: true,
+			clearBtn: true
 		});
-		jQuery('#datepicker-autoclose').datepicker({
-        autoclose: true,
-        todayHighlight: true
-    });
-    jQuery('#date-range').datepicker({
-        toggleActive: true
-    });
-    jQuery('#datepicker-inline').datepicker({
-        todayHighlight: true
-    });
+		
 
 	  $("#select-project").select2({
 	    theme: "bootstrap",
@@ -225,8 +221,8 @@
 	});
 
 	$('#select-project').on('change', function(){
-  	project_id = $("#select-project option:selected").val();
-  	LoadLotsByProject();
+	  	project_id = $("#select-project option:selected").val();
+	  	LoadLotsByProject();
 	});	
 
 	function LoadLotsByProject(){

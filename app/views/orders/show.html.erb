@@ -64,6 +64,9 @@
 		      	<i class="fa fa-envelope-o"></i> Order Sent
 		    	</button>
 		    <% else %>
+		    	<button id="remove_all" type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#removeAllItems">
+		      		<i class="fa fa-trash"></i> Remove All Items
+		    	</button>
 		    	<button id="delete_order" type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#removeOrder">
 			    	<i class="fa fa-trash"></i> Delete Order
 			    </button>
@@ -121,7 +124,7 @@
           <div class="modal-body">
           	<form>
               <p>Are you sure that you want to remove this order?</p>
-               <div class="alert" id="order_remove_alert" style="display: none"></div>
+              <div class="alert" id="order_remove_alert" style="display: none"></div>
           	</form>
           </div>
           <div class="modal-footer">
@@ -209,6 +212,35 @@
   </div>
 </div>
 
+<div class="modal fade" id="removeAllItems" role="dialog" aria-labelledby="removeAllItems">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h4 class="modal-title" id="exampleModalLabel1">Remove All Items</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+          	
+          	<div class="row">
+          		<div class="col-md-12">
+          			<p>
+          				Are you sure that you want to remove all the items from this order?
+          			</p>
+          			<div class="alert" id="order_remove_all" style="display: none"></div>
+          		</div>
+          	</div>
+            
+          </div>
+          <div class="modal-footer">
+          	<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+	        <% if @order.status == Order::Status[:saved] %>
+	          	<button onclick="removeAllItems()" ontype="button" class="btn btn-danger waves-effect waves-light">Remove All</button>
+	         <% end %>
+          </div>
+      </div>
+  </div>
+</div>
+
 <!-- Message Modal -->
 <div id="messageModal" class="modal fade" role="dialog" aria-labelledby="messageModal" aria-hidden="true">
     <div class="modal-dialog">
@@ -276,6 +308,45 @@
 	  });
 	});
 
+	function removeAllItems(){
+		order_id = <%= @order.id %>
+		$.ajax({
+	      url: "<%= remove_all_products_path %>",
+	      method: "POST",
+	      data: {order_id: order_id},
+	      success: function (data) {
+	        if(data.success){
+	        	window.location.replace("<%= order_detail_path(@order.id) %>")
+	        }else{
+	          $("#order_remove_all").empty();
+	          $("#order_remove_all").removeClass("alert-success");
+	          $("#order_remove_all").addClass("alert-danger");
+	          message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+	                    <span aria-hidden="true">×</span>\
+	                    </button>';
+	          $("#order_remove_all").append(message);
+	          $("#order_remove_all").show();
+	          setTimeout(function(){
+	            $("#order_remove_all").hide();
+	          },5000);
+	        }
+	      },
+	      error: function (data) {
+	        $("#order_remove_all").empty();
+	        $("#order_remove_all").removeClass("alert-success");
+	        $("#order_remove_all").addClass("alert-danger");
+	        message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+	                  <span aria-hidden="true">×</span>\
+	                  </button>';
+	        $("#order_remove_all").append(message);
+	        $("#order_remove_all").show();
+	        setTimeout(function(){
+	          $("#order_remove_all").hide();
+	        },5000);
+	      }
+	    })
+	}
+
 	function removeOrder(){
 		order_id = <%= @order.id %>
 		$.ajax({
@@ -293,7 +364,7 @@
 	                    <span aria-hidden="true">×</span>\
 	                    </button>';
 	          $("#order_remove_alert").append(message);
-	          $("#order_new_alert").show();
+	          $("#order_remove_alert").show();
 	          setTimeout(function(){
 	            $("#order_remove_alert").hide();
 	          },5000);

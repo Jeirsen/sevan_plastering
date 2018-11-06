@@ -46,6 +46,7 @@ Rails.application.routes.draw do
   delete 'remove-order-item' => 'orders#remove_item', :as => 'remove_order_item'
   get 'search_orders_by' => 'orders#search_orders_by', :as => 'search_orders_by'
   post 'remove-order' => 'orders#remove_order', :as => 'remove_order'
+  post 'remove-all-products' => 'orders#remove_all_products', :as => 'remove_all_products'
 
   #templates
   post 'template-product' => 'templates#template_product', :as => 'template_product'

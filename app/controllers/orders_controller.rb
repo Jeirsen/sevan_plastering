@@ -9,13 +9,13 @@ class OrdersController < ApplicationController
 
 	def search_projects
 		q = params[:q].to_s
-    results = Project.select('projects.id, projects.name').where("projects.name ILIKE ?", "%#{q}%").limit(5).map { |project| {id: project.id, name: project.name} }
+    results = Project.select('projects.id, projects.name').where("projects.name ILIKE ?", "%#{q}%").limit(10).map { |project| {id: project.id, name: project.name} }
     render json: {success: true, data: results}, status: :ok
 	end
 
 	def search_lots
 		project_id = params[:project_id].to_i
-    results = Lot.select('lots.id, lots.number').where("lots.project_id = #{project_id}").limit(5).map { |lot| {id: lot.id, name: lot.number} }
+    results = Lot.select('lots.id, lots.number').where("lots.project_id = #{project_id} and lots.status = #{Lot::Status[:active]}").limit(15).map { |lot| {id: lot.id, name: lot.number} }
     render json: {success: true, data: results}, status: :ok
 	end
 
@@ -213,6 +213,24 @@ class OrdersController < ApplicationController
           order.update_attributes(:status => Order::Status[:deleted])
           response = {success: true, data: "Order removed successfully."}
         end
+    end
+    render json: response, status: 200
+  end
+
+  def remove_all_products
+    if (params[:order_id].blank?)
+        response = {success: false, data: "Missing parameters"}
+    else
+      order_id = params[:order_id].to_i
+      order_detail = OrderDetail.where(:order_id => order_id)
+      if (order_detail.blank?)
+        response = {success: false, data: "There's no items to remove on this order"}
+      else
+        order_detail.destroy_all
+        order = Order.find(order_id)
+        order.update(order_total: 0)
+        response = {success: true, data: "Item's removed successfully"}
+      end
     end
     render json: response, status: 200
   end
