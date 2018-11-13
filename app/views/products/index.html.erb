@@ -10,13 +10,23 @@
 
 <div class="row">
 	<div class="col-lg-12 col-xlg-6 m-b-30">
-		<button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#newProduct">
+		<button type="btn-group button" class="btn btn-outline-info" data-toggle="modal" data-target="#newProduct">
 			<i class="fa fa-plus"></i> Add new
 		</button>
 
-    <button type="button" class="btn btn-outline-success pull-right" data-toggle="modal" data-target="#prioritizeProduct">
-			<i class="fa fa-pencil"></i> Prioritize
-		</button>
+    <div class="btn-group pull-right">
+      <button type="button" class="btn btn-outline-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Product Options
+      </button>
+      <div class="dropdown-menu" x-placement="right-start">
+        <a class="dropdown-item" data-toggle="modal" data-target="#prioritizeProduct">
+          <i class="fa fa-pencil fa-fw"></i> Prioritize
+        </a>
+        <a class="dropdown-item" data-toggle="modal" data-target="#vipProductsModel">
+          <i class="fa fa-star fa-fw"></i> VIP For Models
+        </a>
+      </div>
+    </div>
 	</div>	
 </div>
 
@@ -153,6 +163,58 @@
   </div>
 </div>
 
+<div class="modal fade" id="vipProductsModel" role="dialog" aria-labelledby="vipProductsModel">
+  <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h4 class="modal-title">Top Product(s) on Model</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+            <div class="table-responsive">
+              <div class="alert" id="prioritize_alert" style="display: none"></div>
+              <table class="table table-bordered" id="prioritize-products">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>VIP</th>
+                  </tr>
+                </thead>  
+                <tbody>
+                  <% if !@active_products.blank? %>
+                    <% @active_products.where(:status => Product::Status[:active]).order(vip_model: :desc, name: :asc).each do |product| %>
+                      <tr>
+                        <td product-id="<%= product.id %>" style="padding: 5px;vertical-align: top;">
+                          <%= product.name %>
+                        </td>
+                        <td style="padding: 5px;vertical-align: top;">
+                          <% if product.vip_model %>
+                            <input type="checkbox" id="vip_model<%=product.id%>" class="filled-in" value="<%= product.vip_model %>" checked>
+                            <label for="vip_model<%=product.id%>"> <%= product.vip_model == false ? "Not VIP" : "VIP" %></label>
+                          <% else %>
+                            <input type="checkbox" id="vip_model<%=product.id%>" class="filled-in" value="<%= product.vip_model %>">
+                            <label for="vip_model<%=product.id%>"> <%= product.vip_model == false ? "Not VIP" : "VIP" %></label>
+                          <% end %>
+                        </td>
+                      </tr>
+                    <% end %>
+                  <% else %>
+                    <h2>
+                      There's no existing products, please go and create some.
+                    </h2>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button onclick="vipProducts()" ontype="button" class="btn btn-danger waves-effect waves-light">Update</button>
+          </div>
+      </div>
+  </div>
+</div>
+
 <div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-labelledby="editProduct">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -204,6 +266,10 @@ var idProductForEditing = 0;
 var statusProduct = 0;
 var unitId = 0;
 var productElement = "";
+
+function vipProducts(){
+  alert('this actions is under construcction')
+}
 
 function prioritizaProducts(){
   let success = true;
