@@ -64,6 +64,23 @@ class ProductsController < ApplicationController
     render json: response, status: 200
   end
 
+  def vip_products
+    if(params[:product][:id].blank? or params[:product][:vip_model].blank?)
+      response = {success: false, data: "Missing parameters"}
+    else
+      vip_model = params[:product][:vip_model]
+      product_id = params[:product][:id].to_i
+      product = Product.where(id: product_id).first
+      if product.nil?
+        response = {success: false, data: "Product not found!"}
+      else
+        product.update(product_params)
+        response = {success: true, data: "Product updated successfully!"}
+      end
+    end
+    render json: response, status: 200
+  end
+
   def search_products
     q = params[:q].to_s
     results = Product.select('products.id, products.name').where("products.name ILIKE ? AND products.status = #{Product::Status[:active]}", "%#{q}%").limit(5).map { |product| {id: product.id, name: product.name} }
@@ -73,7 +90,7 @@ class ProductsController < ApplicationController
   private
 
   def product_params
-      params.require(:product).permit(:id, :name, :unit_id, :status, :category, :prioritize)
+      params.require(:product).permit(:id, :name, :unit_id, :status, :category, :prioritize, :vip_model)
   end
 
 end

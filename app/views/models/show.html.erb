@@ -84,13 +84,18 @@
           			</thead>	
           			<tbody>
           				<% if !@products.blank? %>
-          					<% @products.where(:status => Product::Status[:active]).order(prioritize: :desc, name: :asc).each do |product| %>
+          					<% @products.where(:status => Product::Status[:active]).order(vip_model: :desc, prioritize: :desc, name: :asc).each do |product| %>
           						<tr>
           							<td product-id="<%= product.id %>" style="padding: 5px;vertical-align: top;">
           								<%= product.name %>
-													<h5 class="text-info">
-														<span class="badge badge-success"><%= product.prioritize ? "Prioritized" : "" %></span>
-                  				</h5>
+          								<% if product.vip_model %>
+					                      <span class="badge badge-primary">
+					                        Top Product
+					                      </span>
+					                    <% end %>
+										<h5 class="text-info">
+											<span class="badge badge-success"><%= product.prioritize ? "Prioritized" : "" %></span>
+	                  					</h5>
           							</td>
           							<td style="padding: 5px;vertical-align: top;">
           								<input type="number" min="0" max="1000" name="quantity" value="0" placeholder="Enter a quantity" class="form-control"></input>

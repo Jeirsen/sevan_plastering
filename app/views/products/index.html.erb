@@ -48,7 +48,14 @@
                     <%= product.unit.name %>
                   </h4>
                   <h5 class="text-info">
-                    <span class="badge <%= product.prioritize ? "badge-success" : "badge-warning" %>"><%= product.prioritize ? "Prioritized" : "Not Prioritized" %></span>
+                    <span class="badge <%= product.prioritize ? "badge-success" : "badge-warning" %>">
+                      <%= product.prioritize ? "Prioritized" : "Not Prioritized" %>
+                    </span>
+                    <% if product.vip_model %>
+                      <span class="badge badge-primary" data-toggle="tooltip" title="Top Product">
+                        <i class="fa fa-star fa-fw"></i>
+                      </span>
+                    <% end %>
                   </h5>
                 </div>
               </div>
@@ -172,8 +179,8 @@
           </div>
           <div class="modal-body">
             <div class="table-responsive">
-              <div class="alert" id="prioritize_alert" style="display: none"></div>
-              <table class="table table-bordered" id="prioritize-products">
+              <div class="alert" id="vip_alert" style="display: none"></div>
+              <table class="table table-bordered" id="vip-products">
                 <thead>
                   <tr>
                     <th>Product</th>
@@ -268,7 +275,48 @@ var unitId = 0;
 var productElement = "";
 
 function vipProducts(){
-  alert('this actions is under construcction')
+  let success = true;
+  let count = $("#vip-products").find('tbody tr').length
+  let index = 1
+  $("#vip-products").find('tbody tr').each(function (i, el) {
+    var tds = $(el).find('td');
+    let vip_model = $(tds).find("input").prop("checked");
+    let product_id = $(tds).attr("product-id");
+    product_object = {
+      product : {
+        id: product_id,
+        vip_model: vip_model
+      }
+    }
+    $.ajax({
+      url: "<%= vip_products_path %>",
+      method: "POST",
+      data: product_object,
+      success: function (data) {
+        success = true;
+        console.log(`${count} -- ${index}`)
+        if (count == index){
+          window.location.replace("<%= products_path %>")
+        }
+        index++
+      },
+      error: function (data) {
+        $("#vip_alert").empty();
+        $("#vip_alert").removeClass("alert-success");
+        $("#vip_alert").addClass("alert-danger");
+        message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+              <span aria-hidden="true">×</span>\
+            </button>';
+        $("#vip_alert").append(message);
+        $("#vip_alert").show();
+        setTimeout(function(){
+          $("#vip_alert").hide();
+        },5000);
+        success = false;
+        return false;
+      }
+    })
+  });
 }
 
 function prioritizaProducts(){
