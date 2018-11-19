@@ -65,6 +65,22 @@ class ProjectsController < ApplicationController
     end
   end
 
+  def remove_project
+    if(params[:id].blank?)
+      response = {success: false, data: "Missing parameters"}
+    else
+      project_id = params[:id]
+      project = Project.where(id: project_id).first
+      if project.nil?
+        response = {success: false, data: "Project not found!"}
+      else
+        project.update_attributes(:status => Project::Status[:inactive])
+        response = {success: true, data: "Project removed successfully!"}
+      end
+    end
+    render json: response, status: 200
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_project

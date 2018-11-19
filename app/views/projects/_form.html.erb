@@ -10,6 +10,7 @@
       </ul>
     </div>
   <% end %>
+    <%= form.hidden_field :status, :value => Project::Status[:active] %>
     <div class="form-group">
       <label for="recipient-name" class="control-label">Name:</label>
       <%= form.text_field :name, id: :project_name, class: "form-control", id: "name_project" %>

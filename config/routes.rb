@@ -23,7 +23,8 @@ Rails.application.routes.draw do
   post 'vip-product' => 'products#vip_products', :as => 'vip_products'
   post 'remove-product' => 'products#remove_product', :as  => 'remove_product'
 
-
+  #projects
+  post 'remove-project' => 'projects#remove_project', :as => 'remove_project'
   #units
   get 'units' => 'units#index', :as => 'units'
   post 'admin-unit' => 'units#admin_unit', :as => 'admin_unit'

@@ -17,7 +17,7 @@
 </div>
 
 <div class="row" id="projects">
-  <% @builder.projects.each do |project| %>  
+  <% @builder.projects.where(:status => Project::Status[:active]).each do |project| %>  
     <div class="col-lg-4 col-md-4">      
       <div class="card">
         <div class="card-body card-padding-small">
@@ -31,8 +31,9 @@
               </h5>
             </div>
             <div class="col-md-3 align-self-center text-right">
-              <span onclick="editProject(<%= project.id%>)"class="icon-list-actions green-color" data-toggle="tooltip" title="" data-original-title="Update"><i class="mdi mdi-pencil"></i></span>
-              <span onclick="disableProject(<%= project.id%>)" class="icon-list-actions red-color" data-toggle="tooltip" title="" data-original-title="Delete"><i class="mdi mdi-delete"></i></span>
+              <span onclick="openModalEditProject(this, <%= project.id %>)">
+                <i class="fa fa-pencil"></i>
+              </span>
             </div>
 
           </div>
@@ -96,6 +97,36 @@
   </div>
 </div>
 
+<div class="modal fade" id="editProjectModal" tabindex="-1" role="dialog" aria-labelledby="editProjectModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+          <h4 class="modal-title">Edit Project</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+              <label for="recipient-name" class="control-label">Name:</label>
+              <input type="text" class="form-control" id="edit_project_name" required>
+              <span class="label label-danger" style="display: none" id="danger_edit_name">Product name is required!</span>
+          </div>
+          <div class="alert" id="project_edit_alert" style="display: none"></div>
+        </form>
+      </div>
+      <div class="modal-footer">
+          <div class="col-md-6 pull-left">
+            <button onclick="removeProject()" type="button" class="btn btn-danger pull-left">Remove</button> 
+          </div>
+          <div class="col-md-6" style="text-align: right;">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button onclick="editProject()" ontype="button" class="btn btn-primary waves-effect waves-light">Edit</button>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="content_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content modal-inject">
@@ -105,6 +136,9 @@
 
 
 <script type="text/javascript">
+
+    let idProjectForEditing = null
+    let projectElement = null
 
     function newProject(){
         $.get("<%= new_project_path %>",function(data){
@@ -118,6 +152,14 @@
             $(".modal-inject").html(data);
             $("#content_modal").modal('show');
         })
+    }
+
+    function openModalEditProject(element, project_id){  
+      projectElement = $(element).parent().parent().parent().parent().parent()
+      idProjectForEditing = project_id;
+      name = $(element).parent().parent().find("a").text()
+      $('#edit_project_name').val(name);
+      $('#editProjectModal').modal('show');
     }
 
     function disableBuilder(id){
@@ -143,6 +185,39 @@
               }
           });
       });
+    }
+
+    function removeProject(){
+      $.ajax({
+        url: "<%= remove_project_path %>",
+        method: "POST",
+        data: {id: idProjectForEditing},
+        success: function (data) {
+          if(data.success){
+            $(projectElement).remove()
+            $("#editProjectModal").modal('hide');
+          }else{
+            $("#project_edit_alert").empty();
+            $("#project_edit_alert").removeClass("alert-success");
+            $("#project_edit_alert").addClass("alert-danger");
+            message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                      <span aria-hidden="true">×</span>\
+                      </button>';
+            $("#project_edit_alert").append(message);
+            $("#project_edit_alert").show();
+          }
+        },
+        error: function (data) {
+          $("#project_edit_alert").empty();
+          $("#project_edit_alert").removeClass("alert-success");
+          $("#project_edit_alert").addClass("alert-danger");
+          message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                    <span aria-hidden="true">×</span>\
+                    </button>';
+          $("#project_edit_alert").append(message);
+          $("#project_edit_alert").show();
+        }
+      })
     }
 
     function addNewModel(){
