@@ -65,10 +65,10 @@ class ProductsController < ApplicationController
   end
 
   def vip_products
-    if(params[:product][:id].blank? or params[:product][:vip_model].blank?)
+    if(params[:product][:id].blank? or params[:product][:order_first_by].blank?)
       response = {success: false, data: "Missing parameters"}
     else
-      vip_model = params[:product][:vip_model]
+      position = params[:product][:order_first_by]
       product_id = params[:product][:id].to_i
       product = Product.where(id: product_id).first
       if product.nil?
@@ -90,7 +90,7 @@ class ProductsController < ApplicationController
   private
 
   def product_params
-      params.require(:product).permit(:id, :name, :unit_id, :status, :category, :prioritize, :vip_model)
+      params.require(:product).permit(:id, :name, :unit_id, :status, :category, :prioritize, :order_first_by)
   end
 
 end

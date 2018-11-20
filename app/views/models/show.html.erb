@@ -84,13 +84,13 @@
           			</thead>	
           			<tbody>
           				<% if !@products.blank? %>
-          					<% @products.where(:status => Product::Status[:active]).order(vip_model: :desc, prioritize: :desc, name: :asc).each do |product| %>
+          					<% @products.where(:status => Product::Status[:active]).order(order_first_by: :asc, prioritize: :desc, name: :asc).each do |product| %>
           						<tr>
           							<td product-id="<%= product.id %>" style="padding: 5px;vertical-align: top;">
           								<%= product.name %>
-          								<% if product.vip_model %>
+          								<% if product.order_first_by != nil %>
 					                      <span class="badge badge-primary">
-					                        Top Product
+					                        <%= product.order_first_by %> <i> P</i> 
 					                      </span>
 					                    <% end %>
 										<h5 class="text-info">
