@@ -109,7 +109,7 @@
           <div class="form-group">
               <label for="recipient-name" class="control-label">Name:</label>
               <input type="text" class="form-control" id="edit_project_name" required>
-              <span class="label label-danger" style="display: none" id="danger_edit_name">Product name is required!</span>
+              <span class="label label-danger" style="display: none" id="danger_edit_name">Project name is required!</span>
           </div>
           <div class="alert" id="project_edit_alert" style="display: none"></div>
         </form>
@@ -218,6 +218,78 @@
           $("#project_edit_alert").show();
         }
       })
+    }
+
+    function editProject(){
+      name = $.trim($("#edit_project_name").val());
+      if (name.length > 0){
+        project_object = {
+          project : {
+            id: idProjectForEditing,
+            name: name
+          }
+        }
+
+        $.ajax({
+          url: "<%= update_project_path %>",
+          method: "POST",
+          data: project_object,
+          success: function (data) {
+            if(data.success){
+              updateProjectElement();
+              $("#project_edit_alert").empty();
+              $("#project_edit_alert").removeClass("alert-danger");
+              $("#project_edit_alert").addClass("alert-success");
+              message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                        <span aria-hidden="true">×</span>\
+                        </button>';
+              $("#project_edit_alert").append(message);
+              $("#project_edit_alert").show();
+              setTimeout(function(){
+                $("#project_edit_alert").hide();
+                $("#editProjectModal").modal('hide');
+              },4000);
+            }else{
+              $("#project_edit_alert").empty();
+              $("#project_edit_alert").removeClass("alert-success");
+              $("#project_edit_alert").addClass("alert-danger");
+              message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                        <span aria-hidden="true">×</span>\
+                        </button>';
+              $("#project_edit_alert").append(message);
+              $("#project_edit_alert").show();
+              setTimeout(function(){
+                $("#project_edit_alert").hide();
+              },4000);
+            }
+          },
+          error: function (data) {
+            $("#project_edit_alert").empty();
+            $("#project_edit_alert").removeClass("alert-success");
+            $("#project_edit_alert").addClass("alert-danger");
+            message = data.data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                      <span aria-hidden="true">×</span>\
+                      </button>';
+            $("#project_edit_alert").append(message);
+            $("#project_edit_alert").show();
+            setTimeout(function(){
+              $("#project_edit_alert").hide();
+            },4000);
+          }
+        })
+      }else{
+        $("#danger_edit_name").show();
+        setTimeout(function(){
+            $('#danger_edit_name').hide();
+        },4000);
+      }
+    }
+
+    function updateProjectElement(){
+      name = $.trim($("#edit_project_name").val());
+      $(projectElement).find("a").text(name);
+      projectElement = "";
+      idProjectForEditing = 0;
     }
 
     function addNewModel(){

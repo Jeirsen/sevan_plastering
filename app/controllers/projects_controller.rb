@@ -65,6 +65,24 @@ class ProjectsController < ApplicationController
     end
   end
 
+  def update_project
+    if (params[:project][:name].blank? or params[:project][:id].blank?)
+        response = {success: false, data: "Missing parameters"}
+    else
+      
+      id = params[:project][:id]
+      project = Project.where(id: id).first
+      if (project.blank?)
+        response = {success: false, data: "Project not found!"}
+      else
+        project.update(project_params)
+        response = {success: true, data: "Project updated successfully!"}
+      end
+    end
+    render json: response, status: 200
+  end
+
+
   def remove_project
     if(params[:id].blank?)
       response = {success: false, data: "Missing parameters"}

@@ -25,6 +25,8 @@ Rails.application.routes.draw do
 
   #projects
   post 'remove-project' => 'projects#remove_project', :as => 'remove_project'
+  post 'update-project' => 'projects#update_project', :as => 'update_project'
+
   #units
   get 'units' => 'units#index', :as => 'units'
   post 'admin-unit' => 'units#admin_unit', :as => 'admin_unit'
