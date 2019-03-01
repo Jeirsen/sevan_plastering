@@ -9,13 +9,13 @@ class OrdersController < ApplicationController
 
 	def search_projects
 		q = params[:q].to_s
-    results = Project.select('projects.id, projects.name').where("projects.name ILIKE ?", "%#{q}%").limit(10).map { |project| {id: project.id, name: project.name} }
+    results = Project.select('projects.id, projects.name').where("projects.name ILIKE ?", "%#{q}%").map { |project| {id: project.id, name: project.name} }
     render json: {success: true, data: results}, status: :ok
 	end
 
 	def search_lots
 		project_id = params[:project_id].to_i
-    results = Lot.select('lots.id, lots.number').where("lots.project_id = #{project_id} and lots.status = #{Lot::Status[:active]}").limit(15).map { |lot| {id: lot.id, name: lot.number} }
+    results = Lot.select('lots.id, lots.number').where("lots.project_id = #{project_id} and lots.status = #{Lot::Status[:active]}").map { |lot| {id: lot.id, name: lot.number} }
     render json: {success: true, data: results}, status: :ok
 	end
 
