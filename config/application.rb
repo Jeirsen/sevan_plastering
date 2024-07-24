@@ -28,7 +28,7 @@ module SevanplasteringPorders
       port:                 587,
       domain:               'gmail.com',
       user_name:            'admin@emrichvp.com',
-      password:             'voqwrarpxdqkowwz',
+      password:             'aesrbptbqxrprnad',
       authentication:       'plain',
       enable_starttls_auto: true
     }
